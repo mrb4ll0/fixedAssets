@@ -306,15 +306,27 @@ private Integer errorfieldcount;
             prepaymentAccounts.put(
                     accountsMapList.get(i).get("accountNumber").toString(),
                     accountsMapList.get(i).get("accountName").toString());
+             prepaymentAccountsName.put(
+                    accountsMapList.get(i).get("accountName").toString(),
+                    accountsMapList.get(i).get("accountNumber").toString());
             depreciationAccounts.put(
                     accountsMapList.get(i).get("accountNumber").toString(),
                     accountsMapList.get(i).get("accountName").toString());
+             depreciationAccountsName.put(
+                    accountsMapList.get(i).get("accountName").toString(),
+                    accountsMapList.get(i).get("accountNumber").toString());
             depExpenseAccounts.put(
                     accountsMapList.get(i).get("accountNumber").toString(),
                     accountsMapList.get(i).get("accountName").toString());
+             depExpenseAccountsName.put(
+                    accountsMapList.get(i).get("accountName").toString(),
+                    accountsMapList.get(i).get("accountNumber").toString());
             assetAccounts.put(
             accountsMapList.get(i).get("accountNumber").toString(),
                     accountsMapList.get(i).get("accountName").toString());
+             assetAccountsName.put(
+                    accountsMapList.get(i).get("accountName").toString(),
+                    accountsMapList.get(i).get("accountNumber").toString());
         }
        }
        catch(Exception e)
@@ -613,6 +625,7 @@ String yFound = "";
             
         String sql = "insert into fixedAssetParam(FAPcatID, FAPcategory,FAPdepExpAcctNumber,FAPPrePayAcctNumber,AssetAccountNumber, DepExpenseAccountNumber, FAPdepDate, RecordStatus,Inputter,InputterRec,Authoriser,AuthoriserRec,updatetype,FAPtenancy) values (?,?,?, ?, ?, ?, ?, ?, ?,?,?,?,?,?)";
 	statement = connection.prepareStatement(sql);
+        System.out.println("depreciation account is "+depreciationAccount);
         String depreciationAccountNumber = depreciationAccountsName.get(depreciationAccount);
         String prepaymentAccountNumber = prepaymentAccountsName.get(prepaymentAccount);
         String assetAccountNumber = assetAccountsName.get(assetAccount);

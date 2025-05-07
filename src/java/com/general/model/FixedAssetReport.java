@@ -7,7 +7,7 @@ package com.general.model;
 
 /**
  *
- * @author dell
+ * @author Muhammad
  */
 public class FixedAssetReport {
     private String category;

@@ -1,10 +1,72 @@
+
 body {
     color: black !important;
     font-family: Verdana, Arial, Tahoma, Geneva, sans-serif;
     width: 100% !important;
     height: 100% !important;
-    background-color: #34495E !important;
+    background-color: #37848a30 !important;
 }
+
+h1{
+    color: #183253 ;
+    text-shadow: 2px 2px 2px rgb(255 255 255);
+    font-family: serif;
+    margin-top: 3%;
+    margin-left: 20px;
+}
+
+hr{
+    height: 3px !important;
+    margin-left: 20px !important;
+    margin-right: 20px !important;
+    border-width: 0 !important;
+    background-color: #37848a !important;
+}
+
+
+li.ui-tabs-header.ui-state-active, .ui-state-active a {
+    border-color: #37848a !important;
+	color:#37848a !important;
+}
+.ui-button, .ui-menuitem.ui-menuitem-active > .ui-menuitem-link {
+    border: none !important;
+   background: linear-gradient(to bottom, #37848a 0%, #183253 100%) !important;
+}
+.ui-button:hover{
+     border: none !important;
+    background: linear-gradient(to bottom, #0ad31d 0%, #105703 100%) !important;
+}
+
+
+.ui-button.rounded-button {
+    border-radius: 8px !important;
+    margin-left: 25px;
+}
+
+.ui-tabs .ui-tabs-nav{
+	background: #eeeeee  !important;
+}
+.ui-tabs-panels {
+	background: #eeeeee !important;
+    box-shadow: 3px 2px 10px 3px #37848a;
+    border-bottom-right-radius: 25px !important;
+    border-bottom-left-radius: 25px !important;
+}
+.ui-inputfield {
+    color:black !important;
+   background: white !important;
+    font-size: 1rem;
+    border-radius: 6px;
+    box-shadow: 3px 1px 5px 0px #37848a;
+    transition: background-color 0.2s, color 0.2s, border-color 0.2s, box-shadow 0.2s;
+    -webkit-appearance: none;
+    /* appearance: none; */
+}
+
+.ui-widget {
+    font-weight: 600 !important;
+}
+
 
 .TempBody {
     background-color: #34495E !important;
@@ -12,12 +74,14 @@ body {
     height: 100% !important;
 }
 .top {
-    position: relative;
-    background-color: #522c3b;
+    position: absolute;
+    margin-left: 250px;
+    width: calc(100vw - 250px);
+    background-color:white;
     color: white;
-    height: 20% !important;
+    border-bottom: 3px solid #37848a;
+    height: 86px !important;
     margin-bottom: 20px !important;
-    width: 100% !important;
     font-family: Verdana, Tahoma, Arial, Geneva, sans-serif;
 }
 
@@ -26,15 +90,31 @@ body {
 
 .left {
     float: left;
-    background-color: #34495E !important;
-    width: 18% !important;
+    background-color: #FFFFFF !important;
+    width: 250px !important;;
+    height: 100vh !important;;
 
 }
 
+.ui-menuitem.ui-menuitem-active > .ui-menuitem-link .ui-icon, .ui-menuitem.ui-menuitem-active > .ui-menuitem-link .ui-menuitem-text{
+     color: #FFFFFF !important;
+}
+.ui-menu .ui-menu-list .ui-menuitem{
+     background: #FFFFFF !important;
+}
+.ui-menu .ui-menu-list .ui-menu-child.ui-shadow {
+    border-radius: 8px !important;
+    border: 0 none;
+    box-shadow: 1px 3px 4px 0px #37848a !important;
+}
+
 .left_content {
-    background-color: #424949 !important;
-    margin-left: 19% !important;
-    color: #000000;
+    height: 100vh;
+      background: url("./tmpImage/DashboardBackground.jpg") center !important;
+         background-repeat: repeat-x;
+      background-size: cover !important;
+    margin-left: 250px !important;
+    color: #37848a30 !important;
     font-family: Verdana, Arial, Tahoma, Geneva, sans-serif;
 }
 
@@ -64,7 +144,7 @@ body {
 .ui-tieredmenu {
 width: 100% !important;
 font-size: 10pt !important;
-background-color: #FEF9E7 !important;
+
 color: #000000 !important;
 font-weight: bold !important;
 } 
@@ -72,7 +152,6 @@ font-weight: bold !important;
 .ui-menu .ui-menu-parent .ui-menu-child {
 width: 260px !important;
 font-size: 10pt !important;
-background-color: #FEF9E7 !important;
 color: #000000 !important;
 font-weight: bold !important;
 } 
@@ -92,19 +171,28 @@ font-weight: bold !important;
 .right-alignment {
      vertical-align: middle !important;
      text-align: right !important;
+     padding-right: 3%;
 }
 
 .GenEnrichTxtBannerLeft {
-    color: white !important;
+    font-size: 1.5em !important; 
+    color: #183253 !important;
     text-align: left !important;
     margin-left: 4% !important;
 }
+.GenEnrichTxtBannerSmall {
+    font-size: 0.8em !important; 
+    color: #37848a !important;
+    text-align: left !important; 
+     margin-left: 4% !important;
+}
+
 .GenEnrichTxtBannerMiddle {
     color: white !important;
     text-align: center !important;
 }
 .GenEnrichTxtBannerRight {
-    color: white !important;
+    color: #183253 !important;
     text-align: right !important;
     margin-right: 4% !important;
 }
@@ -202,10 +290,15 @@ font-weight: bold !important;
 .RptsecondColFooter {
     width: 45% !important;
 }
-    
+
+  .ui-tabs.MyTabView {
+		padding: 20px; 
+   }
+
 
 
 .ui-tabs .ui-tabs-nav li {
+	
     background-color: white !important;
 }
 li.ui-tabmenuitem.ui-state-default.ui-state-active {
@@ -214,7 +307,7 @@ li.ui-tabmenuitem.ui-state-default.ui-state-active {
 }
 
 .TabDiv {
-    background-color: #424949 !important;
+    background-color: #eeeeee !important;
 }
 
 
@@ -333,11 +426,11 @@ li.ui-tabmenuitem.ui-state-default.ui-state-active {
 
 
 .ui-outputlabel {
-    color: white;
+    color: black;
 }
 
 .GenEnrichTxt {
-    color: #58F6F1 !important;
+    color: #272BBB !important;
 }
 
 
@@ -348,7 +441,8 @@ li.ui-tabmenuitem.ui-state-default.ui-state-active {
     vertical-align: top !important;
 }
 .GenEnrichTxtPageLoad {
-    color: white !important;
+    margin-left:20px;
+    color: #272BBB !important;
 }
 
 .GenEnrichClearTxt {
@@ -363,7 +457,7 @@ li.ui-tabmenuitem.ui-state-default.ui-state-active {
 
 
 .GenEnrichTxtTab {
-    color: #58F6F1 !important;
+    color: #272BBB !important;
 }
 
 
@@ -379,22 +473,22 @@ li.ui-tabmenuitem.ui-state-default.ui-state-active {
     visibility: hidden;
 }
 .GenTILLheader0 {
-    background-color: #1C1106 !important;
+    background-color: #37848a30 !important;
     color: #3498DB !important;
     text-align: left !important;
 }
 .GenTILLheader00 {
-    background-color: #1C1106 !important;
+    background-color: #37848a30 !important;
     color: #3498DB !important;
     text-align: right !important;
 }
 .GenTILLheader11 {
-    background-color: #1C1106 !important;
+    background-color: #37848a30 !important;
     color: #3498DB !important;
     text-align: right !important;
 }
 .GenTILLheader2 {
-    background-color: #1C1106 !important;
+    background-color: #37848a30 !important;
     color: #3498DB !important;
     text-align: right !important;
 }
@@ -412,7 +506,7 @@ li.ui-tabmenuitem.ui-state-default.ui-state-active {
 }
 
 .ui-selectonemenu.GenSELTxtreqAccount {
-    background-color: #F4D03F !important;
+    background-color: #37848a30 !important;
     font-family: Verdana, Arial, Tahoma, Geneva, sans-serif;
     width: 280px !important;
 }
@@ -424,19 +518,19 @@ li.ui-tabmenuitem.ui-state-default.ui-state-active {
 }
 
 .ui-selectonemenu.GenSELTxtreqMemo {
-    background-color: #F4D03F !important;
+    background-color: #37848a30 !important;
     font-family: Verdana, Arial, Tahoma, Geneva, sans-serif;
     width: 100px !important;
 }
 
 .ui-selectonemenu.GenSELTxtreqProduct {
-    background-color: #F4D03F !important;
+    background-color: #37848a30 !important;
     font-family: Verdana, Arial, Tahoma, Geneva, sans-serif;
     width: 210px !important;
 }
 
 .ui-selectonemenu.GenSELTxtreqCustomer {
-    background-color: #F4D03F !important;
+    background-color: #37848a30 !important;
     font-family: Verdana, Arial, Tahoma, Geneva, sans-serif;
     width: 210px !important;
 }
@@ -448,7 +542,8 @@ li.ui-tabmenuitem.ui-state-default.ui-state-active {
 
 
 .GenSELTxtreq {
-    background-color: #F4D03F !important;
+    background-color: #37848a15 !important;
+    border: 1.5px solid #183253 !important;
     font-family: Verdana, Arial, Tahoma, Geneva, sans-serif;
 }
 
@@ -464,14 +559,14 @@ li.ui-tabmenuitem.ui-state-default.ui-state-active {
 
 .GenSELTxtreqNoUse{
     font-family: Verdana, Arial, Tahoma, Geneva, sans-serif;
-    background-color: #E6E8E8 !important;
+    background-color: #FFFFFF !important;
 }
 .GenCALTxtreq input {
-    background-color: #F4D03F !important;
+    background-color: #37848a30 !important;
     font-family: Verdana, Arial, Tahoma, Geneva, sans-serif;
 }
 .GenCALTxtreqNoUse input {
-    background-color: #E6E8E8 !important;
+    background-color: #FFFFFF !important;
     font-family: Verdana, Arial, Tahoma, Geneva, sans-serif;
 }
 
@@ -481,43 +576,44 @@ li.ui-tabmenuitem.ui-state-default.ui-state-active {
 }
 
 .GenTIMETxtreq input {
-    background-color: #F4D03F !important;
+    background-color: #37848a30 !important;
     font-family: Verdana, Arial, Tahoma, Geneva, sans-serif;
 }
 
 .GenInputTxtreqAccount {
-    background-color: #F4D03F !important;
+    background-color: #37848a15 !important;
     font-family: Verdana, Arial, Tahoma, Geneva, sans-serif;
     width: 250px !important;
 }
 
 
 .GenInputTxtreq {
-    background-color: #F4D03F !important;
+    background-color: #37848a15 !important;
+	border: 1.7px solid #37848a !important;
     font-family: Verdana, Arial, Tahoma, Geneva, sans-serif;
 }
 
 .GenInputTxtreqStayRight {
-    background-color: #F4D03F !important;
+    background-color: #37848a15 !important;
     font-family: Verdana, Arial, Tahoma, Geneva, sans-serif;
     text-align: right !important;
 }
 
 
 .GenInputNumReq input {
-    background-color: #F4D03F !important;
+    background-color: #37848a15 !important;
     text-align: right !important;
 }
 
 .GenInputNumReqAmtNoIputRight input {
-    background-color: #1C1106 !important;
+    background-color: #37848a15 !important;
     color: white !important;
     text-align: right !important;
 }
 
 
 .GenInputNumReqNoUse input {
-    background-color: #E6E8E8 !important;
+    background-color: #FFFFFF !important;
     text-align: right !important;
 
 }
@@ -532,22 +628,22 @@ li.ui-tabmenuitem.ui-state-default.ui-state-active {
     text-align: right !important;
 }
 .GenInputNumReq2 input {
-    background-color: #F4D03F !important;
+    background-color: #37848a30 !important;
     text-align: right !important;
 }
 .GenInputTxtNoInputRight {
-    background-color: #1C1106 !important;
-    color: white !important;
+    background-color: #37848a30 !important;
+    color: black !important;
     text-align: right !important;
 }
 
 .GenInputTxtNoInputRightNoUse {
-    background-color: #E6E8E8 !important;
+    background-color: #FFFFFF !important;
     text-align: right !important;
 }
 
 .GenInputTxtNoInputNoUse {
-    background-color: #E6E8E8 !important;
+    background-color: #FFFFFF !important;
 }
 
 .GenInputTxtNoInputNoUseRO {
@@ -556,19 +652,19 @@ li.ui-tabmenuitem.ui-state-default.ui-state-active {
 
 
 .GenInputTxtNoInput {
-    background-color: #1C1106 !important;
+    background-color: #183253 !important;
     color: white !important;
 }
 
 
 .GenInputTxtNoInputAllIniAudit {
-    background-color: #1C1106 !important;
+    background-color: #37848a30 !important;
     color: wheat !important;
     visibility: hidden;
 }
 
 .GenInputTxtNoInputCALL {
-    background-color: #1C1106 !important;
+    background-color: #37848a30 !important;
     color: wheat !important;
     visibility: hidden;
 }
@@ -581,24 +677,24 @@ li.ui-tabmenuitem.ui-state-default.ui-state-active {
 
 
 .GenInputTxtNoInputRightAmt {
-    background-color: #1C1106 !important;
+    background-color: #37848a30 !important;
     color: white !important;
     text-align: right !important;
 }
 
 .GenNoInputText {
-    background-color: #1C1106 !important;
+    background-color: #37848a30 !important;
     color: white !important;
 }
 .GenInputTxtRight {
-    background-color: #1C1106 !important;
+    background-color: #37848a30 !important;
     color: white !important;
     text-align: right !important;
 }
 
 
 .ui-datatable.myLDRepay th {
-    background: #85929E !important;
+    background: #37848a !important;
     color: white !important;
     font-size: 10pt !important;
     height: 15px !important;
@@ -615,11 +711,11 @@ li.ui-tabmenuitem.ui-state-default.ui-state-active {
 
 
 .evenClass {
-    background-color: #FCF3CF  !important;
+    background-color: #37848a15  !important;
 }
 
 .oddClass {
-    background-color: #D6EAF8  !important;
+    background-color: #FFFFFF  !important;
 }
 
 
@@ -639,27 +735,3 @@ li.ui-tabmenuitem.ui-state-default.ui-state-active {
 .EntryCenterTest {
     background: #c72516 !important;
 }
-
-
-.myLDRepay {
-    font-size: 10pt;
-    width: 100%;
-    border-collapse: collapse;
-    border: 1px solid #ccc;
-    background-color: #f9f9f9;
-}
-
-.myLDRepay th, .myLDRepay td {
-    padding: 8px;
-    border: 1px solid #ddd;
-    text-align: left;
-}
-
-.myLDRepay tr:nth-child(even) {
-    background-color: #f2f2f2;
-}
-
-.myLDRepay tr:hover {
-    background-color: #e6f7ff;
-}
-

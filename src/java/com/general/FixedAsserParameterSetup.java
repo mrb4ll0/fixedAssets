@@ -627,7 +627,7 @@ String yFound = "";
                         statement.setString(5, assetAccountNumber);
                         statement.setString(6, depExpenseAccountNumber);
                         statement.setInt(7, depreciationDay);
-                        statement.setString(8, "AUTH");
+                        statement.setString(8, "UNAUTH");
                         statement.setString(9, yuser);
                         statement.setString(10, AuditDateRecord);
                         statement.setString(11, yuser);

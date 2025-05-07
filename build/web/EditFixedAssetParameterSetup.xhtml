@@ -1,0 +1,126 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+
+    <h:head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <h:outputStylesheet library="css" name="ComSetting.css" />
+        <title>Fixed Assets Setup</title>
+    </h:head>
+    
+    <h:body>
+        <h:form enctype="multipart/form-data" id="fixedAssetsForm">
+            <p:growl id="growl" showDetail="true" life="3000" sticky="true"/>
+            <h1>Edit Fixed Assets Parameter Setup</h1>
+            <hr style="height:5px;border-width:0;color:white;background-color:gray"/>
+            <p:outputLabel styleClass="GenEnrichTxtPageLoad" value="#{getGeneralFieldValues.newPageLoadSet}"/>
+            
+            <div class="SingleForm">
+                <br/>
+                <p:tabView multiViewState="true" id="tabViewMVS" styleClass="MyTabView">
+<p:tab title="Edit Setup">
+    <div class="TabDiv">
+        <h:panelGrid columns="3" columnClasses="firstColumnPGrid,secondColumnPGrid,thirdColumnPGrid" style="width:100%">
+
+            <p:outputLabel for="editCategory" value="Category:" />
+            <p:selectOneMenu id="editCategory" value="#{editFixedAssetSetup.category}" 
+                             styleClass="GenSELTxtreq" required="true">
+                <f:selectItem itemLabel="Select Category" itemValue=""/>
+                <f:selectItems value="#{editFixedAssetSetup.categories}" />
+                <p:ajax event="change" listener="#{editFixedAssetSetup.onselectedCategory}" update="editCategoryId"/>
+            </p:selectOneMenu>
+            <p:outputLabel />
+
+            <p:outputLabel for="editCategoryId" value="Category ID:" />
+            <p:inputText id="editCategoryId" value="#{editFixedAssetSetup.categoryId}" 
+                         size="5" styleClass="GenInputTxtNoInput" readonly="true" />
+            <p:outputLabel/>
+
+             <p:outputLabel for="assetAccount" value="Asset Account:" />
+             <p:selectOneMenu maxlength="10" id="assetAccount" styleClass="GenSELTxtreq" value="#{editFixedAssetSetup.assetAccount}" required="true">
+                <f:selectItem itemLabel="Select Account" itemValue=""/>
+                <f:selectItems value="#{editFixedAssetSetup.assetAccounts}"/>
+                <p:ajax       
+                    listener="#{editFixedAssetSetup.onSelectAssetAccount}" 
+                    update="FASelectedAssetAccount"/>
+            </p:selectOneMenu>
+            <p:outputLabel styleClass="GenEnrichTxt" id="FASelectedAssetAccount" value="#{editFixedAssetSetup.selectedAssetAccount}"/>
+
+
+            
+            <p:outputLabel  for="editPrepaymentAccount" value="Prepayment Account:" />
+            <p:selectOneMenu id="editPrepaymentAccount" value="#{editFixedAssetSetup.prepaymentAccount}" 
+                             styleClass="GenSELTxtreq" required="true">
+                <f:selectItem itemLabel="Select Account" itemValue=""/>
+                <f:selectItems value="#{editFixedAssetSetup.prepaymentAccounts}" />
+                <p:ajax listener="#{editFixedAssetSetup.onSelectPrepaymentAccount}" update="editFASelectedPrepaymentAccount"/>
+            </p:selectOneMenu>
+            <p:outputLabel id="editFASelectedPrepaymentAccount" value="#{editFixedAssetSetup.selectedPrepaymentAccount}" 
+                           styleClass="GenEnrichTxt"/>
+
+            <p:outputLabel for="editDepreciationAccount" value="Depreciation Account:" />
+            <p:selectOneMenu id="editDepreciationAccount" value="#{editFixedAssetSetup.depreciationAccount}" 
+                             styleClass="GenSELTxtreq" required="true">
+                <f:selectItem itemLabel="Select Account" itemValue=""/>
+                <f:selectItems value="#{editFixedAssetSetup.depreciationAccounts}" />
+                <p:ajax event="change" listener="#{editFixedAssetSetup.onSelectDepreciationAccount}" update="editFASelectedDepreciationAccount"/>
+            </p:selectOneMenu>
+            <p:outputLabel id="editFASelectedDepreciationAccount" value="#{editFixedAssetSetup.selectedDepreciationAccount}" 
+                           styleClass="GenEnrichTxt"/>
+
+            <p:outputLabel for="editDepExpenseAccount" value="Dep. Expense Account:" />
+            <p:selectOneMenu id="editDepExpenseAccount" value="#{editFixedAssetSetup.depExpenseAccount}" 
+                             styleClass="GenSELTxtreq" required="true">
+                <f:selectItem itemLabel="Select Account" itemValue=""/>
+                <f:selectItems value="#{editFixedAssetSetup.depExpenseAccounts}" />
+                <p:ajax event="change" listener="#{editFixedAssetSetup.onSelectDepExpenseAccount}" update="editFASelectedAccumDepAccount"/>
+            </p:selectOneMenu>
+            <p:outputLabel id="editFASelectedAccumDepAccount" value="#{editFixedAssetSetup.depExpenseAccount}" 
+                           styleClass="GenEnrichTxt"/>
+
+            <p:outputLabel for="editDepreciationDay" value="Depreciation Day:" />
+            <p:inputText id="editDepreciationDay" value="#{editFixedAssetSetup.depreciationDay}" 
+                         maxlength="2" size="2" styleClass="GenInputTxtreq" required="true" />
+            <p:outputLabel/>
+
+            
+
+        </h:panelGrid>
+         <p:spacer height="10"/>
+    </div>
+</p:tab>
+                    <p:tab title="Audit Section">
+                        <div class="TabDiv">
+                            <h:panelGrid columns="3" columnClasses="firstColumnPGrid,secondColumnPGrid,thirdColumnPGrid">
+                                <p:outputLabel for="AllRecordStatus" value="Record Status:" />
+                                <p:inputText id="AllRecordStatus" styleClass="GenInputTxtNoInput" value="#{editFixedAssetSetup.getAllRecordStatus}" readonly="true"/>
+                                <p:outputLabel/>
+                                
+                                <p:outputLabel for="AllInputterStatus" value="Inputter:" />
+                                <p:inputText id="AllInputterStatus" styleClass="GenInputTxtNoInput" value="#{editFixedAssetSetup.getAllInputterStatus}" readonly="true"/>
+                                <p:outputLabel/>
+                                
+                                <p:outputLabel for="AllInpRecStatus" value="Input Timing:" />
+                                <p:inputText id="AllInpRecStatus" styleClass="GenInputTxtNoInput" value="#{editFixedAssetSetup.getAllInpRecStatus}" readonly="true"/>
+                                <p:outputLabel/>
+                                
+                                <p:outputLabel for="AllAuthoriserStatus" value="Authoriser:" />
+                                <p:inputText id="AllAuthoriserStatus" styleClass="GenInputTxtNoInput" value="#{editFixedAssetSetup.getAllAuthoriserStatus}" readonly="true"/>
+                                <p:outputLabel/>
+                                
+                                <p:outputLabel for="AllAuthRecStatus" value="Authoriser Timing:" />
+                                <p:inputText id="AllAuthRecStatus" styleClass="GenInputTxtNoInput" value="#{editFixedAssetSetup.getAllAuthRecStatus}" readonly="true"/>
+                                <p:outputLabel/>
+                            </h:panelGrid>
+                        </div>
+                    </p:tab>
+                </p:tabView>
+            </div>
+            <p:commandButton value="Commit" action="#{editFixedAssetSetup.editFixedAssetCategoryCheck()}" class="rounded-button ui-button-success" update=":fixedAssetsForm"/>
+        </h:form>
+    </h:body>
+</html>

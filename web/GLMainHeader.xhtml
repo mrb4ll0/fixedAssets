@@ -1,0 +1,125 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+ xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+ xmlns:f="http://xmlns.jcp.org/jsf/core"
+ xmlns:h="http://xmlns.jcp.org/jsf/html"
+ xmlns:p="http://primefaces.org/ui">
+
+    
+    
+    <h:head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <h:outputStylesheet library="css" name="ComSetting.css" />
+        <title>General Ledger Header</title>
+    </h:head>
+    
+    
+    <body>
+
+
+
+<h:form enctype="multipart/form-data" id="GLhead">
+    
+               <p:growl id="growl" showDetail="true" life="3000" sticky="true"/>
+
+        <h1>General Ledger Header</h1>
+        
+        <hr style="height:5px;border-width:0;color:white;background-color:gray"/><p:outputLabel styleClass="GenEnrichTxtPageLoad" value="#{getGeneralFieldValues.newPageLoadSet}"/>
+        
+<div class="SingleForm">
+    <br/>
+    <p:tabView multiViewState="true" id="tabViewMVS" styleClass="MyTabView">
+        
+    
+            <p:tab title="Details">
+                <div class="TabDiv">
+ <h:panelGrid columns="3" columnClasses="firstColumnPGrid,secondColumnPGrid,thirdColumnPGrid">
+  
+ <p:outputLabel for="GLDescript"
+                value="Description"/>
+ <p:inputText 
+     id="GLDescript"
+     styleClass="GenInputTxtreq" maxlength="25" size="35" required="true" value="#{newGLmainheader.newGLDescript}">
+ </p:inputText>
+  <p:outputLabel/>
+  
+         <p:outputLabel for="GLheadLetter" value="Choose Main"/>
+   		<p:selectOneMenu id="GLheadLetter" styleClass="GenSELTxtreq" required="true" value="#{newGLmainheader.newGLheadLetterselection}">
+                    <f:selectItem itemLabel="Select One" itemValue=""/>
+                    <f:selectItems value="#{newGLmainheader.newGLheadLetteroptions}" />
+                        <f:ajax listener="#{newGLmainheader.newGLheadLetterselectValueChanged}" render="GLheadLetterinputToBeUpdated"/>
+                        <p:ajax listener="#{newGLmainheader.onChanges}" update="GLRecordID" />
+   		</p:selectOneMenu>
+          <p:outputLabel id="GLheadLetterinputToBeUpdated" styleClass="GenEnrichTxt" value="#{newGLmainheader.newGLheadLetterenrich}"/>
+  
+         <p:outputLabel for="GLheadNumber" value="Sub Number"/>
+   		<p:selectOneMenu id="GLheadNumber" styleClass="GenSELTxtreq" required="true" value="#{newGLmainheader.newGLheadNumberselection}">
+                    <f:selectItem itemLabel="Select One" itemValue=""/>
+   			<f:selectItems value="#{newGLmainheader.newGLheadNumberoptions}" />
+                        <f:ajax listener="#{newGLmainheader.newGLheadNumberselectValueChanged}" render="GLheadNumberinputToBeUpdated"/>
+                       <p:ajax listener="#{newGLmainheader.onChanges}" update="GLRecordID" />
+   		</p:selectOneMenu>
+          <p:outputLabel id="GLheadNumberinputToBeUpdated" styleClass="GenEnrichTxt" value="#{newGLmainheader.newGLheadNumberenrich}"/>
+          
+          
+<p:outputLabel for="GLRecordID" value="GL Header ID"/>
+ <p:inputText id="GLRecordID" styleClass="GenInputTxtNoInput" size="15" required="true" readonly= "true" value="#{newGLmainheader.newGLRecordID}"/>
+<p:outputLabel/>
+  
+<p:outputLabel id="customlabel" value="Custom Label"/>
+<p:inputText id="custominput"/>
+  </h:panelGrid>     
+                </div>
+            </p:tab>
+           
+        
+            <p:tab title="Audit Section">
+                <div class="TabDiv">
+                    <h:panelGrid columns="3" columnClasses="firstColumnPGrid,secondColumnPGrid,thirdColumnPGrid">
+  
+    <p:outputLabel for="AllRecordStatus" value="Record Status"/>
+      <p:inputText id="AllRecordStatus" styleClass="GenInputTxtNoInput" size="30" readonly="true" value="#{newGLmainheader.getAllRecordStatus}">
+     </p:inputText>
+   <p:outputLabel/>
+   
+   <p:outputLabel for="AllInputterStatus" value="Inputter"/>
+      <p:inputText id="AllInputterStatus" styleClass="GenInputTxtNoInput" size="30" readonly="true" value="#{newGLmainheader.getAllInputterStatus}">
+     </p:inputText>
+   <p:outputLabel/>
+   
+   <p:outputLabel for="AllInpRecStatus" value="Input Timing"/>
+      <p:inputText id="AllInpRecStatus" styleClass="GenInputTxtNoInput" size="30" readonly="true" value="#{newGLmainheader.getAllInpRecStatus}">
+     </p:inputText>
+   <p:outputLabel/>
+   
+   <p:outputLabel for="AllAuthoriserStatus" value="Authoriser"/>
+      <p:inputText id="AllAuthoriserStatus" styleClass="GenInputTxtNoInput" size="30" readonly="true" value="#{newGLmainheader.getAllAuthoriserStatus}">
+     </p:inputText>
+   <p:outputLabel/>
+   
+   <p:outputLabel for="AllAuthRecStatus" value="Authoriser Timing"/>
+      <p:inputText id="AllAuthRecStatus" styleClass="GenInputTxtNoInput" size="30" readonly="true" value="#{newGLmainheader.getAllAuthRecStatus}">
+     </p:inputText>
+   <p:outputLabel/>
+
+
+   </h:panelGrid>
+                    
+                </div>
+            </p:tab>
+        
+        </p:tabView>
+    
+ <p:commandButton value="Commit" styleClass="rounded-button ui-button-success" actionListener="#{newGLmainheader.newMainHeaderCheck}" icon="pi pi-check" update="growl">
+ </p:commandButton>
+
+
+
+</div>
+        
+</h:form>
+
+ 
+    </body>
+</html>

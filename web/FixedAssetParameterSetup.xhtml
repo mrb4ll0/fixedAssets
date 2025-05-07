@@ -1,0 +1,139 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+
+    <h:head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <h:outputStylesheet library="css" name="ComSetting.css" />
+        <title>Fixed Assets Setup</title>
+    </h:head>
+    
+    <h:body>
+        <h:form enctype="multipart/form-data" id="fixedAssetsForm">
+            <p:growl id="growl" showDetail="true" life="3000" sticky="true"/>
+            <h1>Fixed Assets Parameter Setup</h1>
+            <hr style="height:5px;border-width:0;color:white;background-color:gray"/>
+            <p:outputLabel styleClass="GenEnrichTxtPageLoad" value="#{getGeneralFieldValues.newPageLoadSet}"/>
+            
+            <div class="SingleForm">
+                <br/>
+                <p:tabView multiViewState="true" id="tabViewMVS" styleClass="MyTabView">
+                    <p:tab title="Setup" >
+                        <div class="TabDiv">
+                            <h:panelGrid columns="4" columnClasses="firstColumnPGrid,secondColumnPGrid,thirdColumnPGrid">
+                                <p:outputLabel for="category" value="Category:" />
+                                <p:inputText styleClass="GenInputTxtreq" id="category" maxlength="25" size="35" value="#{fixedAssetSetup.newCategory}" required="true"/>
+                                <p:outputLabel/>
+                                <p:outputLabel/>
+                                
+                                <p:outputLabel for="categoryId" value="Category ID:" />
+                                <p:inputText id="categoryId" inputmode="number" styleClass="GenInputTxtreq" maxlength="2" size="5" value="#{fixedAssetSetup.newCategoryID}" required="true"/>
+                                <p:outputLabel/>
+                                <p:outputLabel/>
+                                
+                                <p:outputLabel for="prepaymentAccount" value="Prepayment Account:" />
+                                <p:selectOneMenu editable="true" maxlength="10" id="prepaymentAccount" styleClass="GenSELTxtreq" value="#{fixedAssetSetup.prepaymentAccount}" required="true">
+                                    <f:selectItem itemLabel="Select Account" itemValue=""/>
+                                    <f:selectItems  value="#{fixedAssetSetup.prepaymentAccounts}"/>
+                                  
+                                    <p:ajax       
+                                        listener="#{fixedAssetSetup.onSelectPrepaymentAccount}" 
+                                        update="FASelectedPrepaymentAccount"/>
+                                    <p:ajax event="change"
+                                          listener="#{fixedAssetSetup.onSelectPrepaymentAccount}"
+                                           update="FASelectedPrepaymentAccount"/>
+                                </p:selectOneMenu>
+                                <p:outputLabel value="Search" style="background-color: #4CAF50; color: white; padding: 6px 12px; border: none; border-radius: 4px; cursor: pointer; display: inline-block; text-align: center;"/>
+                                <p:outputLabel id="FASelectedPrepaymentAccount" styleClass="GenEnrichTxt" 
+                                               value="#{ fixedAssetSetup.selectedPrepaymentAccount}"/>
+                                
+                                 <p:outputLabel for="assetAccount" value="Asset Account:" />
+                                 <p:selectOneMenu maxlength="10" editable="true" id="assetAccount" styleClass="GenSELTxtreq" value="#{fixedAssetSetup.assetAccount}" required="true">
+                                    <f:selectItem itemLabel="Select Account" itemValue=""/>
+                                    <f:selectItems value="#{fixedAssetSetup.assetAccounts}"/>
+                                    <p:ajax 
+                                        event="change"
+                                        listener="#{fixedAssetSetup.onSelectAssetAccount}" 
+                                        update="FASelectedAssetAccount"/>
+                                    <p:ajax       
+                                        listener="#{fixedAssetSetup.onSelectAssetAccount}" 
+                                        update="FASelectedAssetAccount"/>
+                                </p:selectOneMenu>
+                                 <p:outputLabel value="Search" style="background-color: #4CAF50; color: white; padding: 6px 12px; border: none; border-radius: 4px; cursor: pointer; display: inline-block; text-align: center;"/>
+                                 <p:outputLabel id="FASelectedAssetAccount" styleClass="GenEnrichTxt" value="#{fixedAssetSetup.selectedAssetAccount}"/>
+                                 
+                                 
+                                 <p:outputLabel for="depreciationAccount" value="Depreciation Account:" />
+                                <p:selectOneMenu editable="true" maxlength="10" id="depreciationAccount" styleClass="GenSELTxtreq" value="#{fixedAssetSetup.depreciationAccount}" required="true">
+                                    <f:selectItem itemLabel="Select Account" itemValue=""/>
+                                    <f:selectItems value="#{fixedAssetSetup.depreciationAccounts}"/>
+                                    <p:ajax 
+                                        event="change"
+                                        listener="#{fixedAssetSetup.onSelectDepreciationAccount()}" 
+                                        update="FASelectedDepreciationAccount"/>
+                                </p:selectOneMenu>
+                                 <p:outputLabel value="Search" style="background-color: #4CAF50; color: white; padding: 6px 12px; border: none; border-radius: 4px; cursor: pointer; display: inline-block; text-align: center;"/>
+                                <p:outputLabel id="FASelectedDepreciationAccount" styleClass="GenEnrichTxt" value="#{fixedAssetSetup.selectedDepreciationAccount}"/>
+                                
+                                <p:outputLabel for="depExpenseAccount" value="Dep. Expense Account:" />
+                                <p:selectOneMenu editable="true" maxlength="10" id="depExpenseAccount" styleClass="GenSELTxtreq" value="#{fixedAssetSetup.depExpenseAccount}" required="true">
+                                    <f:selectItem itemLabel="Select Account" itemValue=""/>
+                                    <f:selectItems value="#{fixedAssetSetup.depExpenseAccounts}"/>
+                                    <p:ajax 
+                                        event="change"
+                                        listener="#{fixedAssetSetup.onSelectedDepExpenseAccount()}" 
+                                        update="FASelectedDepAccount"/>
+                                </p:selectOneMenu>
+                                <p:outputLabel value="Search" style="background-color: #4CAF50; color: white; padding: 6px 12px; border: none; border-radius: 4px; cursor: pointer; display: inline-block; text-align: center;"/>
+                                <p:outputLabel id="FASelectedDepAccount" styleClass="GenEnrichTxt" value="#{fixedAssetSetup.selectedDepExpenseAccount}"/>
+
+                                <p:outputLabel for="depreciationDate" value="Depreciation (Day):" />
+                                <p:selectOneMenu editable="true" id="depreciationDate" styleClass="GenSELTxtreq" value="#{fixedAssetSetup.depreciationDay}" required="true">
+                                    <f:selectItem itemLabel="Select Day" itemValue=""/>
+                                    <f:selectItems value="#{fixedAssetSetup.depreciationDays}"/>
+                                    <p:ajax 
+                                        event="change"
+                                        listener="#{fixedAssetSetup.onSelectMonthDay}" 
+                                        update="FASelectedDay"/>
+                                </p:selectOneMenu>
+                                <p:outputLabel/>
+                                <p:outputLabel id="FASelectedDay" styleClass="GenEnrichTxt" value="#{fixedAssetSetup.depreciationDay}"/>
+                            </h:panelGrid>
+                        </div>
+                    </p:tab>
+                    
+                    <p:tab title="Audit Section">
+                        <div class="TabDiv">
+                            <h:panelGrid columns="3" columnClasses="firstColumnPGrid,secondColumnPGrid,thirdColumnPGrid">
+                                <p:outputLabel for="AllRecordStatus" value="Record Status:" />
+                                <p:inputText id="AllRecordStatus" styleClass="GenInputTxtNoInput" value="#{fixedAssetSetup.getAllRecordStatus}" readonly="true"/>
+                                <p:outputLabel/>
+                                
+                                <p:outputLabel for="AllInputterStatus" value="Inputter:" />
+                                <p:inputText id="AllInputterStatus" styleClass="GenInputTxtNoInput" value="#{fixedAssetSetup.getAllInputterStatus}" readonly="true"/>
+                                <p:outputLabel/>
+                                
+                                <p:outputLabel for="AllInpRecStatus" value="Input Timing:" />
+                                <p:inputText id="AllInpRecStatus" styleClass="GenInputTxtNoInput" value="#{fixedAssetSetup.getAllInpRecStatus}" readonly="true"/>
+                                <p:outputLabel/>
+                                
+                                <p:outputLabel for="AllAuthoriserStatus" value="Authoriser:" />
+                                <p:inputText id="AllAuthoriserStatus" styleClass="GenInputTxtNoInput" value="#{fixedAssetSetup.getAllAuthoriserStatus}" readonly="true"/>
+                                <p:outputLabel/>
+                                
+                                <p:outputLabel for="AllAuthRecStatus" value="Authoriser Timing:" />
+                                <p:inputText id="AllAuthRecStatus" styleClass="GenInputTxtNoInput" value="#{fixedAssetSetup.getAllAuthRecStatus}" readonly="true"/>
+                                <p:outputLabel/>
+                            </h:panelGrid>
+                        </div>
+                    </p:tab>
+                </p:tabView>
+            </div>
+            <p:commandButton value="Commit" action="#{fixedAssetSetup.newFixedAssetCategoryCheck}" class="rounded-button ui-button-success" update=":fixedAssetsForm"/>
+        </h:form>
+    </h:body>
+</html>

@@ -1,0 +1,143 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+ xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+ xmlns:f="http://xmlns.jcp.org/jsf/core"
+ xmlns:h="http://xmlns.jcp.org/jsf/html"
+ xmlns:p="http://primefaces.org/ui">
+
+    <h:head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <h:outputStylesheet library="css" name="ComSetting.css" />
+        <title>Account Search</title>
+    </h:head>
+    
+    <body>
+
+<h:form enctype="multipart/form-data" id="AllExceptionReport">
+    
+               <p:growl id="growl" showDetail="true" life="3000" sticky="true"/>
+
+        <h1>Fixed Assets</h1>
+        
+<div class="SingleForm">
+    
+    <h:panelGrid columns="3" columnClasses="firstColumnPGrid,secondColumnPGrid,thirdColumnPGrid">
+        
+        
+ <p:outputLabel for="AccSearch" value="Name Search:"/>
+ <p:inputText id="AccSearch" styleClass="GenInputTxt" maxlength="50" size="50" value="#{rptClientAccountSearch.newAccSearch}"
+              placeholder="Search by category or  asset name">
+     <p:ajax event="keyup" listener="#{rptClientAccountSearch.searchAccount()}" update="ReportTable" />
+ </p:inputText>
+
+        
+ <p:commandButton value="Display" icon="pi pi-eye" disabled="false" actionListener="#{rptClientAccountSearch.searchAccount}" process="@this" update=":AllExceptionReport:growl ReportTable"/>
+
+ 
+</h:panelGrid>
+    
+    <br/>
+
+                       
+                        
+<p:remoteCommand name="updateMyDataTable" update="ReportTable" />
+<p:dataTable id="ReportTable" resizableColumns="true" rows="15" rowHover="true" paginator="true" showGridlines="true" stickyHeader="true"
+             paginatorPosition="bottom"
+             var="s"
+             
+             styleClass="myLDRepay"
+             rowKey="#{s.recordId}"
+             emptyMessage="No records available"
+             widgetVar="customersTable"
+             rowIndexVar="r" 
+             rowStyleClass="#{r % 2 == 0 ? 'evenClass' : 'oddClass'}"
+             value="#{rptClientAccountSearch.reportLists}">
+
+    <f:facet name="header">
+        <h:outputText value="Fixed Assets Management"/>
+    </f:facet>
+
+    <p:column style="font-size:8pt;border-color:white;" headerText="S/N">
+        <h:outputText value="#{r + 1}"/>
+    </p:column>
+    
+    <p:column style="font-size:8pt;border-color:white;" headerText="Category">
+        <h:outputText value="#{s.category}"/>
+    </p:column>
+    
+    <p:column style="font-size:8pt;border-color:white;" headerText="Assets Name">
+        <h:outputText value="#{s.assetsName}"/>
+    </p:column>
+    
+    <p:column style="font-size:8pt;border-color:white; text-align: right" headerText="Assets Amount">
+        <h:outputText value="#{s.assetsAmount}"/>
+    </p:column>
+    
+    <p:column style="font-size:8pt;border-color:white;" headerText="Duration (Months)">
+        <h:outputText value="#{s.durationMonths}"/>
+    </p:column>
+    
+    <p:column style="font-size:8pt;border-color:white;" headerText="Assets Account">
+        <h:outputText value="#{s.assetsAccount}"/>
+    </p:column>
+    
+    <p:column style="font-size:8pt;border-color:white;" headerText="Depreciation Account">
+        <h:outputText value="#{s.depreciationAccount}"/>
+    </p:column>
+    
+    <p:column style="font-size:8pt;border-color:white;" headerText="Prepayment Account">
+        <h:outputText value="#{s.prepaymentAccount}"/>
+    </p:column>
+    
+    <p:column style="font-size:8pt;border-color:white;" headerText="Dep. Expense Account">
+        <h:outputText value="#{s.depExpenseAccount}"/>
+    </p:column>
+    
+
+    <p:column style="width:15px;border-color:white;text-align: center" exportable="false">
+        <p:commandButton style="width:25px;height:25px;" 
+                         update=":AllExceptionReport:growl" 
+                         icon="pi pi-check" 
+                         title="Commit Asset"
+                         action="#{rptClientAccountSearch.commitAsset}">
+            <f:setPropertyActionListener value="#{s.recordId}" target="#{rptClientAccountSearch.selectedRecord}" />
+        </p:commandButton>
+        <p:commandButton value="Reload" action="#{rptClientAccountSearch.tableupdating()}" update="ReportTable" />
+    </p:column>
+
+    <f:facet name="footer">
+        <p:commandButton value="Export as CSV" icon="pi pi-download" ajax="false">
+            <p:dataExporter type="csv" target="ReportTable" fileName="Fixed_Assets_Report"/>
+        </p:commandButton>
+    </f:facet>
+</p:dataTable>
+<p:inputText id="AllExceptRptValue" styleClass="DefineTextLabel" size="70" value="#{rptClientAccountSearch.allExceptRptValue}"/>
+
+         
+ 
+    
+    <p:dialog id="modalDialog" styleClass="MyClientImageDialog" header="Client Image" widgetVar="dlgImage" modal="false" closeOnEscape="true" showEffect="slide" hideEffect="slide" draggable="false" resizable="false" >    
+     <h:panelGrid columns="1">
+    <p:graphicImage id="gimPhoto" value="/resources/tmpImage/#{rptClientAccountSearch.newClientImage}" rendered="true" cache="false" width="270" height="270"  />       
+     </h:panelGrid>
+    </p:dialog> 
+    
+    
+    <p:dialog id="modalDialog2" styleClass="MyClientImageDialog" header="Account Mandate" widgetVar="dlgMandate" modal="false" closeOnEscape="true" showEffect="slide" hideEffect="slide" draggable="false" resizable="false" >    
+     <h:panelGrid columns="1">
+    <p:graphicImage id="gimMandate" value="/resources/tmpImage/#{rptClientAccountSearch.newClientMandate}" rendered="true" cache="false" width="270" height="270"  />       
+     </h:panelGrid>
+    </p:dialog> 
+ 
+ 
+
+</div>
+        
+</h:form>
+
+ 
+    </body>
+</html>
+
+

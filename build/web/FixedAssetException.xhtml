@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+<h:head>
+    <title>Fixed Asset Parameter Authorization</title>
+    <h:outputStylesheet library="css" name="ComSetting.css" />
+</h:head>
+<h:body>
+    <h:form id="fixedAssetForm">
+        <p:growl id="growl" showDetail="true" life="3000" sticky="true"/>
+        <h2>New Fixed Asset  Authorization</h2>
+
+        <p:dataTable id="unauthorizedAssetsTable"
+                     value="#{newFixedAssetAuth.unAuthFixedAsset}"
+                     var="asset"
+                     widgetVar="unauthorizedAssetsTable"
+                     rows="10"
+                     resizableColumns="true"
+                     rowHover="true"
+                     paginator="true"
+                     showGridlines="true"
+                     stickyHeader="true"
+                     styleClass="myLDRepay">
+
+            <p:column headerText="Select Category">
+                <h:outputText value="#{asset.FAPcategory}" />
+            </p:column>
+
+            <p:column headerText="Category ID">
+                <h:outputText value="#{asset.FAPcatID}" />
+            </p:column>
+
+            <p:column headerText="Assets Name*">
+                <h:outputText value="#{asset.assetName}" />
+            </p:column>
+
+            <p:column headerText="Assets Amount*">
+                <h:outputText value="#{asset.assetAmount}" />
+            </p:column>
+
+            <p:column headerText="Duration (Months)*">
+                <h:outputText value="#{asset.durationsMonth}" />
+            </p:column>
+
+            <p:column headerText="Assets Account">
+                <h:outputText value="#{asset.assetAccount}" />
+            </p:column>
+
+            <p:column headerText="Depreciation Account*">
+                <h:outputText value="#{asset.FAPdepExpAcct}" />
+            </p:column>
+
+            <p:column headerText="Prepayment Account">
+                <h:outputText value="#{asset.FAPPrePayAcct}" />
+            </p:column>
+
+            <p:column headerText="Dep. Expense Account">
+                <h:outputText value="#{asset.depExpenseAccount}" />
+            </p:column>
+
+            <p:column headerText="Actions">
+                <p:menuButton icon="pi pi-ellipsis-v" styleClass="action-menu-button">
+                    <p:menuitem value="Authorize"
+                                icon="pi pi-check"
+                                action="#{newFixedAssetAuth.authorize(asset)}"
+                                update="@form" />
+                    <p:menuitem value="Reverse/Cancel"
+                                icon="pi pi-undo"
+                                action="#{newFixedAssetAuth.reverseCancel(asset)}"
+                                update="@form" />
+                    <p:menuitem value="Delete"
+                                icon="pi pi-trash"
+                                action="#{newFixedAssetAuth.delete(asset)}"
+                                update="@form"
+                                onclick="return confirm('Are you sure you want to delete this item?');" />
+                </p:menuButton>
+            </p:column>
+
+            <f:facet name="footer">
+                <p:commandButton value="Export as CSV" icon="pi pi-download" ajax="false">
+                    <p:dataExporter type="csv" target="unauthorizedAssetsTable" fileName="FixedAssets_Unauth_Report"/>
+                </p:commandButton>
+            </f:facet>
+
+        </p:dataTable>
+    </h:form>
+</h:body>
+</html>

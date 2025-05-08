@@ -19,6 +19,33 @@ public class FixedAsset {
     private String AuthoriserRec;
     private String updatetype;
     private String FAPtenancy;
+    private String assetName;
+    private String assetAmount;
+    private String durationsMonth;
+
+    public String getDurationsMonth() {
+        return durationsMonth;
+    }
+
+    public void setDurationsMonth(String durationsMonth) {
+        this.durationsMonth = durationsMonth;
+    }
+
+    public String getAssetName() {
+        return assetName;
+    }
+
+    public void setAssetName(String assetName) {
+        this.assetName = assetName;
+    }
+
+    public String getAssetAmount() {
+        return assetAmount;
+    }
+
+    public void setAssetAmount(String assetAmount) {
+        this.assetAmount = assetAmount;
+    }
 
     // Constructor
     public FixedAsset() {

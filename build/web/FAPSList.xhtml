@@ -13,7 +13,7 @@
         <h2>Fixed Asset Parameter Authorization</h2>
             
             <p:dataTable id="unauthorizedAccountsTable"
-                         value="#{fapsException.unAuthFixedAssetParams}"
+                         value="#{fapsList.authFixedAssetParam}"
                          var="account"
                          widgetVar="unauthorizedAccountsTable"
                          rows="10"
@@ -52,22 +52,9 @@
                     <h:outputText value="#{account.depreciationDay}" />
                 </p:column>
 
-                <p:column headerText="Actions" exportable="false">
-    <p:menuButton icon="pi pi-ellipsis-v"  styleClass="action-menu-button">
-        <p:menuitem value="Authorize"
-                    icon="pi pi-check"
-                    action="#{fapsException.authorize(account)}"
-                    update="unauthorizedAccountsTable" />
-        <p:menuitem value="Delete"
-                    icon="pi pi-trash"
-                    action="#{fapsException.deleteFixedAsset(account.categoryId)}"
-                    update="unauthorizedAccountsTable"
-                    onclick="if (!confirm('Are you sure you want to delete this item?')) { return false; }" />
-    </p:menuButton>
-</p:column>
                 <f:facet name="footer">
             <p:commandButton value="Export as csv" icon="pi pi-download" ajax="false" >
-               <p:dataExporter type="csv" target="unauthorizedAccountsTable" fileName="UnAuthorize Fixed Asset Parameter Setup"/>
+               <p:dataExporter type="csv" target="unauthorizedAccountsTable" fileName="Fixed_Asset_Parameter_Setup_List"/>
     </p:commandButton> 
         </f:facet>
             </p:dataTable>

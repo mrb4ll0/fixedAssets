@@ -83,9 +83,19 @@
                            styleClass="GenEnrichTxt"/>
 
             <p:outputLabel for="editDepreciationDay" value="Depreciation Day:" />
-            <p:inputText id="editDepreciationDay" value="#{editFixedAssetSetup.depreciationDay}" 
-                         maxlength="2" size="2" styleClass="GenInputTxtreq" required="true" />
-            <p:outputLabel/>
+            <p:calendar id="editDepreciationDay"
+            value="#{editFixedAssetSetup.depreciationDay}"
+            styleClass="GenInputTxtreq"
+            required="true"
+            pattern="dd/MM/yyyy"
+            showOn="button">
+    <p:ajax event="dateSelect"
+            listener="#{editFixedAssetSetup.onSelectMonthDay}"
+            update="FASelectedDay"/>
+</p:calendar>
+            <p:outputLabel id="FASelectedDay" 
+                           value="#{editFixedAssetSetup.depreciationDay}"
+                           styleClass="GenEnrichTxt"/>
 
             
 

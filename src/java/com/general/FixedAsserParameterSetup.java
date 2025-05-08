@@ -11,6 +11,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -28,6 +29,7 @@ import javax.faces.view.ViewScoped;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import org.primefaces.PrimeFaces;
+import org.primefaces.event.SelectEvent;
 
 /**
  *
@@ -46,7 +48,7 @@ private String prepaymentAccount;
 private String selectedPrepaymentAccount;
 private String depExpenseAccount;
 private String selectedDepExpenseAccount;
-private int depreciationDay =0;
+private Date depreciationDay = new Date();
 private boolean dataReady=false;
 
     public boolean isDataReady()
@@ -196,11 +198,11 @@ private Integer errorfieldcount;
         this.selectedPrepaymentAccount = selectedPrepaymentAccount;
     }
     
-    public int getDepreciationDay() {
+    public Date getDepreciationDay() {
         return depreciationDay;
     }
 
-    public void setDepreciationDay(int depreciationDate) {
+    public void setDepreciationDay(Date depreciationDate) {
         this.depreciationDay = depreciationDate;
     }
     
@@ -428,10 +430,15 @@ private Integer errorfieldcount;
     }
       System.out.println("depExpenseAccount is "+(depExpenseAccount)+" selectedDepreciationAccount is "+(selectedDepExpenseAccount));
  }
-   public void onSelectMonthDay()
-   {
-     
- }
+  public void onSelectMonthDay(SelectEvent event) {
+    if (event.getObject() != null) {
+        depreciationDay = (Date) event.getObject();
+    } else {
+        System.out.println("Event object is null!");
+    }
+}
+
+
    
    public static List<Map<String, Object>> fetchTwentyAccountMaps() {
     Connection connection = null;
@@ -527,7 +534,7 @@ FieldMessage = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Depreciation Accou
 FacesContext.getCurrentInstance().addMessage(null, FieldMessage);
 return;
 }
-if (depreciationDay==0){
+if (depreciationDay ==null){
     errorfieldcount = errorfieldcount + 1;
 FieldMessage = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Depreciation Day:", "Missing!");
 FacesContext.getCurrentInstance().addMessage(null, FieldMessage);
@@ -552,7 +559,7 @@ String yFound = "";
             PreparedStatement ps=null;
             DBConnection obj_DB_connection=new DBConnection();
             connection=obj_DB_connection.get_connection();
- 	 	ps = connection.prepareStatement("CREATE TABLE IF NOT EXISTS fixedAssetParam ("
+ 	 	ps = connection.prepareStatement("CREATE TABLE IF NOT EXISTS fixedAssetParamTemp ("
                         + "FAPcatID VARCHAR(255) unique, "
                         + "FAPcategory VARCHAR(255)unique, "
                         + "AssetsName VARCHAR(255), "
@@ -562,7 +569,7 @@ String yFound = "";
                         + "FAPPrePayAcctNumber VARCHAR(255), "
                         + "AssetAccountNumber VARCHAR(255), "
                         + "DepExpenseAccountNumber VARCHAR(255), "
-                        + "FAPdepDate INT, RecordStatus VARCHAR(50), "
+                        + "FAPdepDate VARCHAR(20), RecordStatus VARCHAR(50), "
                         + "Inputter VARCHAR(255), "
                         + "InputterRec VARCHAR(255),"
                         + " Authoriser VARCHAR(255), "
@@ -586,7 +593,7 @@ String yFound = "";
             PreparedStatement ps=null;
             DBConnection obj_DB_connection=new DBConnection();
             connection=obj_DB_connection.get_connection();
- 	 	ps=connection.prepareStatement("select * from fixedAssetParam WHERE FAPcatID = " + "'" + stringCategoryID + "'",ResultSet.CONCUR_READ_ONLY,ResultSet.TYPE_SCROLL_INSENSITIVE);
+ 	 	ps=connection.prepareStatement("select * from fixedAssetParamTemp WHERE FAPcatID = " + "'" + stringCategoryID + "'",ResultSet.CONCUR_READ_ONLY,ResultSet.TYPE_SCROLL_INSENSITIVE);
  	 	ResultSet rs=ps.executeQuery();
                 rs.beforeFirst();
  	 	while(rs.next()){
@@ -614,7 +621,7 @@ String yFound = "";
             
             if (yFound.equals("YES")){
                 
-                String queryString = "DELETE from fixedAssetParam WHERE FAPcatID = " + "'" + stringCategoryID + "'";
+                String queryString = "DELETE from fixedAssetParamTemp WHERE FAPcatID = " + "'" + stringCategoryID + "'";
                 ps9 = connection.prepareStatement(queryString);
                 int ikkd = ps9.executeUpdate();
                 
@@ -623,13 +630,15 @@ String yFound = "";
             //PreparedStatement ps=connection.prepareStatement("insert into titles(titleid,titledescript) value('"+Limit_name+"')");
            // ps.executeUpdate();
             
-        String sql = "insert into fixedAssetParam(FAPcatID, FAPcategory,FAPdepExpAcctNumber,FAPPrePayAcctNumber,AssetAccountNumber, DepExpenseAccountNumber, FAPdepDate, RecordStatus,Inputter,InputterRec,Authoriser,AuthoriserRec,updatetype,FAPtenancy) values (?,?,?, ?, ?, ?, ?, ?, ?,?,?,?,?,?)";
+        String sql = "insert into fixedAssetParamTemp(FAPcatID, FAPcategory,FAPdepExpAcctNumber,FAPPrePayAcctNumber,AssetAccountNumber, DepExpenseAccountNumber, FAPdepDate, RecordStatus,Inputter,InputterRec,Authoriser,AuthoriserRec,updatetype,FAPtenancy) values (?,?,?, ?, ?, ?, ?, ?, ?,?,?,?,?,?)";
 	statement = connection.prepareStatement(sql);
         System.out.println("depreciation account is "+depreciationAccount);
         String depreciationAccountNumber = depreciationAccountsName.get(depreciationAccount);
         String prepaymentAccountNumber = prepaymentAccountsName.get(prepaymentAccount);
         String assetAccountNumber = assetAccountsName.get(assetAccount);
         String depExpenseAccountNumber = depExpenseAccountsName.get(depExpenseAccount);
+        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+        String formattedDate = formatter.format(depreciationDay);
         System.out.println("depreciationAccountName is "+depreciationAccountNumber+" and "
                 + "prepaymentAccountName is "+prepaymentAccountNumber);
         System.out.println("assetAccountName is: "+assetAccountNumber+" and depExpenseAccountName: "+depExpenseAccountNumber);
@@ -639,7 +648,7 @@ String yFound = "";
                         statement.setString(4, prepaymentAccountNumber);
                         statement.setString(5, assetAccountNumber);
                         statement.setString(6, depExpenseAccountNumber);
-                        statement.setInt(7, depreciationDay);
+                        statement.setString(7, formattedDate);
                         statement.setString(8, "UNAUTH");
                         statement.setString(9, yuser);
                         statement.setString(10, AuditDateRecord);

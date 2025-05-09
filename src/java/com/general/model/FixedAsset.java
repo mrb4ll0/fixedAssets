@@ -11,7 +11,7 @@ public class FixedAsset {
     private String AssetAccountName;
     private String DepExpenseAccount;
     private String DepExpenseAccountName;
-    private Integer FAPdepDate;
+    private String FAPdepDate;
     private String RecordStatus;
     private String Inputter;
     private String InputterRec;
@@ -132,11 +132,11 @@ public class FixedAsset {
         DepExpenseAccountName = depExpenseAccountName;
     }
 
-    public Integer getFAPdepDate() {
+    public String getFAPdepDate() {
         return FAPdepDate;
     }
 
-    public void setFAPdepDate(Integer FAPdepDate) {
+    public void setFAPdepDate(String FAPdepDate) {
         this.FAPdepDate = FAPdepDate;
     }
 

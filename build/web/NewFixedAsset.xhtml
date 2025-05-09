@@ -47,10 +47,10 @@
                          <p:outputLabel/>
                          
                           <p:outputLabel for="branch" value="Branch:" />
-                          <p:selectOneMenu id="branch" styleClass="GenSELTxtreq" value="#{newFixedAsset.branch}"  required="true">
+                          <p:selectOneMenu id="branch" styleClass="GenSELTxtreq" value="#{newFixedAsset.branch}"  >
                             <f:selectItem itemLabel="Select Branch" itemValue=""/>
                             <f:selectItems value="#{newFixedAsset.branches}" />
-                            <p:ajax  update="" listener="#{newFixedAsset.onSelectCategory(event)}" />
+                            <p:ajax  update="" listener="#{newFixedAsset.onSelectBranch}" />
                         </p:selectOneMenu>
                         <p:outputLabel/>
                          

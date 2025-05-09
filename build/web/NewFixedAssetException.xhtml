@@ -18,7 +18,7 @@
                          ajax="false"
                          onclick="PrimeFaces.exporter.export('#{component.clientId}', { type: 'csv' }); return false;">
             <p:dataTable id="unauthorizedAccountsTable"
-                         value="#{fixedAssetForm.unauthorizedAccounts}"
+                         value="#{newFixedAssetAuth.fixedAssets}"
                          var="account"
                          widgetVar="unauthorizedAccountsTable"
                          paginator="true"
@@ -35,68 +35,64 @@
 
     <!-- Category (Required) -->
     <p:column headerText="Category*" style="font-size: 10pt;">
-        <h:outputText value="#{item.category}" />
+        <h:outputText value="#{account.FAPcategory}" />
     </p:column>
 
     <!-- Category ID -->
     <p:column headerText="Category ID" style="font-size: 10pt;">
-        <h:outputText value="#{item.categoryId}" />
+        <h:outputText value="#{account.FAPcatID}" />
     </p:column>
 
     <!-- Assets Name (Required) -->
     <p:column headerText="Assets Name*" style="font-size: 10pt;">
-        <h:outputText value="#{item.assetsName}" />
+        <h:outputText value="#{account.assetName}" />
     </p:column>
 
     <!-- Assets Amount (Required) -->
     <p:column headerText="Assets Amount*" style="font-size: 10pt; text-align: right;">
-        <h:outputText value="#{item.assetsAmount}">
+        <h:outputText value="#{account.assetAmount}">
             <f:convertNumber type="currency" currencySymbol="₦" />
         </h:outputText>
     </p:column>
 
     <!-- Duration in Months (Required) -->
     <p:column headerText="Duration (Months)*" style="font-size: 10pt; text-align: center;">
-        <h:outputText value="#{item.durationMonths}" />
+        <h:outputText value="#{account.durationsMonth}" />
     </p:column>
 
     <!-- Assets Account -->
     <p:column headerText="Assets Account" style="font-size: 10pt;">
-        <h:outputText value="#{item.assetsAccount}" />
+        <h:outputText value="#{account.assetAccount}" />
     </p:column>
 
     <!-- Depreciation Account (Required) -->
     <p:column headerText="Depreciation Account*" style="font-size: 10pt;">
-        <h:outputText value="#{item.depreciationAccount}" />
+        <h:outputText value="#{account.FAPdepExpAcct}" />
     </p:column>
 
     <!-- Prepayment Account -->
     <p:column headerText="Prepayment Account" style="font-size: 10pt;">
-        <h:outputText value="#{item.prepaymentAccount}" />
+        <h:outputText value="#{account.FAPPrePayAcct}" />
     </p:column>
 
     <!-- Depreciation Expense Account -->
     <p:column headerText="Dep. Expense Account" style="font-size: 10pt;">
-        <h:outputText value="#{item.depExpenseAccount}" />
+        <h:outputText value="#{account.depExpenseAccount}" />
     </p:column>
 
- <p:column headerText="Actions">
-                    <p:commandButton value="Authorize"
-                                     action="#{fixedAssetForm.authorize(account)}"
-                                     update="@form"
-                                     styleClass="p-button-success action-button" />
-
-                    <p:commandButton value="Reverse Cancel"
-                                     action="#{fixedAssetForm.reverseCancel(account)}"
-                                     update="@form"
-                                     styleClass="p-button-warning action-button" />
-
-                    <p:commandButton value="Delete"
-                                     action="#{fixedAssetForm.delete(account)}"
-                                     update="@form"
-                                     styleClass="p-button-danger action-button"
-                                     onclick="return confirm('Are you sure you want to delete this item?');" />
-                </p:column>
+ <p:column headerText="Actions" exportable="false">
+    <p:menuButton icon="pi pi-ellipsis-v"  styleClass="action-menu-button">
+        <p:menuitem value="Authorize"
+                    icon="pi pi-check"
+                    action="#{newFixedAssetAuth.authorize(account)}"
+                    update="unauthorizedAccountsTable" />
+        <p:menuitem value="Delete"
+                    icon="pi pi-trash"
+                    action="#{newFixedAssetAuth.deleteFixedAsset(account.FAPcatID)}"
+                    update="unauthorizedAccountsTable"
+                    onclick="if (!confirm('Are you sure you want to delete this item?')) { return false; }" />
+    </p:menuButton>
+</p:column>
 </p:dataTable>
 
         </p:commandButton>

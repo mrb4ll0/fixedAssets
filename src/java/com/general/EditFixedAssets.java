@@ -167,6 +167,25 @@ private String assetsName;
 private String assetsAmount;
 private int duration;
 private List<String> assetNames;
+private List<String> branches;
+private String branch;
+
+    public List<String> getBranches() {
+        return branches;
+    }
+
+    public void setBranches(List<String> branches) {
+        this.branches = branches;
+    }
+
+    public String getBranch() {
+        return branch;
+    }
+
+    public void setBranch(String branch) {
+        this.branch = branch;
+    }
+
 
     public List<String> getAssetNames() {
         return assetNames;
@@ -343,6 +362,8 @@ private List<String> assetNames;
     public void setSelectedDepExpenseAccount(String selectedDepExpenseAccount) {
         this.selectedDepExpenseAccount = selectedDepExpenseAccount;
     }
+    
+    
 private String depExpenseAccountNumber;
 private String selectedDepExpenseAccount;
 private String depreciationAccountNumber;
@@ -378,6 +399,10 @@ private List<Map<String, Object>> fixedAssetsData;
 private Integer errorfieldcount;
 
   
+public void onSelectBranch()
+{
+    
+}
 
     @PostConstruct
    public void init() {
@@ -385,10 +410,10 @@ private Integer errorfieldcount;
        fixedAssetsCategories = new LinkedHashMap();
         for (int i = 0; i<fixedAssetsData.size(); i++)
         {
-            System.out.println("FixedAssetData at i is "+fixedAssetsData.get(i));
             fixedAssetsCategories.put(fixedAssetsData.get(i)
                     .get("FAPcategory").toString(),
                     fixedAssetsData.get(i).get("FAPcatID").toString());
+            
         }
        assetNames =  getAllAssetsNames();
    }
@@ -402,7 +427,7 @@ private Integer errorfieldcount;
         connection = obj_DB_connection.get_connection();
 
         PreparedStatement ps = connection.prepareStatement(
-            "SELECT FAPcatID, FAPcategory, FAPdepExpAcctNumber, FAPPrePayAcctNumber, FAPdepDate, AssetAccountNumber, DepExpenseAccountNumber FROM fixedAssetParam"
+            "SELECT FAPcatID,AssetsName, FAPcategory, FAPdepExpAcctNumber, FAPPrePayAcctNumber, FAPdepDate, AssetAccountNumber, DepExpenseAccountNumber FROM fixedAssetTemp"
         );
 
         ResultSet rs = ps.executeQuery();
@@ -413,6 +438,7 @@ private Integer errorfieldcount;
             String prePayAcct = rs.getString("FAPPrePayAcctNumber");
             String assetAcct = rs.getString("AssetAccountNumber");
             String depExpAccount = rs.getString("DepExpenseAccountNumber");
+            String assetName=rs.getString("AssetsName");
 
             row.put("FAPcatID", rs.getString("FAPcatID"));
             row.put("FAPcategory", rs.getString("FAPcategory"));
@@ -422,13 +448,14 @@ private Integer errorfieldcount;
             row.put("FAPPrePayAcctNumber", prePayAcct);
             row.put("FAPPrePayAcctName", getAccountName(connection, prePayAcct));
 
-            row.put("FAPdepDate", rs.getInt("FAPdepDate"));
+            row.put("FAPdepDate", rs.getString("FAPdepDate"));
 
             row.put("AssetAccountNumber", assetAcct);
             row.put("AssetAccountName", getAccountName(connection, assetAcct));
 
             row.put("DepExpenseAccountNumber", depExpAccount);
             row.put("DepExpenseAccountName", getAccountName(connection, depExpAccount));
+            row.put("AssetsName", assetName);
 
             resultList.add(row);
         }
@@ -457,7 +484,7 @@ private Integer errorfieldcount;
         connection = obj_DB_connection.get_connection();
 
         PreparedStatement ps = connection.prepareStatement(
-            "SELECT AssetsName FROM fixedAssetParam"
+            "SELECT AssetsName FROM fixedAssetTemp"
         );
 
         ResultSet rs = ps.executeQuery();
@@ -596,35 +623,56 @@ private Integer errorfieldcount;
         return;
     }
 
-    // TODO: Retrieve these values properly from the form or backing bean
-    String asstsName = request.getParameter("fixedAssetsForm:tabViewMVS:assetsName");
-    String asstsAmount = request.getParameter("fixedAssetsForm:tabViewMVS:assetsAmount");
+    // Retrieve values properly from form or backing bean
+    String assetName = request.getParameter("fixedAssetsForm:tabViewMVS:assetname");
+    String assetAmount = request.getParameter("fixedAssetsForm:tabViewMVS:assetamount");
     String durationStr = request.getParameter("fixedAssetsForm:tabViewMVS:duration");
 
-    int duration = 0;
+    Integer duration = null;
     try {
-        duration = Integer.parseInt(durationStr);
+        if (durationStr != null && !durationStr.isEmpty()) {
+            duration = Integer.parseInt(durationStr);
+        }
     } catch (NumberFormatException e) {
         FacesMessage errorMsg = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Invalid Duration", "Duration must be a number.");
         facesContext.addMessage(null, errorMsg);
         return;
     }
 
-    String updateSql = "UPDATE fixedAssetParam SET AssetsName = ?, AssetsAmount = ?, Duration = ?, Inputter = ?, updatetype = ?, FAPtenancy = ? WHERE FAPcatID = ?";
+    // Dynamically build the UPDATE query based on non-null values
+    StringBuilder updateSql = new StringBuilder("UPDATE fixedAssetTemp SET ");
+    List<Object> params = new ArrayList<>();
+
+    if (assetName != null && !assetName.trim().isEmpty()) {
+        updateSql.append("AssetsName = ?, ");
+        params.add(assetName);
+    }
+    if (assetAmount != null && !assetAmount.trim().isEmpty()) {
+        updateSql.append("AssetsAmount = ?, ");
+        params.add(assetAmount);
+    }
+    if (duration != null) {
+        updateSql.append("Duration = ?, ");
+        params.add(duration);
+    }
+
+    // Always update Inputter, updatetype, and FAPtenancy
+    updateSql.append("Inputter = ?, updatetype = ?, FAPtenancy = ? ");
+    params.add(yuser);
+    params.add("MODIFY");
+    params.add(yTenancynum);
+
+    updateSql.append("WHERE FAPcatID = ?");
+    params.add(categoryId);
 
     try (Connection conn = new DBConnection().get_connection();
-         PreparedStatement ps = conn.prepareStatement(updateSql)) {
+         PreparedStatement ps = conn.prepareStatement(updateSql.toString())) {
 
         conn.setAutoCommit(false);
-       System.out.println("assetsName is "+assetsName);
-       System.out.println("assetsAmount is "+assetsAmount);
-        ps.setString(1, assetsName);
-        ps.setString(2, assetsAmount);
-        ps.setInt(3, duration);
-        ps.setString(4, yuser);
-        ps.setString(5, "MODIFY");
-        ps.setString(6, yTenancynum);
-        ps.setString(7, categoryId);
+
+        for (int i = 0; i < params.size(); i++) {
+            ps.setObject(i + 1, params.get(i));
+        }
 
         int rowsUpdated = ps.executeUpdate();
 

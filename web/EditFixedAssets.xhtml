@@ -28,7 +28,7 @@
                             <h:panelGrid columns="3" columnClasses="firstColumnPGrid,secondColumnPGrid,thirdColumnPGrid">
                                 
                                 <p:outputLabel for="FACategories" value="Category:" />
-                                <p:selectOneMenu id="FACategories" styleClass="GenSELTxtreq" value="#{editFixedAsset.fixedAssetCategory}" required="true">
+                                <p:selectOneMenu id="FACategories" styleClass="GenSELTxtreq" value="#{editFixedAsset.fixedAssetCategory}" >
                                     <f:selectItem itemLabel="Select Category" itemValue=""/>
                                     <f:selectItems value="#{editFixedAsset.fixedAssetsCategories}" />
                                     <p:ajax update="categoryId assetaccount assetAccountLabel deprecationaccount depreciationAccountLabel prepaymentaccount prepaymentAccountLabel depExpenseAccount depExpenseAccountLabel" 
@@ -43,7 +43,7 @@
                                 <p:outputLabel/>
                                 
                                 <p:outputLabel for="assetname" value="Assets Name" />
-                                <p:selectOneMenu id="assetname" styleClass="GenSELTxtreq" value="#{editFixedAsset.assetsName}" required="true">
+                                <p:selectOneMenu id="assetname" styleClass="GenSELTxtreq" value="#{editFixedAsset.assetsName}" >
                                     <f:selectItem itemLabel="Select Asset Name" itemValue=""/>
                                     <f:selectItems value="#{editFixedAsset.assetNames}" />
                                     <p:ajax listener="#{editFixedAsset.onSelectAssetsName(event)}" />
@@ -52,11 +52,19 @@
 
 
                                 <p:outputLabel for="assetamount" value="Assets Amount" />
-                                <p:inputText styleClass="GenInputTxtreq" id="assetamount" maxlength="25" size="20" value="#{editFixedAsset.assetsAmount}" required="true"/>
+                                <p:inputText styleClass="GenInputTxtreq" id="assetamount" maxlength="25" size="20" value="#{editFixedAsset.assetsAmount}" />
                                 <p:outputLabel/>
-
+                                
+                                <p:outputLabel for="branch" value="Branch:" />
+                          <p:selectOneMenu id="branch" styleClass="GenSELTxtreq" value="#{editFixedAsset.branch}"  >
+                            <f:selectItem itemLabel="Select Branch" itemValue=""/>
+                            <f:selectItems value="#{editFixedAsset.branches}" />
+                            <p:ajax  update="" listener="#{editFixedAsset.onSelectBranch}" />
+                        </p:selectOneMenu>
+                        <p:outputLabel/>
+                                
                                 <p:outputLabel for="duration" value="Duration(Months)" />
-                                <p:inputText styleClass="GenInputTxtreq" id="duration" maxlength="25" size="5" value="#{editFixedAsset.duration}" required="true"/>
+                                <p:inputText styleClass="GenInputTxtreq" id="duration" maxlength="25" size="5" value="#{editFixedAsset.duration}" />
                                 <p:outputLabel/>
 
                                 <p:outputLabel for="assetaccount" value="Assets Account" />

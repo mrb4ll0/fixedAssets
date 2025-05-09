@@ -560,7 +560,7 @@ String yFound = "";
             DBConnection obj_DB_connection=new DBConnection();
             connection=obj_DB_connection.get_connection();
  	 	ps = connection.prepareStatement("CREATE TABLE IF NOT EXISTS fixedAssetParamTemp ("
-                        + "FAPcatID VARCHAR(255) unique, "
+                        + "FAPcatID VARCHAR(255) UNIQUE, "
                         + "FAPcategory VARCHAR(255)unique, "
                         + "AssetsName VARCHAR(255), "
                         + "AssetsAmount VARCHAR(255), "

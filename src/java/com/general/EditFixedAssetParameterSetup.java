@@ -122,7 +122,7 @@ public class EditFixedAssetParameterSetup implements Serializable {
     private Map<String,String> depreciationAccounts = new HashMap();
     private Map<String, String> depExpenseAccounts = new HashMap();
     private Map<String, String> assetAccounts = new HashMap();
-    private List<Map<String, Object>> fixedAssetsData ;
+    private List<Map<String, Object>> fixedAssetsData =new ArrayList<>();
 
     
 
@@ -360,7 +360,9 @@ public class EditFixedAssetParameterSetup implements Serializable {
 //
 //   }
    
-    public List<Map<String, Object>> getDataFromDatabase() {
+    
+
+public List<Map<String, Object>> getDataFromDatabase() {
     Connection connection = null;
     List<Map<String, Object>> resultList = new ArrayList<>();
 
@@ -368,11 +370,29 @@ public class EditFixedAssetParameterSetup implements Serializable {
         DBConnection obj_DB_connection = new DBConnection();
         connection = obj_DB_connection.get_connection();
 
-        PreparedStatement ps = connection.prepareStatement(
-            "SELECT FAPcatID, FAPcategory, FAPdepExpAcctNumber, FAPPrePayAcctNumber, FAPdepDate, AssetAccountNumber, DepExpenseAccountNumber FROM fixedAssetParamTemp"
-        );
+        // Fetch data only from fixedAssetParamTemp
+        fetchDataFromTable(connection, "fixedAssetParamTemp", resultList);
 
-        ResultSet rs = ps.executeQuery();
+        connection.close();
+
+    } catch (Exception e) {
+        System.out.println("Exception: " + e);
+        try {
+            if (connection != null) connection.close();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    System.out.println("resultList size is " + resultList.size());
+    return resultList;
+}
+
+/** Helper method to fetch data from fixedAssetParamTemp */
+private void fetchDataFromTable(Connection connection, String tableName, List<Map<String, Object>> resultList) throws Exception {
+    String query = "SELECT FAPcatID, FAPcategory, FAPdepExpAcctNumber, FAPPrePayAcctNumber, FAPdepDate, AssetAccountNumber, DepExpenseAccountNumber FROM " + tableName;
+    try (PreparedStatement ps = connection.prepareStatement(query);
+         ResultSet rs = ps.executeQuery()) {
 
         while (rs.next()) {
             Map<String, Object> row = new HashMap<>();
@@ -389,7 +409,7 @@ public class EditFixedAssetParameterSetup implements Serializable {
             row.put("FAPPrePayAcctNumber", prePayAcct);
             row.put("FAPPrePayAcctName", GetAccountCustomer.getAccountName(prePayAcct));
 
-            row.put("FAPdepDate", rs.getInt("FAPdepDate"));
+            row.put("FAPdepDate", rs.getString("FAPdepDate"));
 
             row.put("AssetAccountNumber", assetAcct);
             row.put("AssetAccountName", GetAccountCustomer.getAccountName(assetAcct));
@@ -399,19 +419,7 @@ public class EditFixedAssetParameterSetup implements Serializable {
 
             resultList.add(row);
         }
-
-        ps.close();
-        connection.close();
-
-    } catch (Exception e) {
-        System.out.println("Exception: " + e);
-        try {
-            if (connection != null) connection.close();
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
     }
-    return resultList;
 }
 
    public void onSelectMonthDay(SelectEvent event) {
@@ -446,6 +454,10 @@ public class EditFixedAssetParameterSetup implements Serializable {
    
    
 
+
+
+
+
 public boolean updateOrInsertFixedAssetParamByCategoryId() {
     Connection connection = null;
     PreparedStatement ps = null;
@@ -457,100 +469,79 @@ public boolean updateOrInsertFixedAssetParamByCategoryId() {
 
         // **Check if data exists in fixedAssetParamTemp**
         String checkSql = "SELECT COUNT(*) FROM fixedAssetParamTemp WHERE FAPcatID = ?";
-        ps = connection.prepareStatement(checkSql);
-        ps.setString(1, categoryId);
-        rs = ps.executeQuery();
+        try (PreparedStatement checkPs = connection.prepareStatement(checkSql)) {
+            checkPs.setString(1, categoryId);
+            rs = checkPs.executeQuery();
 
-        boolean exists = false;
-        if (rs.next()) {
-            exists = rs.getInt(1) > 0;
+            boolean exists = false;
+            if (rs.next()) {
+                exists = rs.getInt(1) > 0;
+            }
+            rs.close();
+
+            if (exists) {
+                // **Update existing record with only non-null fields**
+                StringBuilder updateSql = new StringBuilder("UPDATE fixedAssetParamTemp SET ");
+                List<Object> params = new ArrayList<>();
+
+                if (depreciationAccount != null && !depreciationAccount.trim().isEmpty()) {
+                    updateSql.append("FAPdepExpAcctNumber = ?, ");
+                    params.add(getAccountNumber(depreciationAccount));
+                }
+                if (prepaymentAccount != null && !prepaymentAccount.trim().isEmpty()) {
+                    updateSql.append("FAPPrePayAcctNumber = ?, ");
+                    params.add(getAccountNumber(prepaymentAccount));
+                }
+                if (depreciationDay != null) {
+                    updateSql.append("FAPdepDate = ?, ");
+                    SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+                    params.add(formatter.format(depreciationDay));
+                }
+                if (assetAccount != null && !assetAccount.trim().isEmpty()) {
+                    updateSql.append("AssetAccountNumber = ?, ");
+                    params.add(getAccountNumber(assetAccount));
+                }
+                if (depExpenseAccount != null && !depExpenseAccount.trim().isEmpty()) {
+                    updateSql.append("DepExpenseAccountNumber = ?, ");
+                    params.add(getAccountNumber(depExpenseAccount));
+                }
+
+                if (!params.isEmpty()) {
+                    updateSql.setLength(updateSql.length() - 2);
+                    updateSql.append(" WHERE FAPcatID = ?");
+                    params.add(categoryId);
+
+                    try (PreparedStatement updatePs = connection.prepareStatement(updateSql.toString())) {
+                        for (int i = 0; i < params.size(); i++) {
+                            updatePs.setObject(i + 1, params.get(i));
+                        }
+
+                        int rowsAffected = updatePs.executeUpdate();
+                        System.out.println(rowsAffected > 0 ? "Update successful" : "No rows updated");
+                        return rowsAffected > 0;
+                    }
+                } else {
+                    System.out.println("No fields to update.");
+                    return false;
+                }
+            }  
+            
+                // **Insert new record**
+                
+            
         }
-        rs.close();
-        ps.close();
 
-        if (exists) {
-            // **Update existing record**
-            StringBuilder updateSql = new StringBuilder("UPDATE fixedAssetParamTemp SET ");
-            List<Object> params = new ArrayList<>();
-
-            if (depreciationAccount != null && !depreciationAccount.trim().isEmpty()) {
-                updateSql.append("FAPdepExpAcctNumber = ?, ");
-                params.add(getAccountNumber(depreciationAccount));
-            }
-            if (prepaymentAccount != null && !prepaymentAccount.trim().isEmpty()) {
-                updateSql.append("FAPPrePayAcctNumber = ?, ");
-                params.add(getAccountNumber(prepaymentAccount));
-            }
-            if (depreciationDay != null) {
-                updateSql.append("FAPdepDate = ?, ");
-                SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-        String formattedDate = formatter.format(depreciationDay);
-                params.add(formattedDate);
-            }
-            if (assetAccount != null && !assetAccount.trim().isEmpty()) {
-                updateSql.append("AssetAccountNumber = ?, ");
-                params.add(getAccountNumber(assetAccount));
-            }
-            if (depExpenseAccount != null && !depExpenseAccount.trim().isEmpty()) {
-                updateSql.append("DepExpenseAccountNumber = ?, ");
-                params.add(getAccountNumber(depExpenseAccount));
-            }
-
-            if (params.isEmpty()) {
-                System.out.println("No fields to update.");
-                return false;
-            }
-
-            // Remove last comma and space
-            updateSql.setLength(updateSql.length() - 2);
-            updateSql.append(" WHERE FAPcatID = ?");
-            params.add(categoryId);
-
-            ps = connection.prepareStatement(updateSql.toString());
-            for (int i = 0; i < params.size(); i++) {
-                ps.setObject(i + 1, params.get(i));
-            }
-
-            int rowsAffected = ps.executeUpdate();
-            ps.close();
-            connection.close();
-
-            System.out.println(rowsAffected > 0 ? "Update successful" : "No rows updated");
-            return rowsAffected > 0;
-        } else {
-            // **Insert new record**
-            String insertSql = "INSERT INTO fixedAssetParamTemp (FAPcatID, FAPdepExpAcctNumber, FAPPrePayAcctNumber, FAPdepDate, AssetAccountNumber, DepExpenseAccountNumber) VALUES (?, ?, ?, ?, ?, ?)";
-            ps = connection.prepareStatement(insertSql);
-            SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-             String formattedDate = formatter.format(depreciationDay);
-            ps.setString(1, categoryId);
-            ps.setString(2, depreciationAccount != null ? getAccountNumber(depreciationAccount) : null);
-            ps.setString(3, prepaymentAccount != null ? getAccountNumber(prepaymentAccount) : null);
-            ps.setString(4, formattedDate);
-            ps.setString(5, assetAccount != null ? getAccountNumber(assetAccount) : null);
-            ps.setString(6, depExpenseAccount != null ? getAccountNumber(depExpenseAccount) : null);
-
-            int rowsInserted = ps.executeUpdate();
-            ps.close();
-            connection.close();
-
-            System.out.println(rowsInserted > 0 ? "Insert successful" : "No rows inserted");
-            return rowsInserted > 0;
-        }
     } catch (Exception e) {
-        System.out.println("Exception during update or insert: " + e);
+        System.out.println("Exception during update/insert: " + e);
+    } finally {
         try {
             if (connection != null) connection.close();
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-        return false;
     }
+    return false;
 }
-
-
-
-
    
    public static String getAccountNumber(String accountName) {
     String accountNumber = null;
@@ -649,6 +640,37 @@ public boolean updateOrInsertFixedAssetParamByCategoryId() {
 }
 
 
+   public String getCategoryById(String categoryId) {
+    Connection connection = null;
+    String categoryName = null;
+
+    try {
+        DBConnection obj_DB_connection = new DBConnection();
+        connection = obj_DB_connection.get_connection();
+
+        // Query to fetch category name based on category ID
+        String query = "SELECT FAPcategory FROM fixedAssetParamTemp WHERE FAPcatID = ?";
+        try (PreparedStatement ps = connection.prepareStatement(query)) {
+            ps.setString(1, categoryId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    categoryName = rs.getString("FAPcategory");
+                }
+            }
+        }
+
+    } catch (Exception e) {
+        System.out.println("Exception while fetching category: " + e);
+    } finally {
+        try {
+            if (connection != null) connection.close();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    return categoryName; // Returns category name or null if not found
+}
 }
 
 

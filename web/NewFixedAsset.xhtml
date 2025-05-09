@@ -45,6 +45,15 @@
                           <p:outputLabel for="assetamount" value="Assets Amount" />
                           <p:inputText styleClass="GenInputTxtreq" id="assetamount" maxlength="25" size="20" value="#{newFixedAsset.assetsAmount}" required="true"/>
                          <p:outputLabel/>
+                         
+                          <p:outputLabel for="branch" value="Branch:" />
+                          <p:selectOneMenu id="branch" styleClass="GenSELTxtreq" value="#{newFixedAsset.branch}"  required="true">
+                            <f:selectItem itemLabel="Select Branch" itemValue=""/>
+                            <f:selectItems value="#{newFixedAsset.branches}" />
+                            <p:ajax  update="" listener="#{newFixedAsset.onSelectCategory(event)}" />
+                        </p:selectOneMenu>
+                        <p:outputLabel/>
+                         
                          <p:outputLabel for="duration" value="Duration(Months)" />
                          <p:inputText styleClass="GenInputTxtreq" id="duration" maxlength="25" size="5" value="#{newFixedAsset.duration}" required="true"/>
                          <p:outputLabel/>

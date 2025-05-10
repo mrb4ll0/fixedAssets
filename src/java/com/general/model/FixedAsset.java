@@ -1,4 +1,5 @@
 package com.general.model;
+
 public class FixedAsset {
 
     private String FAPcatID;
@@ -22,6 +23,20 @@ public class FixedAsset {
     private String assetName;
     private String assetAmount;
     private String durationsMonth;
+    private String branch; 
+
+    // Constructor
+    public FixedAsset() {
+    }
+
+    // Getters and Setters
+    public String getBranch() {
+        return branch;
+    }
+
+    public void setBranch(String branch) {
+        this.branch = branch;
+    }
 
     public String getDurationsMonth() {
         return durationsMonth;
@@ -47,11 +62,6 @@ public class FixedAsset {
         this.assetAmount = assetAmount;
     }
 
-    // Constructor
-    public FixedAsset() {
-    }
-
-    // Getters and Setters
     public String getFAPcatID() {
         return FAPcatID;
     }
@@ -209,7 +219,7 @@ public class FixedAsset {
                 ", AssetAccountName='" + AssetAccountName + '\'' +
                 ", DepExpenseAccount='" + DepExpenseAccount + '\'' +
                 ", DepExpenseAccountName='" + DepExpenseAccountName + '\'' +
-                ", FAPdepDate=" + FAPdepDate +
+                ", FAPdepDate='" + FAPdepDate + '\'' +
                 ", RecordStatus='" + RecordStatus + '\'' +
                 ", Inputter='" + Inputter + '\'' +
                 ", InputterRec='" + InputterRec + '\'' +
@@ -217,6 +227,10 @@ public class FixedAsset {
                 ", AuthoriserRec='" + AuthoriserRec + '\'' +
                 ", updatetype='" + updatetype + '\'' +
                 ", FAPtenancy='" + FAPtenancy + '\'' +
+                ", assetName='" + assetName + '\'' +
+                ", assetAmount='" + assetAmount + '\'' +
+                ", durationsMonth='" + durationsMonth + '\'' +
+                ", branch='" + branch + '\'' +  // 
                 '}';
     }
 }

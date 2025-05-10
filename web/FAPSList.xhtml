@@ -20,10 +20,17 @@
                          resizableColumns="true"  
                          rowHover="true" 
                          paginator="true" 
+                         rowIndexVar="r" 
+                         rowStyleClass="#{r % 2 == 0 ? 'evenClass' : 'oddClass'}"
                          showGridlines="true"
                          stickyHeader="true"
                          styleClass="myLDRepay">
 
+                 <!-- Serial Number Column -->
+    <p:column headerText="S/N" style="font-size: 10pt; text-align: center;" width="50">
+        <h:outputText value="#{r + 1}" />
+    </p:column>
+                
                 <p:column headerText="Category:">
                     <h:outputText value="#{account.category}" />
                 </p:column>

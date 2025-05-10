@@ -627,6 +627,9 @@ public void onSelectBranch()
     String assetName = request.getParameter("fixedAssetsForm:tabViewMVS:assetname");
     String assetAmount = request.getParameter("fixedAssetsForm:tabViewMVS:assetamount");
     String durationStr = request.getParameter("fixedAssetsForm:tabViewMVS:duration");
+    System.out.println("AssetsName is "+assetName);
+    System.out.println("AssetsName Global is "+assetsName);
+    
 
     Integer duration = null;
     try {
@@ -643,9 +646,9 @@ public void onSelectBranch()
     StringBuilder updateSql = new StringBuilder("UPDATE fixedAssetTemp SET ");
     List<Object> params = new ArrayList<>();
 
-    if (assetName != null && !assetName.trim().isEmpty()) {
+    if (assetsName != null && !assetsName.trim().isEmpty()) {
         updateSql.append("AssetsName = ?, ");
-        params.add(assetName);
+        params.add(assetsName);
     }
     if (assetAmount != null && !assetAmount.trim().isEmpty()) {
         updateSql.append("AssetsAmount = ?, ");

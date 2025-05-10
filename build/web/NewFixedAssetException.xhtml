@@ -11,26 +11,26 @@
     <h:form id="fixedAssetForm">
         <p:growl id="growl" showDetail="true" life="3000" sticky="true"/>
         <h2>New Fixed Asset Authorization</h2>
-            
-        <p:commandButton value="Export as CSV"
-                         icon="pi pi-download"
-                         styleClass="p-button-secondary"
-                         ajax="false"
-                         onclick="PrimeFaces.exporter.export('#{component.clientId}', { type: 'csv' }); return false;">
+           
+       
             <p:dataTable id="unauthorizedAccountsTable"
                          value="#{newFixedAssetAuth.fixedAssets}"
                          var="account"
                          widgetVar="unauthorizedAccountsTable"
                          paginator="true"
+                         resizableColumns="true"
+                         rowIndexVar="r" 
+                         rowStyleClass="#{r % 2 == 0 ? 'evenClass' : 'oddClass'}"
                          rows="10"
-                         scrollable="true"
-                         styleClass="responsive-table">
+                         showGridlines="true"
+                         stickyHeader="true"
+                         styleClass="myLDRepay">
 
     
 
     <!-- Serial Number Column -->
     <p:column headerText="S/N" style="font-size: 10pt; text-align: center;" width="50">
-        <h:outputText value="#{i + 1}" />
+        <h:outputText value="#{r + 1}" />
     </p:column>
 
     <!-- Category (Required) -->
@@ -74,7 +74,10 @@
     <p:column headerText="Prepayment Account" style="font-size: 10pt;">
         <h:outputText value="#{account.FAPPrePayAcct}" />
     </p:column>
-
+         <!-- Branch -->
+      <p:column headerText="Branch" style="font-size: 10pt;">
+          <h:outputText value="#{account.branch}" />
+    </p:column>
     <!-- Depreciation Expense Account -->
     <p:column headerText="Dep. Expense Account" style="font-size: 10pt;">
         <h:outputText value="#{account.depExpenseAccount}" />
@@ -93,9 +96,15 @@
                     onclick="if (!confirm('Are you sure you want to delete this item?')) { return false; }" />
     </p:menuButton>
 </p:column>
+    
+    <f:facet name="footer">
+            <p:commandButton value="Export as csv" icon="pi pi-download" ajax="false" >
+               <p:dataExporter type="csv" target="unauthorizedAccountsTable" fileName="UnAuthorize Fixed Asset Parameter Setup"/>
+    </p:commandButton> 
+        </f:facet>
 </p:dataTable>
 
-        </p:commandButton>
+        
     </h:form>
 </h:body>
 </html>

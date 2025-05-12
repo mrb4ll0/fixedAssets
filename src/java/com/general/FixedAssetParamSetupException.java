@@ -11,12 +11,14 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.PostConstruct;
+import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.context.FacesContext;
 import javax.faces.view.ViewScoped;
@@ -98,8 +100,11 @@ public List<FixedAssetParameter> fetchFixedAssetParams() {
 }
 
  public void authorize(FixedAssetParameter fap)
- {    deleteFixedAsset(fap.getCategoryId());
-     saveFixedAssetParameter(fap);
+ {    
+     
+    boolean isSaved= saveFixedAssetParameter(fap);
+     if(isSaved)deleteFixedAsset(fap.getCategoryId());
+     
  }
  
  public void delete(FixedAssetParameter fap)
@@ -107,7 +112,7 @@ public List<FixedAssetParameter> fetchFixedAssetParams() {
      deleteFixedAsset(fap.getCategoryId());
  }
 
-   public void saveFixedAssetParameter(FixedAssetParameter param) {
+   public boolean saveFixedAssetParameter(FixedAssetParameter param) {
     Connection connection = null;
     PreparedStatement psTemp = null;
     PreparedStatement psAuth = null;
@@ -156,7 +161,7 @@ statement = connection.createStatement();
 statement.execute(createFixedAssetTempSQL);
 
 // **Create authFixedAssetParamSetup Table If It Doesn't Exist**
-String createAuthTableSQL = "CREATE TABLE IF NOT EXISTS authFixedAssetParamSetup ("
+String createAuthTableSQL = "CREATE TABLE IF NOT EXISTS FixedAssetParamSetup ("
         + "FAPcatID VARCHAR(255) UNIQUE, "
         + "FAPcategory VARCHAR(255) UNIQUE, "
         + "AssetsName VARCHAR(255), "
@@ -214,7 +219,7 @@ psTemp.setString(19, yTenancynum);
 psTemp.executeUpdate();
 
 // **Insert Data into authFixedAssetParamSetup**
-String insertAuthSQL = "INSERT INTO authFixedAssetParamSetup "
+String insertAuthSQL = "INSERT INTO FixedAssetParamSetup "
         + "(FAPcategory, FAPcatID, AssetAccountNumber, FAPPrePayAcctNumber, "
         + "FAPdepExpAcctNumber, DepExpenseAccountNumber, FAPdepDate, RecordStatus, "
         + "Inputter, InputterRec, Authoriser, AuthoriserRec, updatetype, FAPtenancy, "
@@ -244,8 +249,26 @@ psAuth.setString(19, yTenancynum);
 
 psAuth.executeUpdate();
         System.out.println("Insertion successful in fixedAssetTemp and authFixedAssetParamSetup!");
+        return true;
 
-    } catch (Exception e) {
+    }
+    
+    catch (SQLIntegrityConstraintViolationException e)
+       {
+    // Duplicate key error handling
+    System.out.println("Duplicate key error: " + e.getMessage());
+
+    facesContext.addMessage(null, 
+        new FacesMessage(FacesMessage.SEVERITY_ERROR, 
+        "Cannot authorize", "Category ID already exists!"));
+
+    try {
+        if (connection != null) connection.rollback();
+        System.out.println("Transaction rolled back due to duplicate key error.");
+    } catch (SQLException rollbackEx) {
+        rollbackEx.printStackTrace();
+    }}
+    catch (Exception e) {
         e.printStackTrace();
     } finally {
         try {
@@ -257,6 +280,7 @@ psAuth.executeUpdate();
             ex.printStackTrace();
         }
     }
+    return false;
 }
     
     

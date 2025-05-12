@@ -53,7 +53,7 @@ public class AuthNewFixedAsset implements Serializable{
                     "FAPdepExpAcct, FAPPrePayAcct, AssetAccount, DepExpenseAccount, " +
                     "FAPdepDate, RecordStatus, Inputter, InputterRec, Authoriser, AuthoriserRec, " +
                     "updatetype, FAPtenancy, AuditDateRecord, YUser, ProfileUser, UserTransit, UserTenancy ,PurchasedDate" +
-                    " FROM authFixedAsset";
+                    " FROM FixedAsset";
 
             ps = connection.prepareStatement(query);
             rs = ps.executeQuery();

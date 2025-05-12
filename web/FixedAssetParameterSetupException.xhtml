@@ -6,10 +6,33 @@
 <h:head>
     <title>Fixed Asset Parameter Authorization</title>
      <h:outputStylesheet library="css" name="ComSetting.css" />
+     <style>
+            /* Ensure Growl appears above the table */
+            /* Ensure Growl appears above all components */
+            .overlay-growl {
+                position: absolute; /* Change to absolute */
+                top: 5px; /* Align it at the top */
+                right: 5px;
+                width: 350px;
+                z-index: 99999; /* Ensure it's above everything */
+                pointer-events: none;
+            }
+
+            /* PrimeFaces growl specific styling */
+            .ui-growl {
+                position: fixed !important; /* Force it to be fixed */
+                top: 5px !important;
+                right: 5px !important;
+                z-index: 100000 !important; /* Highest z-index to avoid conflicts */
+            }
+        </style>
 </h:head>
 <h:body>
+      <div class="overlay-growl">
+            <p:growl id="growl" showDetail="true" life="3000" sticky="true" />
+        </div>
     <h:form id="fixedAssetForm">
-        <p:growl id="growl" showDetail="true" life="3000" sticky="true"/>
+        
         <h2>Fixed Asset Parameter Authorization</h2>
             
             <p:dataTable id="unauthorizedAccountsTable"
@@ -63,7 +86,7 @@
         <p:menuitem value="Authorize"
                     icon="pi pi-check"
                     action="#{fapsException.authorize(account)}"
-                    update="unauthorizedAccountsTable" />
+                    update="unauthorizedAccountsTable growl" />
         <p:menuitem value="Delete"
                     icon="pi pi-trash"
                     action="#{fapsException.deleteFixedAsset(account.categoryId)}"

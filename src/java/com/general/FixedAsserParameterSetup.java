@@ -481,7 +481,7 @@ private Integer errorfieldcount;
 }
 
 
-  public void newFixedAssetCategoryCheck() {
+ public void newFixedAssetCategoryCheck() {
     FacesContext facesContext = FacesContext.getCurrentInstance();
     HttpSession session = (HttpSession) facesContext.getExternalContext().getSession(true);
 
@@ -520,37 +520,51 @@ private Integer errorfieldcount;
     if (errorfieldcount > 0) return;
 
     try (Connection connection = new DBConnection().get_connection()) {
-        // Create table if not exists
-        try (PreparedStatement createTableStmt = connection.prepareStatement(
-                "CREATE TABLE IF NOT EXISTS fixedAssetParamTemp ("
-                        + "FAPcatID VARCHAR(255) UNIQUE, "
-                        + "FAPcategory VARCHAR(255) UNIQUE, "
-                        + "AssetsName VARCHAR(255), "
-                        + "AssetsAmount VARCHAR(255), "
-                        + "Duration VARCHAR(255), "
-                        + "FAPdepExpAcctNumber VARCHAR(255), "
-                        + "FAPPrePayAcctNumber VARCHAR(255), "
-                        + "AssetAccountNumber VARCHAR(255), "
-                        + "DepExpenseAccountNumber VARCHAR(255), "
-                        + "FAPdepDate VARCHAR(20), "
-                        + "RecordStatus VARCHAR(50), "
-                        + "Inputter VARCHAR(255), "
-                        + "InputterRec VARCHAR(255), "
-                        + "Authoriser VARCHAR(255), "
-                        + "AuthoriserRec VARCHAR(255), "
-                        + "updatetype VARCHAR(50), "
-                        + "FAPtenancy VARCHAR(255))"
-        )) {
-            createTableStmt.execute();
+        // Check if `fixedAssetParamTemp` table exists
+        boolean fixedAssetParamTempExists = false;
+        try (ResultSet rs = connection.getMetaData().getTables(null, null, "fixedAssetParamTemp", null)) {
+            if (rs.next()) {
+                fixedAssetParamTempExists = true;
+            }
         }
 
-        // Check if category exists in either table
+        // If the table doesn’t exist, create it
+        if (!fixedAssetParamTempExists) {
+            try (PreparedStatement createTableStmt = connection.prepareStatement(
+                    "CREATE TABLE IF NOT EXISTS fixedAssetParamTemp (" +
+                            "FAPcatID VARCHAR(255) UNIQUE, " +
+                            "FAPcategory VARCHAR(255) UNIQUE, " +
+                            "AssetsName VARCHAR(255), " +
+                            "AssetsAmount VARCHAR(255), " +
+                            "Duration VARCHAR(255), " +
+                            "FAPdepExpAcctNumber VARCHAR(255), " +
+                            "FAPPrePayAcctNumber VARCHAR(255), " +
+                            "AssetAccountNumber VARCHAR(255), " +
+                            "DepExpenseAccountNumber VARCHAR(255), " +
+                            "FAPdepDate VARCHAR(20), " +
+                            "RecordStatus VARCHAR(50), " +
+                            "Inputter VARCHAR(255), " +
+                            "InputterRec VARCHAR(255), " +
+                            "Authoriser VARCHAR(255), " +
+                            "AuthoriserRec VARCHAR(255), " +
+                            "updatetype VARCHAR(50), " +
+                            "FAPtenancy VARCHAR(255))")) {
+                createTableStmt.execute();
+            }
+        }
+
+        // If the table doesn't exist, return early
+        if (!fixedAssetParamTempExists) {
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Transaction Failed", "Table fixedAssetParamTemp does not exist."));
+            return;
+        }
+
+        // Check if category ID exists in `fixedAssetParamTemp`
         boolean categoryExists = false;
-        String checkQuery = "SELECT FAPcatID FROM fixedAssetParamTemp WHERE FAPcatID = ? "
-                + "UNION SELECT FAPcatID FROM authFixedAssetParamSetup WHERE FAPcatID = ?";
+        String checkQuery = "SELECT FAPcatID FROM fixedAssetParamTemp WHERE FAPcatID = ?";
         try (PreparedStatement ps = connection.prepareStatement(checkQuery)) {
             ps.setString(1, stringCategoryID);
-            ps.setString(2, stringCategoryID);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     categoryExists = true;
@@ -563,7 +577,7 @@ private Integer errorfieldcount;
             return;
         }
 
-        // Delete if any old record exists
+        // Delete old records if any exist
         try (PreparedStatement deleteStmt = connection.prepareStatement(
                 "DELETE FROM fixedAssetParamTemp WHERE FAPcatID = ?")) {
             deleteStmt.setString(1, stringCategoryID);
@@ -578,11 +592,11 @@ private Integer errorfieldcount;
         String assetAccountNumber = assetAccountsName.getOrDefault(assetAccount, "");
         String depExpenseAccountNumber = depExpenseAccountsName.getOrDefault(depExpenseAccount, "");
 
-        String insertSQL = "INSERT INTO fixedAssetParamTemp ("
-                + "FAPcatID, FAPcategory, FAPdepExpAcctNumber, FAPPrePayAcctNumber, "
-                + "AssetAccountNumber, DepExpenseAccountNumber, FAPdepDate, RecordStatus, "
-                + "Inputter, InputterRec, Authoriser, AuthoriserRec, updatetype, FAPtenancy) "
-                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String insertSQL = "INSERT INTO fixedAssetParamTemp (" +
+                "FAPcatID, FAPcategory, FAPdepExpAcctNumber, FAPPrePayAcctNumber, " +
+                "AssetAccountNumber, DepExpenseAccountNumber, FAPdepDate, RecordStatus, " +
+                "Inputter, InputterRec, Authoriser, AuthoriserRec, updatetype, FAPtenancy) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (PreparedStatement insertStmt = connection.prepareStatement(insertSQL)) {
             insertStmt.setString(1, stringCategoryID);

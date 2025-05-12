@@ -426,7 +426,7 @@ public void onSelectPurchasedDate(SelectEvent event)
         connection = obj_DB_connection.get_connection();
 
         PreparedStatement ps = connection.prepareStatement(
-            "SELECT FAPcatID, FAPcategory, FAPdepExpAcctNumber, FAPPrePayAcctNumber, FAPdepDate, AssetAccountNumber, DepExpenseAccountNumber FROM authFixedAssetParamSetup"
+            "SELECT FAPcatID, FAPcategory, FAPdepExpAcctNumber, FAPPrePayAcctNumber, FAPdepDate, AssetAccountNumber, DepExpenseAccountNumber FROM FixedAssetParamSetup"
         );
 
         ResultSet rs = ps.executeQuery();

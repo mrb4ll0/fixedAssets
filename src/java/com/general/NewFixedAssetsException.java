@@ -119,8 +119,12 @@ public class NewFixedAssetsException implements Serializable
 
  
  public void authorize(FixedAsset fa)
- {    deleteFixedAsset(fa.getFAPcatID());
-     saveFixedAsset(fa);
+ {   
+     boolean savedSuccess = saveFixedAsset(fa);
+     if(savedSuccess)
+     {
+         deleteFixedAsset(fa.getFAPcatID());
+     }
  }
  
  public void delete(FixedAssetParameter fap)
@@ -128,7 +132,7 @@ public class NewFixedAssetsException implements Serializable
      deleteFixedAsset(fap.getCategoryId());
  }
 
-   public void saveFixedAsset(FixedAsset asset) {
+   public Boolean saveFixedAsset(FixedAsset asset) {
     Connection connection = null;
     PreparedStatement ps = null;
     Statement statement = null;
@@ -148,7 +152,7 @@ public class NewFixedAssetsException implements Serializable
         connection.setAutoCommit(false);
 
         // **Create Table If It Doesn't Exist (Without Account Name Fields)**
-        String createTableSQL = "CREATE TABLE IF NOT EXISTS authFixedAsset ("
+        String createTableSQL = "CREATE TABLE IF NOT EXISTS FixedAsset ("
                 + "FAPcatID VARCHAR(255) UNIQUE, "
                 + "FAPcategory VARCHAR(255) UNIQUE, "
                 + "AssetsName VARCHAR(255), "
@@ -178,7 +182,7 @@ public class NewFixedAssetsException implements Serializable
         statement.execute(createTableSQL);
 
         // **Insert Data into authFixedAsset (Without Account Name Fields)**
-        String insertSQL = "INSERT INTO authFixedAsset "
+        String insertSQL = "INSERT INTO FixedAsset "
                 + "(FAPcatID, FAPcategory, AssetsName, AssetsAmount, Duration, Branch, "
                 + "FAPdepExpAcct, FAPPrePayAcct, AssetAccount, DepExpenseAccount, "
                 + "FAPdepDate, RecordStatus, Inputter, InputterRec, Authoriser, AuthoriserRec, "
@@ -214,6 +218,7 @@ public class NewFixedAssetsException implements Serializable
         ps.executeUpdate();
         connection.commit();
         System.out.println("Insertion successful in authFixedAsset!");
+        return true;
 
     }
        catch (SQLIntegrityConstraintViolationException e)
@@ -251,6 +256,7 @@ public class NewFixedAssetsException implements Serializable
         }
         
     }
+    return false;
 } 
     public void deleteFixedAsset(String categoryId) {
     Connection connection = null;

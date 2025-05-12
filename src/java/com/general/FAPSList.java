@@ -56,7 +56,7 @@ public List<FixedAssetParameter> fetchAuthFixedAssetParams() {
         // **Query to fetch all authorized fixed asset parameters**
         String query = "SELECT FAPcategory, FAPcatID, AssetAccountNumber, FAPPrePayAcctNumber, "
                      + "FAPdepExpAcctNumber, DepExpenseAccountNumber, FAPdepDate "
-                     + "FROM authFixedAssetParamSetup";
+                     + "FROM FixedAssetParamSetup";
 
         ps = connection.prepareStatement(query);
         rs = ps.executeQuery();

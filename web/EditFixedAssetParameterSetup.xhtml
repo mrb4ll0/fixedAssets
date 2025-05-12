@@ -82,19 +82,16 @@
             <p:outputLabel id="editFASelectedAccumDepAccount" value="#{editFixedAssetSetup.depExpenseAccount}" 
                            styleClass="GenEnrichTxt"/>
 
-            <p:outputLabel for="editDepreciationDay" value="Depreciation Day:" />
-            <p:calendar id="editDepreciationDay"
-            value="#{editFixedAssetSetup.depreciationDay}"
-            styleClass="GenInputTxtreq"
-            pattern="dd/MM/yyyy"
-            showOn="button">
-    <p:ajax event="dateSelect"
-            listener="#{editFixedAssetSetup.onSelectMonthDay}"
-            update="FASelectedDay"/>
-</p:calendar>
-            <p:outputLabel id="FASelectedDay" 
-                           value="#{editFixedAssetSetup.depreciationDay}"
-                           styleClass="GenEnrichTxt"/>
+            <p:outputLabel for="depreciationDate" value="Depreciation (Day):" />
+                                <p:selectOneMenu  maxlength="10" id="depreciationDate" styleClass="GenSELTxtreq" value="#{editFixedAssetSetup.depreciationDay}" required="true">
+                                    <f:selectItem itemLabel="Select Day" itemValue=""/>
+                                    <f:selectItems value="#{editFixedAssetSetup.depreciationDays}"/>
+                                    <p:ajax 
+                                        event="change"
+                                        listener="#{editFixedAssetSetup.onSelectMonthDay(event)}" 
+                                        update="FASelectedDay"/>
+                                </p:selectOneMenu>
+                                <p:outputLabel id="FASelectedDay" styleClass="GenEnrichTxt" value="#{editFixedAssetSetup.depreciationDay}"/>
 
             
 

@@ -48,7 +48,7 @@ private String prepaymentAccount;
 private String selectedPrepaymentAccount;
 private String depExpenseAccount;
 private String selectedDepExpenseAccount;
-private Date depreciationDay = new Date();
+private int depreciationDay = 0;
 private boolean dataReady=false;
 
     public boolean isDataReady()
@@ -123,7 +123,7 @@ private Map<String,String> assetAccounts =  new LinkedHashMap();
 private Map<String,String> assetAccountsName =  new LinkedHashMap();
 private Map<String,String> depExpenseAccounts =  new LinkedHashMap();
 private Map<String,String> depExpenseAccountsName =  new LinkedHashMap();
-private Map<String,String> depreciationDays =  new LinkedHashMap();
+private List<Integer> depreciationDays =  new ArrayList<>();
 
     public List<Map<String, Object>> getAccountsMapList() {
         return accountsMapList;
@@ -198,11 +198,11 @@ private Integer errorfieldcount;
         this.selectedPrepaymentAccount = selectedPrepaymentAccount;
     }
     
-    public Date getDepreciationDay() {
+    public int getDepreciationDay() {
         return depreciationDay;
     }
 
-    public void setDepreciationDay(Date depreciationDate) {
+    public void setDepreciationDay(int depreciationDate) {
         this.depreciationDay = depreciationDate;
     }
     
@@ -252,11 +252,11 @@ private Integer errorfieldcount;
     public void setGetAllAuthRecStatus(String getAllAuthRecStatus) {
     this.getAllAuthRecStatus = getAllAuthRecStatus;
     }
-     public Map<String, String> getDepreciationDays() {
+     public List<Integer> getDepreciationDays() {
         return depreciationDays;
     }
 
-    public void setDepreciationDays(Map<String, String> depreciationDays) {
+    public void setDepreciationDays(List<Integer> depreciationDays) {
         this.depreciationDays = depreciationDays;
     }
     public String getAssetAccount() {
@@ -335,9 +335,9 @@ private Integer errorfieldcount;
        {
            e.printStackTrace();
        }
-       depreciationDays = new LinkedHashMap<>();
-        for (int i = 1; i<28; i++){
-            depreciationDays.put(String.format("%02d", i),String.format("%02d", i));
+       depreciationDays = new ArrayList<>();
+        for (int i = 1; i<29; i++){
+            depreciationDays.add(i);
         }
        
    }
@@ -431,11 +431,10 @@ private Integer errorfieldcount;
       System.out.println("depExpenseAccount is "+(depExpenseAccount)+" selectedDepreciationAccount is "+(selectedDepExpenseAccount));
  }
   public void onSelectMonthDay(SelectEvent event) {
-    if (event.getObject() != null) {
-        depreciationDay = (Date) event.getObject();
-    } else {
-        System.out.println("Event object is null!");
-    }
+    
+    
+        System.out.println("depreciationDay is "+depreciationDay);
+    
 }
 
 
@@ -482,86 +481,50 @@ private Integer errorfieldcount;
 }
 
 
-  public void newFixedAssetCategoryCheck(){
-    
-FacesMessage FieldMessage = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Field ID:", "error Message");
-//FacesContext.getCurrentInstance().addMessage(null, FieldMessage);
+  public void newFixedAssetCategoryCheck() {
+    FacesContext facesContext = FacesContext.getCurrentInstance();
+    HttpSession session = (HttpSession) facesContext.getExternalContext().getSession(true);
 
+    String yuser = (String) session.getAttribute("user");
+    String ytransit = (String) session.getAttribute("usertransit");
+    String yTenancynum = (String) session.getAttribute("usertenancy");
+    String AuditDateRecord = GetSystemDates.GetAuditTrailDate();
 
-FacesContext facesContext = FacesContext.getCurrentInstance();
-HttpSession session = (HttpSession) facesContext.getExternalContext().getSession(true);
-String yuser =(String)session.getAttribute("user");
-String yprofileuser =(String)session.getAttribute("usernames");
-String ytransit =(String)session.getAttribute("usertransit");
-String yTenancynum = (String)session.getAttribute("usertenancy");
-
-String AuditDateRecord = GetSystemDates.GetAuditTrailDate(); 
-
-    HttpServletRequest checkrequest = (HttpServletRequest)FacesContext.getCurrentInstance().getExternalContext().getRequest();
+    HttpServletRequest checkrequest = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
     String stringCategoryID = checkrequest.getParameter("fixedAssetsForm:tabViewMVS:categoryId");
-    
-    if (stringCategoryID == null){
-        stringCategoryID = "";
+
+    stringCategoryID = (stringCategoryID != null) ? stringCategoryID.trim() : "";
+    int errorfieldcount = 0;
+
+    if (stringCategoryID.isEmpty()) {
+        addFieldMessage("Category ID:", "Missing!");
+        errorfieldcount++;
+    }
+    if (newCategory == null || newCategory.trim().isEmpty()) {
+        addFieldMessage("Description:", "Missing!");
+        errorfieldcount++;
+    }
+    if (prepaymentAccount == null || prepaymentAccount.trim().isEmpty()) {
+        addFieldMessage("Prepayment Account:", "Missing!");
+        errorfieldcount++;
+    }
+    if (depreciationAccount == null || depreciationAccount.trim().isEmpty()) {
+        addFieldMessage("Depreciation Account:", "Missing!");
+        errorfieldcount++;
+    }
+    if (depreciationDay == 0) {
+        addFieldMessage("Depreciation Day:", "Missing!");
+        errorfieldcount++;
     }
 
+    if (errorfieldcount > 0) return;
 
-      
-errorfieldcount = 0;
-int intValue;
-
-if (stringCategoryID == null || stringCategoryID.isEmpty()){
-    errorfieldcount = errorfieldcount + 1;
-FieldMessage = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Category ID:", "Missing!");
-FacesContext.getCurrentInstance().addMessage(null, FieldMessage);
-return;
-}
-
-if (newCategory == null || newCategory.isEmpty()){
-    errorfieldcount = errorfieldcount + 1;
-FieldMessage = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Description:", "Missing!");
-FacesContext.getCurrentInstance().addMessage(null, FieldMessage);
-return;
-}
-if (prepaymentAccount == null || prepaymentAccount.isEmpty()){
-    errorfieldcount = errorfieldcount + 1;
-FieldMessage = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Prepayment Account:", "Missing!");
-FacesContext.getCurrentInstance().addMessage(null, FieldMessage);
-return;
-}
-if (depreciationAccount == null || depreciationAccount.isEmpty()){
-    errorfieldcount = errorfieldcount + 1;
-FieldMessage = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Depreciation Account:", "Missing!");
-FacesContext.getCurrentInstance().addMessage(null, FieldMessage);
-return;
-}
-if (depreciationDay ==null){
-    errorfieldcount = errorfieldcount + 1;
-FieldMessage = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Depreciation Day:", "Missing!");
-FacesContext.getCurrentInstance().addMessage(null, FieldMessage);
-return;
-}
-
-
-
-
-if (errorfieldcount < 1)
-{
-    System.out.println("error field count is less than 1");
-Connection connection=null;
-//--------------------------updating database
-
-
-String yFound = "";
-
-           try {
-            connection=null;
-            PreparedStatement statement = null;
-            PreparedStatement ps=null;
-            DBConnection obj_DB_connection=new DBConnection();
-            connection=obj_DB_connection.get_connection();
- 	 	ps = connection.prepareStatement("CREATE TABLE IF NOT EXISTS fixedAssetParamTemp ("
+    try (Connection connection = new DBConnection().get_connection()) {
+        // Create table if not exists
+        try (PreparedStatement createTableStmt = connection.prepareStatement(
+                "CREATE TABLE IF NOT EXISTS fixedAssetParamTemp ("
                         + "FAPcatID VARCHAR(255) UNIQUE, "
-                        + "FAPcategory VARCHAR(255)unique, "
+                        + "FAPcategory VARCHAR(255) UNIQUE, "
                         + "AssetsName VARCHAR(255), "
                         + "AssetsAmount VARCHAR(255), "
                         + "Duration VARCHAR(255), "
@@ -569,144 +532,99 @@ String yFound = "";
                         + "FAPPrePayAcctNumber VARCHAR(255), "
                         + "AssetAccountNumber VARCHAR(255), "
                         + "DepExpenseAccountNumber VARCHAR(255), "
-                        + "FAPdepDate VARCHAR(20), RecordStatus VARCHAR(50), "
+                        + "FAPdepDate VARCHAR(20), "
+                        + "RecordStatus VARCHAR(50), "
                         + "Inputter VARCHAR(255), "
-                        + "InputterRec VARCHAR(255),"
-                        + " Authoriser VARCHAR(255), "
+                        + "InputterRec VARCHAR(255), "
+                        + "Authoriser VARCHAR(255), "
                         + "AuthoriserRec VARCHAR(255), "
                         + "updatetype VARCHAR(50), "
-                        + "FAPtenancy VARCHAR(255))");
-                ps.execute();
-                ps.close();
-                connection.close();
- 	} catch (Exception e) {
-                System.out.println(e);                 
-                 try{
-                 connection.close();
-                 } catch (Exception ErrClose){
-                 }
- 	} 
-
- 	try {
-            connection=null;
-            PreparedStatement statement = null;
-            PreparedStatement ps=null;
-            DBConnection obj_DB_connection=new DBConnection();
-            connection=obj_DB_connection.get_connection();
- 	 	ps=connection.prepareStatement("select * from fixedAssetParamTemp WHERE FAPcatID = " + "'" + stringCategoryID + "'",ResultSet.CONCUR_READ_ONLY,ResultSet.TYPE_SCROLL_INSENSITIVE);
- 	 	ResultSet rs=ps.executeQuery();
-                rs.beforeFirst();
- 	 	while(rs.next()){
-            yFound = "YES";
- 	 	}
-                ps.close();
-                connection.close();
- 	} catch (Exception e) {
-                System.out.println(e);                 
-                 try{
-                 connection.close();
-                 } catch (Exception ErrClose){
-                 }
- 	} 
-        
-        
-        
-        try {
-            connection=null;
-            PreparedStatement statement = null;
-            PreparedStatement ps9 = null;
-            DBConnection obj_DB_connection=new DBConnection();
-            connection=obj_DB_connection.get_connection();
-            connection.setAutoCommit(false);
-            
-            if (yFound.equals("YES")){
-                
-                String queryString = "DELETE from fixedAssetParamTemp WHERE FAPcatID = " + "'" + stringCategoryID + "'";
-                ps9 = connection.prepareStatement(queryString);
-                int ikkd = ps9.executeUpdate();
-                
-            }
-
-            //PreparedStatement ps=connection.prepareStatement("insert into titles(titleid,titledescript) value('"+Limit_name+"')");
-           // ps.executeUpdate();
-            
-        String sql = "insert into fixedAssetParamTemp(FAPcatID, FAPcategory,FAPdepExpAcctNumber,FAPPrePayAcctNumber,AssetAccountNumber, DepExpenseAccountNumber, FAPdepDate, RecordStatus,Inputter,InputterRec,Authoriser,AuthoriserRec,updatetype,FAPtenancy) values (?,?,?, ?, ?, ?, ?, ?, ?,?,?,?,?,?)";
-	statement = connection.prepareStatement(sql);
-        System.out.println("depreciation account is "+depreciationAccount);
-        String depreciationAccountNumber = depreciationAccountsName.get(depreciationAccount);
-        String prepaymentAccountNumber = prepaymentAccountsName.get(prepaymentAccount);
-        String assetAccountNumber = assetAccountsName.get(assetAccount);
-        String depExpenseAccountNumber = depExpenseAccountsName.get(depExpenseAccount);
-        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-        String formattedDate = formatter.format(depreciationDay);
-        System.out.println("depreciationAccountName is "+depreciationAccountNumber+" and "
-                + "prepaymentAccountName is "+prepaymentAccountNumber);
-        System.out.println("assetAccountName is: "+assetAccountNumber+" and depExpenseAccountName: "+depExpenseAccountNumber);
-			statement.setString(1, stringCategoryID);
-			statement.setString(2, newCategory);
-                        statement.setString(3, depreciationAccountNumber);
-                        statement.setString(4, prepaymentAccountNumber);
-                        statement.setString(5, assetAccountNumber);
-                        statement.setString(6, depExpenseAccountNumber);
-                        statement.setString(7, formattedDate);
-                        statement.setString(8, "UNAUTH");
-                        statement.setString(9, yuser);
-                        statement.setString(10, AuditDateRecord);
-                        statement.setString(11, yuser);
-                        statement.setString(12, AuditDateRecord);
-                        statement.setString(13, "NEW");
-                        statement.setString(14, yTenancynum);
-			
-			statement.execute();
-                        statement.close();
-
-                  
-                        connection.commit();
-                        connection.setAutoCommit(true);
-                        connection.close();
-                        
-//TODO LATER
-//                        String protocolresult = GetProtocolUpdate.UpdateRecords(yuser, "GL.HEADER", stringCategoryID, "I", null, AuditDateRecord,null,ytransit);
-                        
-      
-       FacesMessage SuccessMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "Transaction Completed", "Record ID: " + stringCategoryID);
-       FacesContext.getCurrentInstance().addMessage(null, SuccessMessage);
-      
-FacesContext context = FacesContext.getCurrentInstance();
-context.getExternalContext().getFlash().setKeepMessages(true);
-
-
-//*****reload the page
-    ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
-    ec.redirect(((HttpServletRequest) ec.getRequest()).getRequestURI());
-                     
-                        
-        } catch (Exception e) {
-            System.out.println(e);
-       FacesMessage FailedMessage = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Transaction Failed:", "Error: " + e.getMessage());
-       FacesContext.getCurrentInstance().addMessage(null, FailedMessage);
-       
-FacesContext context = FacesContext.getCurrentInstance();
-context.getExternalContext().getFlash().setKeepMessages(true);
-
-       try{
-                        connection.rollback();
-                        connection.setAutoCommit(true);
-                        connection.close();
-       } catch (Exception err) {
-           
-       } 
-       
+                        + "FAPtenancy VARCHAR(255))"
+        )) {
+            createTableStmt.execute();
         }
-        
-        
-}
-        
-        
+
+        // Check if category exists in either table
+        boolean categoryExists = false;
+        String checkQuery = "SELECT FAPcatID FROM fixedAssetParamTemp WHERE FAPcatID = ? "
+                + "UNION SELECT FAPcatID FROM authFixedAssetParamSetup WHERE FAPcatID = ?";
+        try (PreparedStatement ps = connection.prepareStatement(checkQuery)) {
+            ps.setString(1, stringCategoryID);
+            ps.setString(2, stringCategoryID);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    categoryExists = true;
+                }
+            }
+        }
+
+        if (categoryExists) {
+            addFieldMessage("Category ID:", "Category ID '" + stringCategoryID + "' already exists!");
+            return;
+        }
+
+        // Delete if any old record exists
+        try (PreparedStatement deleteStmt = connection.prepareStatement(
+                "DELETE FROM fixedAssetParamTemp WHERE FAPcatID = ?")) {
+            deleteStmt.setString(1, stringCategoryID);
+            deleteStmt.executeUpdate();
+        }
+
+        connection.setAutoCommit(false);
+
+        // Resolve account numbers
+        String depreciationAccountNumber = depreciationAccountsName.getOrDefault(depreciationAccount, "");
+        String prepaymentAccountNumber = prepaymentAccountsName.getOrDefault(prepaymentAccount, "");
+        String assetAccountNumber = assetAccountsName.getOrDefault(assetAccount, "");
+        String depExpenseAccountNumber = depExpenseAccountsName.getOrDefault(depExpenseAccount, "");
+
+        String insertSQL = "INSERT INTO fixedAssetParamTemp ("
+                + "FAPcatID, FAPcategory, FAPdepExpAcctNumber, FAPPrePayAcctNumber, "
+                + "AssetAccountNumber, DepExpenseAccountNumber, FAPdepDate, RecordStatus, "
+                + "Inputter, InputterRec, Authoriser, AuthoriserRec, updatetype, FAPtenancy) "
+                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+        try (PreparedStatement insertStmt = connection.prepareStatement(insertSQL)) {
+            insertStmt.setString(1, stringCategoryID);
+            insertStmt.setString(2, newCategory);
+            insertStmt.setString(3, depreciationAccountNumber);
+            insertStmt.setString(4, prepaymentAccountNumber);
+            insertStmt.setString(5, assetAccountNumber);
+            insertStmt.setString(6, depExpenseAccountNumber);
+            insertStmt.setString(7, String.valueOf(depreciationDay));
+            insertStmt.setString(8, "UNAUTH");
+            insertStmt.setString(9, yuser);
+            insertStmt.setString(10, AuditDateRecord);
+            insertStmt.setString(11, yuser);
+            insertStmt.setString(12, AuditDateRecord);
+            insertStmt.setString(13, "NEW");
+            insertStmt.setString(14, yTenancynum);
+            insertStmt.executeUpdate();
+        }
+
+        connection.commit();
+        connection.setAutoCommit(true);
+
+        FacesContext.getCurrentInstance().addMessage(null,
+                new FacesMessage(FacesMessage.SEVERITY_INFO, "Transaction Completed", "Record ID: " + stringCategoryID));
+        facesContext.getExternalContext().getFlash().setKeepMessages(true);
+        facesContext.getExternalContext().redirect(((HttpServletRequest) facesContext.getExternalContext().getRequest()).getRequestURI());
+
+    } catch (Exception e) {
+        logException(e);
+        FacesContext.getCurrentInstance().addMessage(null,
+                new FacesMessage(FacesMessage.SEVERITY_ERROR, "Transaction Failed:", "Error: " + e.getMessage()));
+        facesContext.getExternalContext().getFlash().setKeepMessages(true);
     }
+}
 
-  
+private void addFieldMessage(String title, String message) {
+    FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_ERROR, title, message);
+    FacesContext.getCurrentInstance().addMessage(null, msg);
+}
 
-  
-  
+private void logException(Exception e) {
+    e.printStackTrace(); // Replace with proper logger in real prod env
+}
+
 }

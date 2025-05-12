@@ -1,5 +1,7 @@
 package com.general.model;
 
+import java.sql.Date;
+
 public class FixedAsset {
 
     private String FAPcatID;
@@ -24,6 +26,15 @@ public class FixedAsset {
     private String assetAmount;
     private String durationsMonth;
     private String branch; 
+    private Date purchasedDate;
+
+    public Date getPurchasedDate() {
+        return purchasedDate;
+    }
+
+    public void setPurchasedDate(Date purchasedDate) {
+        this.purchasedDate = new java.sql.Date(purchasedDate.getTime());
+    }
 
     // Constructor
     public FixedAsset() {

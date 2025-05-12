@@ -26,6 +26,7 @@ import javax.faces.event.AjaxBehaviorEvent;
 import javax.faces.view.ViewScoped;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import org.primefaces.event.SelectEvent;
 
 /**
  *
@@ -169,6 +170,15 @@ private int duration;
 private List<String> assetNames;
 private List<String> branches;
 private String branch;
+private Date purchasedDate = new Date();
+
+    public Date getPurchasedDate() {
+        return purchasedDate;
+    }
+
+    public void setPurchasedDate(Date purchasedDate) {
+        this.purchasedDate = purchasedDate;
+    }
 
     public List<String> getBranches() {
         return branches;
@@ -404,6 +414,13 @@ public void onSelectBranch()
     
 }
 
+private Date selectedPurchasedDate;
+public void onSelectPurchasedDate(SelectEvent event)
+{
+    selectedPurchasedDate= purchasedDate;
+    System.out.println("Purchased Date is "+selectedPurchasedDate);
+}
+
     @PostConstruct
    public void init() {
        fixedAssetsData = getDataFromDatabse();
@@ -627,8 +644,12 @@ public void onSelectBranch()
     String assetName = request.getParameter("fixedAssetsForm:tabViewMVS:assetname");
     String assetAmount = request.getParameter("fixedAssetsForm:tabViewMVS:assetamount");
     String durationStr = request.getParameter("fixedAssetsForm:tabViewMVS:duration");
+    String fetchedPurchasedDate = request.getParameter("fixedAssetsForm:tabViewMVS:purchasedDate");
     System.out.println("AssetsName is "+assetName);
     System.out.println("AssetsName Global is "+assetsName);
+    System.out.println("selectedPurchasedDate its  "+selectedPurchasedDate);
+    System.out.println("fetchedPurchasedDate  it  "+fetchedPurchasedDate);
+    System.out.println("PurchasedDate  it  "+purchasedDate);
     
 
     Integer duration = null;
@@ -657,6 +678,12 @@ public void onSelectBranch()
     if (duration != null) {
         updateSql.append("Duration = ?, ");
         params.add(duration);
+    }
+    if(purchasedDate != null)
+    {
+        updateSql.append("PurchasedDate = ?,");
+        System.out.println("selectedPurchasedDate is not null and its  "+selectedPurchasedDate);
+        params.add(new java.sql.Date(purchasedDate.getTime()));
     }
 
     // Always update Inputter, updatetype, and FAPtenancy

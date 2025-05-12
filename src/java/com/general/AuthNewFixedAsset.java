@@ -52,7 +52,7 @@ public class AuthNewFixedAsset implements Serializable{
             String query = "SELECT FAPcatID, FAPcategory, AssetsName, AssetsAmount, Duration, Branch, " +
                     "FAPdepExpAcct, FAPPrePayAcct, AssetAccount, DepExpenseAccount, " +
                     "FAPdepDate, RecordStatus, Inputter, InputterRec, Authoriser, AuthoriserRec, " +
-                    "updatetype, FAPtenancy, AuditDateRecord, YUser, ProfileUser, UserTransit, UserTenancy " +
+                    "updatetype, FAPtenancy, AuditDateRecord, YUser, ProfileUser, UserTransit, UserTenancy ,PurchasedDate" +
                     " FROM authFixedAsset";
 
             ps = connection.prepareStatement(query);
@@ -80,6 +80,7 @@ public class AuthNewFixedAsset implements Serializable{
                 asset.setUpdatetype(rs.getString("updatetype"));
                 asset.setFAPtenancy(rs.getString("FAPtenancy"));
                 asset.setFAPtenancy(rs.getString("FAPtenancy"));
+                asset.setPurchasedDate(rs.getDate("PurchasedDate"));
                
 
                 resultList.add(asset);

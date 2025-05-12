@@ -83,6 +83,29 @@
                                 <p:inputText id="depExpenseAccount" inputmode="number" styleClass="GenInputTxtNoInput" readonly="true" maxlength="2" size="35" value="#{editFixedAsset.depExpenseAccountNumber}" />
                                 <p:outputLabel styleClass="GenEnrichTxt" id="depExpenseAccountLabel" value="#{editFixedAsset.depExpenseAccountName}"/>
                                 
+                                <p:outputLabel for="purchasedDate" value="Purchase Date:" />
+
+                                <p:calendar 
+                                    id="purchasedDate"
+                                    value="#{editFixedAsset.purchasedDate}" 
+                                    pattern="dd/MM/yyyy" 
+                                    navigator="true"
+                                    required="true"
+                                    showOn="button"
+                                    styleClass="GenSELTxtreq">
+                                    <p:ajax 
+                                        event="dateSelect" 
+                                        listener="#{editFixedAsset.onSelectPurchasedDate(event)}" 
+                                        update="FASelectedDay" />
+                                </p:calendar>
+
+                                <p:outputLabel 
+                                    id="FASelectedDay" 
+                                    styleClass="GenEnrichTxt" 
+                                    value="#{editFixedAsset.purchasedDate}" />
+
+
+                                
                             </h:panelGrid>
                         </div>
                     </p:tab>

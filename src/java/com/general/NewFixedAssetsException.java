@@ -12,6 +12,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -19,6 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.PostConstruct;
+import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.context.FacesContext;
 import javax.faces.view.ViewScoped;
@@ -65,7 +67,7 @@ public class NewFixedAssetsException implements Serializable
         String query = "SELECT FAPcatID, FAPcategory, FAPdepExpAcctNumber, " +
                        "FAPPrePayAcctNumber, AssetAccountNumber, AssetsName, AssetsAmount,Duration," +
                        "DepExpenseAccountNumber, FAPdepDate, RecordStatus, " +
-                       "Inputter, InputterRec, Authoriser, AuthoriserRec, updatetype, FAPtenancy, Branch " +
+                       "Inputter, InputterRec, Authoriser, AuthoriserRec, updatetype, FAPtenancy, Branch, PurchasedDate " +
                        "FROM fixedAssetTemp";
 
         ps = connection.prepareStatement(query);
@@ -96,7 +98,7 @@ public class NewFixedAssetsException implements Serializable
             asset.setAssetAmount(rs.getString("AssetsAmount"));
             asset.setDurationsMonth(rs.getString("Duration"));
             asset.setBranch(rs.getString("Branch"));
-
+            asset.setPurchasedDate(rs.getDate("PurchasedDate"));
             resultList.add(asset);
         }
 
@@ -158,6 +160,7 @@ public class NewFixedAssetsException implements Serializable
                 + "DepExpenseAccount VARCHAR(255), "
                 + "FAPdepDate VARCHAR(100), "
                 + "Branch VARCHAR(200), "
+                +"PurchasedDate Date, "
                 + "RecordStatus VARCHAR(50), "
                 + "Inputter VARCHAR(255), "
                 + "InputterRec VARCHAR(255), "
@@ -179,8 +182,8 @@ public class NewFixedAssetsException implements Serializable
                 + "(FAPcatID, FAPcategory, AssetsName, AssetsAmount, Duration, Branch, "
                 + "FAPdepExpAcct, FAPPrePayAcct, AssetAccount, DepExpenseAccount, "
                 + "FAPdepDate, RecordStatus, Inputter, InputterRec, Authoriser, AuthoriserRec, "
-                + "updatetype, FAPtenancy, AuditDateRecord, YUser, ProfileUser, UserTransit, UserTenancy) "
-                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                + "updatetype, FAPtenancy, AuditDateRecord, YUser, ProfileUser, UserTransit, UserTenancy,PurchasedDate) "
+                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?)";
 
         ps = connection.prepareStatement(insertSQL);
         ps.setString(1, asset.getFAPcatID());
@@ -206,12 +209,31 @@ public class NewFixedAssetsException implements Serializable
         ps.setString(21, yprofileuser);
         ps.setString(22, ytransit);
         ps.setString(23, yTenancynum);
+        ps.setDate(24, asset.getPurchasedDate());
 
         ps.executeUpdate();
         connection.commit();
         System.out.println("Insertion successful in authFixedAsset!");
 
-    } catch (Exception e) {
+    }
+       catch (SQLIntegrityConstraintViolationException e)
+       {
+    // Duplicate key error handling
+    System.out.println("Duplicate key error: " + e.getMessage());
+
+    facesContext.addMessage(null, 
+        new FacesMessage(FacesMessage.SEVERITY_ERROR, 
+        "Cannot authorize", "Category ID already exists!"));
+
+    try {
+        if (connection != null) connection.rollback();
+        System.out.println("Transaction rolled back due to duplicate key error.");
+    } catch (SQLException rollbackEx) {
+        rollbackEx.printStackTrace();
+    }}
+
+    
+    catch (Exception e) {
         e.printStackTrace();
         try {
             if (connection != null) connection.rollback();
@@ -227,6 +249,7 @@ public class NewFixedAssetsException implements Serializable
         } catch (Exception ex) {
             ex.printStackTrace();
         }
+        
     }
 } 
     public void deleteFixedAsset(String categoryId) {
@@ -257,8 +280,8 @@ public class NewFixedAssetsException implements Serializable
 
         // **Create deletedFixedAsset Table If It Doesn't Exist**
         String createTableSQL = "CREATE TABLE IF NOT EXISTS deletedFixedAsset ("
-                + "FAPcatID VARCHAR(255) UNIQUE, "
-                + "FAPcategory VARCHAR(255) UNIQUE, "
+                + "FAPcatID VARCHAR(255),  "
+                + "FAPcategory VARCHAR(255) , "
                 + "AssetsName VARCHAR(255), "
                 + "AssetsAmount VARCHAR(255), "
                 + "Duration VARCHAR(255), "
@@ -268,6 +291,7 @@ public class NewFixedAssetsException implements Serializable
                 + "DepExpenseAccountNumber VARCHAR(255), "
                 + "FAPdepDate VARCHAR(100), "
                 + "Branch VARCHAR(200), "
+                +"PurchasedDate Date, "
                 + "RecordStatus VARCHAR(50), "
                 + "Inputter VARCHAR(255), "
                 + "InputterRec VARCHAR(255), "
@@ -289,8 +313,8 @@ public class NewFixedAssetsException implements Serializable
                 + "(FAPcatID, FAPcategory, AssetsName, AssetsAmount, Duration, Branch, "
                 + "FAPdepExpAcctNumber, FAPPrePayAcctNumber, AssetAccountNumber, DepExpenseAccountNumber, "
                 + "FAPdepDate, RecordStatus, Inputter, InputterRec, Authoriser, AuthoriserRec, "
-                + "updatetype, FAPtenancy, AuditDateRecord, YUser, ProfileUser, UserTransit, UserTenancy) "
-                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                + "updatetype, FAPtenancy, AuditDateRecord, YUser, ProfileUser, UserTransit, UserTenancy, PurchasedDate) "
+                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?)";
 
         insertPs = connection.prepareStatement(insertSQL);
         insertPs.setString(1, existingFixedAsset.getFAPcatID());
@@ -312,10 +336,12 @@ public class NewFixedAssetsException implements Serializable
         insertPs.setString(17, existingFixedAsset.getUpdatetype());
         insertPs.setString(18, existingFixedAsset.getFAPtenancy());
         insertPs.setString(19, GetSystemDates.GetAuditTrailDate());
-        insertPs.setString(20, "DefaultUser"); // Adjust if needed
-        insertPs.setString(21, "DefaultProfile"); // Adjust if needed
-        insertPs.setString(22, "DefaultTransit"); // Adjust if needed
-        insertPs.setString(23, "DefaultTenancy"); // Adjust if needed
+        insertPs.setString(20, "DefaultUser"); 
+        insertPs.setString(21, "DefaultProfile"); 
+        insertPs.setString(22, "DefaultTransit"); 
+        insertPs.setString(23, "DefaultTenancy"); 
+        insertPs.setDate(24, existingFixedAsset.getPurchasedDate()); 
+        
 
         insertPs.executeUpdate();
 

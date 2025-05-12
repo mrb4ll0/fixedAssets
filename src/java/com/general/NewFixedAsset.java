@@ -28,6 +28,7 @@ import javax.faces.event.AjaxBehaviorEvent;
 import javax.faces.view.ViewScoped;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import org.primefaces.event.SelectEvent;
 
 /**
  *
@@ -185,6 +186,16 @@ private String prepaymentAccountName;
 private String assetsName;
 private String assetsAmount;
 private int duration;
+private Date purchasedDate = new Date();
+
+    public Date getPurchasedDate() {
+        return purchasedDate;
+    }
+
+    public void setPurchasedDate(Date purchasedDate) {
+        this.purchasedDate = purchasedDate;
+    }
+
 
     public int getDuration() {
         return duration;
@@ -388,6 +399,10 @@ private List<Map<String, Object>> fixedAssetsData;
 private Integer errorfieldcount;
 
   
+public void onSelectPurchasedDate(SelectEvent event)
+{
+   System.out.println("purchased date is "+purchasedDate);   
+}
 
     @PostConstruct
    public void init() {
@@ -602,6 +617,7 @@ public void newFixedAssetCategoryCheck() {
                 + "DepExpenseAccountNumber VARCHAR(255), "
                 + "FAPdepDate VARCHAR(100), "
                 + "Branch VARCHAR(200), "
+                +"PurchasedDate Date ,"
                 + "RecordStatus VARCHAR(50), "
                 + "Inputter VARCHAR(255), "
                 + "InputterRec VARCHAR(255), "
@@ -624,7 +640,7 @@ public void newFixedAssetCategoryCheck() {
         String insertQuery = "INSERT INTO fixedAssetTemp (FAPcatID, FAPcategory, AssetsName, AssetsAmount, Duration, Branch, "
                 + "FAPdepExpAcctNumber, FAPPrePayAcctNumber, AssetAccountNumber, DepExpenseAccountNumber, RecordStatus, Inputter, "
                 + "InputterRec, Authoriser, AuthoriserRec, updatetype, FAPtenancy, AuditDateRecord, YUser, ProfileUser, "
-                + "UserTransit, UserTenancy, FAPdepDate ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?)";
+                + "UserTransit, UserTenancy, FAPdepDate ,PurchasedDate) VALUES (?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?)";
 
         try (PreparedStatement insertStmt = connection.prepareStatement(insertQuery)) {
             insertStmt.setString(1, stringCategoryID);
@@ -650,6 +666,7 @@ public void newFixedAssetCategoryCheck() {
             insertStmt.setString(21, ytransit); // Placeholder for UserTransit
             insertStmt.setString(22, yTenancynum); // UserTenancy
             insertStmt.setString(23, getDepExpenseDateByCategoryId(stringCategoryID));
+            insertStmt.setDate(24,new java.sql.Date(purchasedDate.getTime()));
             
 
             int rowsInserted = insertStmt.executeUpdate();

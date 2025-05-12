@@ -3,93 +3,102 @@
       xmlns:f="http://xmlns.jcp.org/jsf/core"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:p="http://primefaces.org/ui">
-<h:head>
-    <title>New Fixed Asset Authorization</title>
-     <h:outputStylesheet library="css" name="ComSetting.css" />
-</h:head>
-<h:body>
-    <h:form id="fixedAssetForm">
-        <p:growl id="growl" showDetail="true" life="3000" sticky="true"/>
-        <h2>New Fixed Asset Authorization</h2>
-            
-        <p:commandButton value="Export as CSV"
-                         icon="pi pi-download"
-                         styleClass="p-button-secondary"
-                         ajax="false"
-                         onclick="PrimeFaces.exporter.export('#{component.clientId}', { type: 'csv' }); return false;">
-            <p:dataTable id="unauthorizedAccountsTable"
-                         value="#{authNewFixedAsset.authNewFixedAsset}"
-                         var="account"
-                          rowIndexVar="r" 
-                         rowStyleClass="#{r % 2 == 0 ? 'evenClass' : 'oddClass'}"
-                         resizableColumns="true" 
-                         widgetVar="unauthorizedAccountsTable"
-                         paginator="true"
-                         rows="10"
-                         showGridlines="true"
-                         stickyHeader="true"
-                         styleClass="myLDRepay">
+    <h:head>
+        <title>New Fixed Asset Authorization</title>
+        <h:outputStylesheet library="css" name="ComSetting.css" />
+    </h:head>
+    <h:body>
+        <h:form id="fixedAssetForm">
+            <p:growl id="growl" showDetail="true" life="3000" sticky="true"/>
+            <h2>New Fixed Asset Authorization</h2>
 
-    
+            <p:commandButton value="Export as CSV"
+                             icon="pi pi-download"
+                             styleClass="p-button-secondary"
+                             ajax="false"
+                             onclick="PrimeFaces.exporter.export('#{component.clientId}', {type: 'csv'}); return false;">
+                <p:dataTable id="unauthorizedAccountsTable"
+                             value="#{authNewFixedAsset.authNewFixedAsset}"
+                             var="account"
+                             rowIndexVar="r" 
+                             rowStyleClass="#{r % 2 == 0 ? 'evenClass' : 'oddClass'}"
+                             resizableColumns="true" 
+                             widgetVar="unauthorizedAccountsTable"
+                             paginator="true"
+                             rows="10"
+                             showGridlines="true"
+                             stickyHeader="true"
+                             styleClass="myLDRepay">
 
-    <!-- Serial Number Column -->
-    <p:column headerText="S/N" style="font-size: 10pt; text-align: center;" width="50">
-        <h:outputText value="#{r + 1}" />
-    </p:column>
 
-    <!-- Category (Required) -->
-    <p:column headerText="Category*" style="font-size: 10pt;">
-        <h:outputText value="#{account.FAPcategory}" />
-    </p:column>
 
-    <!-- Category ID -->
-    <p:column headerText="Category ID" style="font-size: 10pt;">
-        <h:outputText value="#{account.FAPcatID}" />
-    </p:column>
+                    <!-- Serial Number Column -->
+                    <p:column headerText="S/N" style="font-size: 10pt; text-align: center;" width="50">
+                        <h:outputText value="#{r + 1}" />
+                    </p:column>
 
-    <!-- Assets Name (Required) -->
-    <p:column headerText="Assets Name*" style="font-size: 10pt;">
-        <h:outputText value="#{account.assetName}" />
-    </p:column>
+                    <!-- Category (Required) -->
+                    <p:column headerText="Category*" style="font-size: 10pt;">
+                        <h:outputText value="#{account.FAPcategory}" />
+                    </p:column>
 
-    <!-- Assets Amount (Required) -->
-    <p:column headerText="Assets Amount*" style="font-size: 10pt; text-align: right;">
-        <h:outputText value="#{account.assetAmount}">
-            <f:convertNumber type="currency" currencySymbol="₦" />
-        </h:outputText>
-    </p:column>
+                    <!-- Category ID -->
+                    <p:column headerText="Category ID" style="font-size: 10pt;">
+                        <h:outputText value="#{account.FAPcatID}" />
+                    </p:column>
 
-    <!-- Duration in Months (Required) -->
-    <p:column headerText="Duration (Months)*" style="font-size: 10pt; text-align: center;">
-        <h:outputText value="#{account.durationsMonth}" />
-    </p:column>
+                    <!-- Assets Name (Required) -->
+                    <p:column headerText="Assets Name*" style="font-size: 10pt;">
+                        <h:outputText value="#{account.assetName}" />
+                    </p:column>
 
-    <!-- Assets Account -->
-    <p:column headerText="Assets Account" style="font-size: 10pt;">
-        <h:outputText value="#{account.assetAccount}" />
-    </p:column>
+                    <!-- Assets Amount (Required) -->
+                    <p:column headerText="Assets Amount*" style="font-size: 10pt; text-align: right;">
+                        <h:outputText value="#{account.assetAmount}">
+                            <f:convertNumber type="currency" currencySymbol="₦" />
+                        </h:outputText>
+                    </p:column>
 
-    <!-- Depreciation Account (Required) -->
-    <p:column headerText="Depreciation Account*" style="font-size: 10pt;">
-        <h:outputText value="#{account.FAPdepExpAcct}" />
-    </p:column>
+                    <!-- Duration in Months (Required) -->
+                    <p:column headerText="Duration (Months)*" style="font-size: 10pt; text-align: center;">
+                        <h:outputText value="#{account.durationsMonth}" />
+                    </p:column>
 
-    <!-- Prepayment Account -->
-    <p:column headerText="Prepayment Account" style="font-size: 10pt;">
-        <h:outputText value="#{account.FAPPrePayAcct}" />
-    </p:column>
-         <!-- Branch -->
-      <p:column headerText="Branch" style="font-size: 10pt;">
-          <h:outputText value="#{account.branch}" />
-    </p:column>
-    <!-- Depreciation Expense Account -->
-    <p:column headerText="Dep. Expense Account" style="font-size: 10pt;">
-        <h:outputText value="#{account.depExpenseAccount}" />
-    </p:column>
+                    <!-- Assets Account -->
+                    <p:column headerText="Assets Account" style="font-size: 10pt;">
+                        <h:outputText value="#{account.assetAccount}" />
+                    </p:column>
 
-</p:dataTable>
+                    <!-- Depreciation Account (Required) -->
+                    <p:column headerText="Depreciation Account*" style="font-size: 10pt;">
+                        <h:outputText value="#{account.FAPdepExpAcct}" />
+                    </p:column>
 
-        </p:commandButton>
-    </h:form>
-</h:body>
+                    <!-- Prepayment Account -->
+                    <p:column headerText="Prepayment Account" style="font-size: 10pt;">
+                        <h:outputText value="#{account.FAPPrePayAcct}" />
+                    </p:column>
+
+                    <!-- Depreciation Expense Account -->
+                    <p:column headerText="Dep. Expense Account" style="font-size: 10pt;">
+                        <h:outputText value="#{account.depExpenseAccount}" />
+                    </p:column>
+                    <!-- Branch -->
+                    <p:column headerText="Branch" style="font-size: 10pt;">
+                        <h:outputText value="#{account.branch}" />
+                    </p:column>
+
+
+                    <!-- Purchase  Date(Required) -->
+                    <p:column headerText="Purchased Date" style="font-size: 10pt;">
+                        <h:outputText value="#{account.purchasedDate}">
+                        <f:convertDateTime pattern="dd-MM-yyyy" />
+                    </h:outputText>
+                    </p:column>
+
+                </p:dataTable>
+
+            </p:commandButton>
+        </h:form>
+    </h:body>
 </html>

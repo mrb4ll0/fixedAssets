@@ -123,6 +123,15 @@ public class EditFixedAssetParameterSetup implements Serializable {
     private Map<String, String> depExpenseAccounts = new HashMap();
     private Map<String, String> assetAccounts = new HashMap();
     private List<Map<String, Object>> fixedAssetsData =new ArrayList<>();
+    private List<Integer> depreciationDays = new ArrayList<>();
+
+    public List<Integer> getDepreciationDays() {
+        return depreciationDays;
+    }
+
+    public void setDepreciationDays(List<Integer> depreciationDays) {
+        this.depreciationDays = depreciationDays;
+    }
 
     
 
@@ -149,6 +158,11 @@ public class EditFixedAssetParameterSetup implements Serializable {
             assetAccounts.put(
             fixedAssetsData.get(i).get("AssetAccountNumber").toString(),
                     fixedAssetsData.get(i).get("AssetAccountName").toString());
+        }
+        
+        for(int i = 1; i<29; i++)
+        {
+            depreciationDays.add(i);
         }
     }
     public void onselectedCategory()
@@ -201,7 +215,7 @@ public class EditFixedAssetParameterSetup implements Serializable {
         private String depreciationAccount;
         private String assetAccount;
         private String depExpenseAccount;
-        private Date depreciationDay = new Date();
+        private int depreciationDay = 0;
         private String status;
         private String createdDate;
         private String createdBy;
@@ -226,8 +240,8 @@ public class EditFixedAssetParameterSetup implements Serializable {
         public String getDepExpenseAccount() { return depExpenseAccount; }
         public void setDepExpenseAccount(String accumulatedDepreciationAccount) { this.depExpenseAccount = accumulatedDepreciationAccount; }
 
-        public Date getDepreciationDay() { return depreciationDay; }
-        public void setDepreciationDay(Date depreciationDay) { this.depreciationDay = depreciationDay; }
+        public int getDepreciationDay() { return depreciationDay; }
+        public void setDepreciationDay(int depreciationDay) { this.depreciationDay = depreciationDay; }
 
         public String getStatus() { return status; }
         public void setStatus(String status) { this.status = status; }
@@ -423,11 +437,9 @@ private void fetchDataFromTable(Connection connection, String tableName, List<Ma
 }
 
    public void onSelectMonthDay(SelectEvent event) {
-    if (event.getObject() != null) {
-        depreciationDay = (Date) event.getObject();
-    } else {
-        System.out.println("Event object is null!");
-    }
+   
+        System.out.println("day selected is "+depreciationDay);
+    
 }
 
    public void editFixedAssetCategoryCheck()
@@ -492,10 +504,9 @@ public boolean updateOrInsertFixedAssetParamByCategoryId() {
                     updateSql.append("FAPPrePayAcctNumber = ?, ");
                     params.add(getAccountNumber(prepaymentAccount));
                 }
-                if (depreciationDay != null) {
+                if (depreciationDay != 0) {
                     updateSql.append("FAPdepDate = ?, ");
-                    SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-                    params.add(formatter.format(depreciationDay));
+                    params.add(depreciationDay);
                 }
                 if (assetAccount != null && !assetAccount.trim().isEmpty()) {
                     updateSql.append("AssetAccountNumber = ?, ");

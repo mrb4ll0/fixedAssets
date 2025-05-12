@@ -735,3 +735,16 @@ li.ui-tabmenuitem.ui-state-default.ui-state-active {
 .EntryCenterTest {
     background: #c72516 !important;
 }
+
+.overlay-growl {
+    position: absolute;
+    top: 100px;
+    left: 0;
+    right: 0;
+    margin: auto;
+    width: fit-content;
+    z-index: 9999;
+    background: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 0 10px rgba(0,0,0,0.5);
+    pointer-events: auto;
+}

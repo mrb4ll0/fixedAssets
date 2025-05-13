@@ -719,7 +719,7 @@ public String getDepExpenseDateByCategoryId(String categoryId) {
         connection = obj_DB_connection.get_connection();
 
         // Query to fetch depreciation expense date based on category ID
-        String query = "SELECT FAPdepDate FROM authFixedAssetParamSetup WHERE FAPcatID = ?";
+        String query = "SELECT FAPdepDate FROM FixedAssetParamSetup WHERE FAPcatID = ?";
         try (PreparedStatement ps = connection.prepareStatement(query)) {
             ps.setString(1, categoryId);
             try (ResultSet rs = ps.executeQuery()) {
@@ -751,7 +751,7 @@ public String getCategoryById(String categoryId) {
         connection = obj_DB_connection.get_connection();
 
         // Query to fetch category name based on category ID
-        String query = "SELECT FAPcategory FROM authFixedAssetParamSetup WHERE FAPcatID = ?";
+        String query = "SELECT FAPcategory FROM FixedAssetParamSetup WHERE FAPcatID = ?";
         try (PreparedStatement ps = connection.prepareStatement(query)) {
             ps.setString(1, categoryId);
             try (ResultSet rs = ps.executeQuery()) {

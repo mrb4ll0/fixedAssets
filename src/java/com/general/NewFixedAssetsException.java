@@ -124,6 +124,9 @@ public class NewFixedAssetsException implements Serializable
      if(savedSuccess)
      {
          deleteFixedAsset(fa.getFAPcatID());
+         DBConnection dbConn = new DBConnection();
+         DepreciationScheduler sched = new DepreciationScheduler(dbConn);
+         sched.start();
      }
  }
  
@@ -165,6 +168,7 @@ public class NewFixedAssetsException implements Serializable
                 + "FAPdepDate VARCHAR(100), "
                 + "Branch VARCHAR(200), "
                 +"PurchasedDate Date, "
+                +"DepreciationAmount BIGINT, "
                 + "RecordStatus VARCHAR(50), "
                 + "Inputter VARCHAR(255), "
                 + "InputterRec VARCHAR(255), "
@@ -186,9 +190,10 @@ public class NewFixedAssetsException implements Serializable
                 + "(FAPcatID, FAPcategory, AssetsName, AssetsAmount, Duration, Branch, "
                 + "FAPdepExpAcct, FAPPrePayAcct, AssetAccount, DepExpenseAccount, "
                 + "FAPdepDate, RecordStatus, Inputter, InputterRec, Authoriser, AuthoriserRec, "
-                + "updatetype, FAPtenancy, AuditDateRecord, YUser, ProfileUser, UserTransit, UserTenancy,PurchasedDate) "
-                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?)";
-
+                + "updatetype, FAPtenancy, AuditDateRecord, YUser, ProfileUser, UserTransit, UserTenancy,PurchasedDate, DepreciationAmount "
+                + ")VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?)";
+          Long depreciationAmount =Long.parseLong(asset.getAssetAmount())/ FADepreciationService.getDepreciationDayByCategoryId(connection,asset.getFAPcatID());
+          System.out.println("Depreciation Amount is "+depreciationAmount);
         ps = connection.prepareStatement(insertSQL);
         ps.setString(1, asset.getFAPcatID());
         ps.setString(2, asset.getFAPcategory());
@@ -214,10 +219,12 @@ public class NewFixedAssetsException implements Serializable
         ps.setString(22, ytransit);
         ps.setString(23, yTenancynum);
         ps.setDate(24, asset.getPurchasedDate());
+        ps.setLong(25, depreciationAmount);
 
         ps.executeUpdate();
         connection.commit();
         System.out.println("Insertion successful in authFixedAsset!");
+        
         return true;
 
     }

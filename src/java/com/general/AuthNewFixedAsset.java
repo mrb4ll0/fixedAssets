@@ -207,6 +207,7 @@ public class AuthNewFixedAsset implements Serializable{
     
     public void onSelectBranch()
     {
+        List<FixedAsset> reportList = new ArrayList<>();
         String query;
         if(branches != "All Branches")
         {

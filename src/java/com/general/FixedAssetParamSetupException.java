@@ -65,7 +65,7 @@ public List<FixedAssetParameter> fetchFixedAssetParams() {
         connection = obj_DB_connection.get_connection();
 
         // **Query now selects all records without any condition**
-        String query = "SELECT FAPcategory, FAPcatID, AssetAccountNumber, FAPPrePayAcctNumber, FAPdepExpAcctNumber, DepExpenseAccountNumber, FAPdepDate FROM fixedAssetParamTemp";
+        String query = "SELECT FAPcategory, FAPcatID, AssetAccountNumber, FAPPrePayAcctNumber, FAPdepExpAcctNumber, DepExpenseAccountNumber, FAPdepDate, FAPdepDay FROM fixedAssetParamTemp";
 
         ps = connection.prepareStatement(query);
         rs = ps.executeQuery();
@@ -79,7 +79,8 @@ public List<FixedAssetParameter> fetchFixedAssetParams() {
             param.setPrepaymentAccount(rs.getString("FAPPrePayAcctNumber"));
             param.setDepreciationAccount(rs.getString("FAPdepExpAcctNumber"));
             param.setDepExpenseAccount(rs.getString("DepExpenseAccountNumber"));
-            param.setDepreciationDay(rs.getString("FAPdepDate"));
+            param.setDepreciationDay(rs.getString("FAPdepDay"));
+            param.setDepreciationDate(rs.getString("FAPdepDate"));
 
             resultList.add(param);
         }
@@ -133,32 +134,7 @@ public List<FixedAssetParameter> fetchFixedAssetParams() {
 
         // **Create fixedAssetTemp Table If It Doesn't Exist**
         // **Create fixedAssetTemp Table If It Doesn't Exist**
-String createFixedAssetTempSQL = "CREATE TABLE IF NOT EXISTS fixedAssetTemp ("
-        + "FAPcatID VARCHAR(255) UNIQUE, "
-        + "FAPcategory VARCHAR(255) UNIQUE, "
-        + "AssetsName VARCHAR(255), "
-        + "AssetsAmount VARCHAR(255), "
-        + "Duration VARCHAR(255), "
-        + "FAPdepExpAcctNumber VARCHAR(255), "
-        + "FAPPrePayAcctNumber VARCHAR(255), "
-        + "AssetAccountNumber VARCHAR(255), "
-        + "DepExpenseAccountNumber VARCHAR(255), "
-        + "FAPdepDate VARCHAR(100), "
-        +"Branch VARCHAR(200),"
-        + "RecordStatus VARCHAR(50), "
-        + "Inputter VARCHAR(255), "
-        + "InputterRec VARCHAR(255), "
-        + "Authoriser VARCHAR(255), "
-        + "AuthoriserRec VARCHAR(255), "
-        + "updatetype VARCHAR(50), "
-        + "FAPtenancy VARCHAR(255), "
-        + "AuditDateRecord VARCHAR(100), "
-        + "YUser VARCHAR(255), "
-        + "ProfileUser VARCHAR(255), "
-        + "UserTransit VARCHAR(255), "
-        + "UserTenancy VARCHAR(255))";
 statement = connection.createStatement();
-statement.execute(createFixedAssetTempSQL);
 
 // **Create authFixedAssetParamSetup Table If It Doesn't Exist**
 String createAuthTableSQL = "CREATE TABLE IF NOT EXISTS FixedAssetParamSetup ("
@@ -172,6 +148,7 @@ String createAuthTableSQL = "CREATE TABLE IF NOT EXISTS FixedAssetParamSetup ("
         + "AssetAccountNumber VARCHAR(255), "
         + "DepExpenseAccountNumber VARCHAR(255), "
         + "FAPdepDate VARCHAR(100), "
+        + "FAPdepDay VARCHAR(100), "
         + "RecordStatus VARCHAR(50), "
         + "Inputter VARCHAR(255), "
         + "InputterRec VARCHAR(255), "
@@ -186,45 +163,13 @@ String createAuthTableSQL = "CREATE TABLE IF NOT EXISTS FixedAssetParamSetup ("
         + "UserTenancy VARCHAR(255))";
 
 statement.execute(createAuthTableSQL);
-
-      // **Insert Data into fixedAssetTemp**
-String insertTempSQL = "INSERT INTO fixedAssetTemp "
-        + "(FAPcategory, FAPcatID, AssetAccountNumber, FAPPrePayAcctNumber, "
-        + "FAPdepExpAcctNumber, DepExpenseAccountNumber, FAPdepDate, RecordStatus, "
-        + "Inputter, InputterRec, Authoriser, AuthoriserRec, updatetype, FAPtenancy, "
-        + "AuditDateRecord, YUser, ProfileUser, UserTransit, UserTenancy) "
-        + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-
-psTemp = connection.prepareStatement(insertTempSQL);
-psTemp.setString(1, param.getCategory());
-psTemp.setString(2, param.getCategoryId());
-psTemp.setString(3, param.getAssetAccount());
-psTemp.setString(4, param.getPrepaymentAccount());
-psTemp.setString(5, param.getDepreciationAccount());
-psTemp.setString(6, param.getDepExpenseAccount());
-psTemp.setString(7, param.getDepreciationDay());
-psTemp.setString(8, "Active"); // Assuming default status, modify as needed
-psTemp.setString(9, yuser);
-psTemp.setString(10, yprofileuser);
-psTemp.setString(11, "DefaultAuthoriser"); // Modify if necessary
-psTemp.setString(12, "DefaultAuthoriserRec"); // Modify if necessary
-psTemp.setString(13, "Insert"); // Assuming 'Insert' as updatetype
-psTemp.setString(14, yTenancynum);
-psTemp.setString(15, auditDateRecord);
-psTemp.setString(16, yuser);
-psTemp.setString(17, yprofileuser);
-psTemp.setString(18, ytransit);
-psTemp.setString(19, yTenancynum);
-
-psTemp.executeUpdate();
-
 // **Insert Data into authFixedAssetParamSetup**
 String insertAuthSQL = "INSERT INTO FixedAssetParamSetup "
         + "(FAPcategory, FAPcatID, AssetAccountNumber, FAPPrePayAcctNumber, "
         + "FAPdepExpAcctNumber, DepExpenseAccountNumber, FAPdepDate, RecordStatus, "
         + "Inputter, InputterRec, Authoriser, AuthoriserRec, updatetype, FAPtenancy, "
-        + "AuditDateRecord, YUser, ProfileUser, UserTransit, UserTenancy) "
-        + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        + "AuditDateRecord, YUser, ProfileUser, UserTransit, UserTenancy,FAPdepDay) "
+        + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?)";
 
 psAuth = connection.prepareStatement(insertAuthSQL);
 psAuth.setString(1, param.getCategory());
@@ -233,19 +178,20 @@ psAuth.setString(3, param.getAssetAccount());
 psAuth.setString(4, param.getPrepaymentAccount());
 psAuth.setString(5, param.getDepreciationAccount());
 psAuth.setString(6, param.getDepExpenseAccount());
-psAuth.setString(7, param.getDepreciationDay());
-psAuth.setString(8, "Active"); // Assuming default status, modify as needed
+psAuth.setString(7, param.getDepreciationDate());
+psAuth.setString(8, "AUTH"); 
 psAuth.setString(9, yuser);
-psAuth.setString(10, yprofileuser);
-psAuth.setString(11, "DefaultAuthoriser"); // Modify if necessary
-psAuth.setString(12, "DefaultAuthoriserRec"); // Modify if necessary
-psAuth.setString(13, "Insert"); // Assuming 'Insert' as updatetype
+psAuth.setString(10, auditDateRecord);
+psAuth.setString(11, "SYSTEM"); 
+psAuth.setString(12, auditDateRecord); 
+psAuth.setString(13, "Insert"); 
 psAuth.setString(14, yTenancynum);
 psAuth.setString(15, auditDateRecord);
 psAuth.setString(16, yuser);
 psAuth.setString(17, yprofileuser);
 psAuth.setString(18, ytransit);
 psAuth.setString(19, yTenancynum);
+psAuth.setString(20, param.getDepreciationDay());
 
 psAuth.executeUpdate();
         System.out.println("Insertion successful in fixedAssetTemp and authFixedAssetParamSetup!");
@@ -318,7 +264,8 @@ psAuth.executeUpdate();
                 + "FAPPrePayAcctNumber VARCHAR(50) NOT NULL, "
                 + "FAPdepExpAcctNumber VARCHAR(50) NOT NULL, "
                 + "DepExpenseAccountNumber VARCHAR(50) NOT NULL, "
-                + "FAPdepDate VARCHAR(10) NOT NULL)";
+                + "FAPdepDate VARCHAR(10) NOT NULL,"
+                + "FAPdepDay VARCHAR(10) NOT NULL)";
         
         createTablePs = connection.prepareStatement(createTableSQL);
         createTablePs.executeUpdate();
@@ -326,8 +273,8 @@ psAuth.executeUpdate();
         // **Insert the Deleted Data into deletedFixedAssetParam**
         String insertSQL = "INSERT INTO deletedFixedAssetParam "
                 + "(FAPcategory, FAPcatID, AssetAccountNumber, FAPPrePayAcctNumber, "
-                + "FAPdepExpAcctNumber, DepExpenseAccountNumber, FAPdepDate) "
-                + "VALUES (?, ?, ?, ?, ?, ?, ?)";
+                + "FAPdepExpAcctNumber, DepExpenseAccountNumber, FAPdepDate, FAPdepDay) "
+                + "VALUES (?, ?, ?, ?, ?, ?, ?,?)";
 
         insertPs = connection.prepareStatement(insertSQL);
         insertPs.setString(1, existingParam.getCategory());
@@ -336,7 +283,10 @@ psAuth.executeUpdate();
         insertPs.setString(4, existingParam.getPrepaymentAccount());
         insertPs.setString(5, existingParam.getDepreciationAccount());
         insertPs.setString(6, existingParam.getDepExpenseAccount());
-        insertPs.setString(7, existingParam.getDepreciationDay());
+        insertPs.setString(7, existingParam.getDepreciationDate());
+        insertPs.setString(8, existingParam.getDepreciationDay());
+        
+        
 
         insertPs.executeUpdate();
 

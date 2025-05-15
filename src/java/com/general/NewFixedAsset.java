@@ -426,7 +426,7 @@ public void onSelectPurchasedDate(SelectEvent event)
         connection = obj_DB_connection.get_connection();
 
         PreparedStatement ps = connection.prepareStatement(
-            "SELECT FAPcatID, FAPcategory, FAPdepExpAcctNumber, FAPPrePayAcctNumber, FAPdepDate, AssetAccountNumber, DepExpenseAccountNumber FROM FixedAssetParamSetup"
+            "SELECT FAPcatID, FAPcategory, FAPdepExpAcctNumber, FAPPrePayAcctNumber, FAPdepDate, AssetAccountNumber, DepExpenseAccountNumber, FAPdepDay FROM FixedAssetParamSetup"
         );
 
         ResultSet rs = ps.executeQuery();
@@ -438,16 +438,16 @@ public void onSelectPurchasedDate(SelectEvent event)
             String assetAcct = rs.getString("AssetAccountNumber");
             String depExpAccount = rs.getString("DepExpenseAccountNumber");
             String depDate = rs.getString("FAPdepDate");
+            String depDay = rs.getString("FAPdepDate");
             row.put("FAPcatID", rs.getString("FAPcatID"));
             row.put("FAPcategory", rs.getString("FAPcategory"));
             row.put("FAPdepExpAcctNumber", depExpAcct);
             row.put("FAPdepExpAcctName", getAccountName(connection, depExpAcct));
             row.put("FAPdepDate", depDate);
+            row.put("FAPdepDay",depDay);
 
             row.put("FAPPrePayAcctNumber", prePayAcct);
             row.put("FAPPrePayAcctName", getAccountName(connection, prePayAcct));
-
-            row.put("FAPdepDate", rs.getString("FAPdepDate"));
 
             row.put("AssetAccountNumber", assetAcct);
             row.put("AssetAccountName", getAccountName(connection, assetAcct));
@@ -616,6 +616,7 @@ public void newFixedAssetCategoryCheck() {
                 + "AssetAccountNumber VARCHAR(255), "
                 + "DepExpenseAccountNumber VARCHAR(255), "
                 + "FAPdepDate VARCHAR(100), "
+                + "FAPdepDay VARCHAR(100), "
                 + "Branch VARCHAR(200), "
                 +"PurchasedDate Date ,"
                 + "RecordStatus VARCHAR(50), "
@@ -640,7 +641,7 @@ public void newFixedAssetCategoryCheck() {
         String insertQuery = "INSERT INTO fixedAssetTemp (FAPcatID, FAPcategory, AssetsName, AssetsAmount, Duration, Branch, "
                 + "FAPdepExpAcctNumber, FAPPrePayAcctNumber, AssetAccountNumber, DepExpenseAccountNumber, RecordStatus, Inputter, "
                 + "InputterRec, Authoriser, AuthoriserRec, updatetype, FAPtenancy, AuditDateRecord, YUser, ProfileUser, "
-                + "UserTransit, UserTenancy, FAPdepDate ,PurchasedDate) VALUES (?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?)";
+                + "UserTransit, UserTenancy, FAPdepDate ,PurchasedDate,FAPdepDay) VALUES (?,?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?)";
 
         try (PreparedStatement insertStmt = connection.prepareStatement(insertQuery)) {
             insertStmt.setString(1, stringCategoryID);
@@ -653,7 +654,7 @@ public void newFixedAssetCategoryCheck() {
             insertStmt.setString(8, prepaymentAccount);
             insertStmt.setString(9, assetAccount);
             insertStmt.setString(10, depExpenseAccount);
-            insertStmt.setString(11, "Active");  // Default Record Status
+            insertStmt.setString(11, "INAU");  // Default Record Status
             insertStmt.setString(12, yuser); // Inputter from session
             insertStmt.setString(13, yuser); // Placeholder for InputterRec
             insertStmt.setString(14, yuser); // Placeholder for Authoriser
@@ -665,8 +666,11 @@ public void newFixedAssetCategoryCheck() {
             insertStmt.setString(20, "Default Profile"); // Default ProfileUser
             insertStmt.setString(21, ytransit); // Placeholder for UserTransit
             insertStmt.setString(22, yTenancynum); // UserTenancy
-            insertStmt.setString(23, getDepExpenseDateByCategoryId(stringCategoryID));
+             Map<String,String> mappedDepDate = getDepExpenseDateByCategoryId(stringCategoryID);
+            insertStmt.setString(23, mappedDepDate.get("FAPdepDate"));
             insertStmt.setDate(24,new java.sql.Date(purchasedDate.getTime()));
+            insertStmt.setString(25,mappedDepDate.get("FAPdepDay"));
+          
             
 
             int rowsInserted = insertStmt.executeUpdate();
@@ -710,21 +714,22 @@ private void addFacesMessage(FacesMessage.Severity severity, String summary, Str
     facesContext.getExternalContext().getFlash().setKeepMessages(true);
 }
 
-public String getDepExpenseDateByCategoryId(String categoryId) {
+public Map<String,String> getDepExpenseDateByCategoryId(String categoryId) {
     Connection connection = null;
-    String depExpenseDate = null;
+    Map<String,String> depExpenseDate = new HashMap<>();
 
     try {
         DBConnection obj_DB_connection = new DBConnection();
         connection = obj_DB_connection.get_connection();
 
         // Query to fetch depreciation expense date based on category ID
-        String query = "SELECT FAPdepDate FROM FixedAssetParamSetup WHERE FAPcatID = ?";
+        String query = "SELECT FAPdepDate,FAPdepDay FROM FixedAssetParamSetup WHERE FAPcatID = ?";
         try (PreparedStatement ps = connection.prepareStatement(query)) {
             ps.setString(1, categoryId);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
-                    depExpenseDate = rs.getString("FAPdepDate");
+                    depExpenseDate.put("FAPdepDate", rs.getString("FAPdepDate"));
+                    depExpenseDate.put("FAPdepDay", rs.getString("FAPdepDay"));
                 }
             }
         }

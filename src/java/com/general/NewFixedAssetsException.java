@@ -166,6 +166,7 @@ public class NewFixedAssetsException implements Serializable
                 + "AssetAccount VARCHAR(255), "
                 + "DepExpenseAccount VARCHAR(255), "
                 + "FAPdepDate VARCHAR(100), "
+                + "FAPdepDay VARCHAR(100), "
                 + "Branch VARCHAR(200), "
                 +"PurchasedDate Date, "
                 +"DepreciationAmount BIGINT, "
@@ -190,8 +191,8 @@ public class NewFixedAssetsException implements Serializable
                 + "(FAPcatID, FAPcategory, AssetsName, AssetsAmount, Duration, Branch, "
                 + "FAPdepExpAcct, FAPPrePayAcct, AssetAccount, DepExpenseAccount, "
                 + "FAPdepDate, RecordStatus, Inputter, InputterRec, Authoriser, AuthoriserRec, "
-                + "updatetype, FAPtenancy, AuditDateRecord, YUser, ProfileUser, UserTransit, UserTenancy,PurchasedDate, DepreciationAmount "
-                + ")VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?)";
+                + "updatetype, FAPtenancy, AuditDateRecord, YUser, ProfileUser, UserTransit, UserTenancy,PurchasedDate, DepreciationAmount , FAPdepDay"
+                + ")VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?,?)";
           Long depreciationAmount =Long.parseLong(asset.getAssetAmount())/ FADepreciationService.getDepreciationDayByCategoryId(connection,asset.getFAPcatID());
           System.out.println("Depreciation Amount is "+depreciationAmount);
         ps = connection.prepareStatement(insertSQL);
@@ -206,7 +207,7 @@ public class NewFixedAssetsException implements Serializable
         ps.setString(9, asset.getAssetAccount());
         ps.setString(10, asset.getDepExpenseAccount());
         ps.setString(11, asset.getFAPdepDate());
-        ps.setString(12, "Active");  // Default RecordStatus
+        ps.setString(12, "AUTH");  // Default RecordStatus
         ps.setString(13, yuser);
         ps.setString(14, yprofileuser);
         ps.setString(15, "DefaultAuthoriser"); // Modify if needed
@@ -220,6 +221,7 @@ public class NewFixedAssetsException implements Serializable
         ps.setString(23, yTenancynum);
         ps.setDate(24, asset.getPurchasedDate());
         ps.setLong(25, depreciationAmount);
+        ps.setString(26, asset.getFAPdepDay());
 
         ps.executeUpdate();
         connection.commit();
@@ -303,6 +305,7 @@ public class NewFixedAssetsException implements Serializable
                 + "AssetAccountNumber VARCHAR(255), "
                 + "DepExpenseAccountNumber VARCHAR(255), "
                 + "FAPdepDate VARCHAR(100), "
+                + "FAPdepDay VARCHAR(100), "
                 + "Branch VARCHAR(200), "
                 +"PurchasedDate Date, "
                 + "RecordStatus VARCHAR(50), "
@@ -326,8 +329,8 @@ public class NewFixedAssetsException implements Serializable
                 + "(FAPcatID, FAPcategory, AssetsName, AssetsAmount, Duration, Branch, "
                 + "FAPdepExpAcctNumber, FAPPrePayAcctNumber, AssetAccountNumber, DepExpenseAccountNumber, "
                 + "FAPdepDate, RecordStatus, Inputter, InputterRec, Authoriser, AuthoriserRec, "
-                + "updatetype, FAPtenancy, AuditDateRecord, YUser, ProfileUser, UserTransit, UserTenancy, PurchasedDate) "
-                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?)";
+                + "updatetype, FAPtenancy, AuditDateRecord, YUser, ProfileUser, UserTransit, UserTenancy, PurchasedDate, FAPdepDay) "
+                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?)";
 
         insertPs = connection.prepareStatement(insertSQL);
         insertPs.setString(1, existingFixedAsset.getFAPcatID());
@@ -354,6 +357,7 @@ public class NewFixedAssetsException implements Serializable
         insertPs.setString(22, "DefaultTransit"); 
         insertPs.setString(23, "DefaultTenancy"); 
         insertPs.setDate(24, existingFixedAsset.getPurchasedDate()); 
+        insertPs.setString(25, existingFixedAsset.getFAPdepDay()); 
         
 
         insertPs.executeUpdate();

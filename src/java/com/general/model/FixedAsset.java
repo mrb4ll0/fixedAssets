@@ -27,6 +27,15 @@ public class FixedAsset {
     private String durationsMonth;
     private String branch; 
     private Date purchasedDate;
+    private String FAPdepDay;
+
+    public String getFAPdepDay() {
+        return FAPdepDay;
+    }
+
+    public void setFAPdepDay(String FAPdepDay) {
+        this.FAPdepDay = FAPdepDay;
+    }
 
     public Date getPurchasedDate() {
         return purchasedDate;

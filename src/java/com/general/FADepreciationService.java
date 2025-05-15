@@ -20,12 +20,12 @@ public class FADepreciationService {
 
 
     public static int getDepreciationDayByCategoryId(Connection conn, String categoryId) throws SQLException {
-        String sql = "SELECT FAPdepDate FROM FixedAssetParamSetup WHERE FAPcatID = ?";
+        String sql = "SELECT FAPdepDay FROM FixedAssetParamSetup WHERE FAPcatID = ?";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, categoryId);
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
-                    String depDateStr = rs.getString("FAPdepDate");
+                    String depDateStr = rs.getString("FAPdepDay");
                     try {
                         return Integer.parseInt(depDateStr.trim()); // Trim to avoid spaces
                     } catch (NumberFormatException e) {

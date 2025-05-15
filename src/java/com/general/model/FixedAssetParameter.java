@@ -17,6 +17,15 @@ public class FixedAssetParameter {
     private String depreciationAccount;
     private String depExpenseAccount;
     private String depreciationDay;
+    private String depreciationDate;
+
+    public String getDepreciationDate() {
+        return depreciationDate;
+    }
+
+    public void setDepreciationDate(String depreciationDate) {
+        this.depreciationDate = depreciationDate;
+    }
 
     // Getter and Setter for category
     public String getCategory() {

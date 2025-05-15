@@ -24,8 +24,11 @@ import javax.annotation.PostConstruct;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.LinkedHashMap;
+import javax.servlet.http.HttpServletRequest;
 import org.primefaces.event.SelectEvent;
 
 @ManagedBean(name = "editFixedAssetSetup")
@@ -124,6 +127,15 @@ public class EditFixedAssetParameterSetup implements Serializable {
     private Map<String, String> assetAccounts = new HashMap();
     private List<Map<String, Object>> fixedAssetsData =new ArrayList<>();
     private List<Integer> depreciationDays = new ArrayList<>();
+    private String depDate;
+
+    public String getDepDate() {
+        return depDate;
+    }
+
+    public void setDepDate(String depDate) {
+        this.depDate = depDate;
+    }
 
     public List<Integer> getDepreciationDays() {
         return depreciationDays;
@@ -404,7 +416,7 @@ public List<Map<String, Object>> getDataFromDatabase() {
 
 /** Helper method to fetch data from fixedAssetParamTemp */
 private void fetchDataFromTable(Connection connection, String tableName, List<Map<String, Object>> resultList) throws Exception {
-    String query = "SELECT FAPcatID, FAPcategory, FAPdepExpAcctNumber, FAPPrePayAcctNumber, FAPdepDate, AssetAccountNumber, DepExpenseAccountNumber FROM " + tableName;
+    String query = "SELECT FAPcatID, FAPcategory, FAPdepExpAcctNumber, FAPPrePayAcctNumber, FAPdepDay, AssetAccountNumber, DepExpenseAccountNumber FROM " + tableName;
     try (PreparedStatement ps = connection.prepareStatement(query);
          ResultSet rs = ps.executeQuery()) {
 
@@ -423,7 +435,7 @@ private void fetchDataFromTable(Connection connection, String tableName, List<Ma
             row.put("FAPPrePayAcctNumber", prePayAcct);
             row.put("FAPPrePayAcctName", GetAccountCustomer.getAccountName(prePayAcct));
 
-            row.put("FAPdepDate", rs.getString("FAPdepDate"));
+            row.put("FAPdepDay", rs.getString("FAPdepDay"));
 
             row.put("AssetAccountNumber", assetAcct);
             row.put("AssetAccountName", GetAccountCustomer.getAccountName(assetAcct));
@@ -436,9 +448,20 @@ private void fetchDataFromTable(Connection connection, String tableName, List<Ma
     }
 }
 
-   public void onSelectMonthDay(SelectEvent event) {
+   public void onSelectMonthDay(SelectEvent event)
+   {
    
         System.out.println("day selected is "+depreciationDay);
+         LocalDate today = LocalDate.now();
+
+        // Validate and set the date
+       
+            LocalDate updatedDate = today.withDayOfMonth(depreciationDay);
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            depDate = updatedDate.format(formatter);
+        
+
+        System.out.println("Depreciation Date: " + depDate);
     
 }
 
@@ -474,6 +497,8 @@ public boolean updateOrInsertFixedAssetParamByCategoryId() {
     Connection connection = null;
     PreparedStatement ps = null;
     ResultSet rs = null;
+     HttpServletRequest checkrequest = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
+    String depreciationDate = checkrequest.getParameter("fixedAssetsForm:tabViewMVS:depreciationDate");
 
     try {
         DBConnection obj_DB_connection = new DBConnection();
@@ -505,7 +530,7 @@ public boolean updateOrInsertFixedAssetParamByCategoryId() {
                     params.add(getAccountNumber(prepaymentAccount));
                 }
                 if (depreciationDay != 0) {
-                    updateSql.append("FAPdepDate = ?, ");
+                    updateSql.append("FAPdepDay = ?, ");
                     params.add(depreciationDay);
                 }
                 if (assetAccount != null && !assetAccount.trim().isEmpty()) {
@@ -515,6 +540,10 @@ public boolean updateOrInsertFixedAssetParamByCategoryId() {
                 if (depExpenseAccount != null && !depExpenseAccount.trim().isEmpty()) {
                     updateSql.append("DepExpenseAccountNumber = ?, ");
                     params.add(getAccountNumber(depExpenseAccount));
+                }
+                if (depreciationDate != null) {
+                    updateSql.append("FAPdepDate = ?, ");
+                    params.add(depreciationDate);
                 }
 
                 if (!params.isEmpty()) {

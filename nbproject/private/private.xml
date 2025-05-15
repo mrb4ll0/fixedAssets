@@ -12,6 +12,7 @@
             <file>file:/C:/Users/dell/OneDrive/Documents/NetBeansProjects/Demo/web/NewFixedAssetException.xhtml</file>
             <file>file:/C:/Users/dell/OneDrive/Documents/NetBeansProjects/Demo/src/java/com/general/GetAccountCustomer.java</file>
             <file>file:/C:/Users/dell/OneDrive/Documents/NetBeansProjects/Demo/src/java/com/general/EditFixedAssetParameterSetup.java</file>
+            <file>file:/C:/Users/dell/OneDrive/Documents/NetBeansProjects/Demo/src/java/com/general/FADepreciationService.java</file>
             <file>file:/C:/Users/dell/OneDrive/Documents/NetBeansProjects/Demo/web/EditFixedAssets.xhtml</file>
             <file>file:/C:/Users/dell/OneDrive/Documents/NetBeansProjects/Demo/web/index.xhtml</file>
             <file>file:/C:/Users/dell/OneDrive/Documents/NetBeansProjects/Demo/src/java/com/general/FAPSList.java</file>
@@ -26,12 +27,14 @@
             <file>file:/C:/Users/dell/OneDrive/Documents/NetBeansProjects/Demo/web/FixedAssetParameterSetupException.xhtml</file>
             <file>file:/C:/Users/dell/OneDrive/Documents/NetBeansProjects/Demo/web/CollateralAuth.xhtml</file>
             <file>file:/C:/Users/dell/OneDrive/Documents/NetBeansProjects/Demo/web/NewFixedAsset.xhtml</file>
+            <file>file:/C:/Users/dell/OneDrive/Documents/NetBeansProjects/Demo/src/java/com/general/DepreciationScheduler.java</file>
             <file>file:/C:/Users/dell/OneDrive/Documents/NetBeansProjects/Demo/web/FixedAssetParameterSetup.xhtml</file>
             <file>file:/C:/Users/dell/OneDrive/Documents/NetBeansProjects/Demo/web/GLMainHeader.xhtml</file>
             <file>file:/C:/Users/dell/OneDrive/Documents/NetBeansProjects/Demo/web/EditFixedAssetParameterSetup.xhtml</file>
             <file>file:/C:/Users/dell/OneDrive/Documents/NetBeansProjects/Demo/web/FAPSList.xhtml</file>
             <file>file:/C:/Users/dell/OneDrive/Documents/NetBeansProjects/Demo/src/java/com/newinput/NewCardStopReason.java</file>
             <file>file:/C:/Users/dell/OneDrive/Documents/NetBeansProjects/Demo/src/java/com/general/GetUserAccessRights.java</file>
+            <file>file:/C:/Users/dell/OneDrive/Documents/NetBeansProjects/Demo/src/java/com/general/DepreciationLogService.java</file>
             <file>file:/C:/Users/dell/OneDrive/Documents/NetBeansProjects/Demo/src/java/com/general/NewFixedAssetsException.java</file>
             <file>file:/C:/Users/dell/OneDrive/Documents/NetBeansProjects/Demo/web/resources/css/ComSetting.css</file>
             <file>file:/C:/Users/dell/OneDrive/Documents/NetBeansProjects/Demo/src/java/com/reports/RptClientAccountSearch.java</file>

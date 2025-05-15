@@ -82,18 +82,20 @@
             <p:outputLabel id="editFASelectedAccumDepAccount" value="#{editFixedAssetSetup.depExpenseAccount}" 
                            styleClass="GenEnrichTxt"/>
 
-            <p:outputLabel for="depreciationDate" value="Depreciation (Day):" />
-                                <p:selectOneMenu  maxlength="10" id="depreciationDate" styleClass="GenSELTxtreq" value="#{editFixedAssetSetup.depreciationDay}" required="true">
+            <p:outputLabel for="depreciationDay" value="Depreciation (Day):" />
+                                <p:selectOneMenu  maxlength="10" id="depreciationDay" styleClass="GenSELTxtreq" value="#{editFixedAssetSetup.depreciationDay}" required="true">
                                     <f:selectItem itemLabel="Select Day" itemValue=""/>
                                     <f:selectItems value="#{editFixedAssetSetup.depreciationDays}"/>
                                     <p:ajax 
                                         event="change"
                                         listener="#{editFixedAssetSetup.onSelectMonthDay(event)}" 
-                                        update="FASelectedDay"/>
+                                        update="FASelectedDay depreciationDate"/>
                                 </p:selectOneMenu>
                                 <p:outputLabel id="FASelectedDay" styleClass="GenEnrichTxt" value="#{editFixedAssetSetup.depreciationDay}"/>
 
-            
+            <p:outputLabel for="depreciationDate" value="Depreciation Date"/>
+                                <p:inputText styleClass="GenInputTxtreq" readonly="true"  id="depreciationDate" maxlength="25" size="35" value="#{editFixedAssetSetup.depDate}" required="true"/>
+                                <p:outputLabel/>
 
         </h:panelGrid>
          <p:spacer height="10"/>

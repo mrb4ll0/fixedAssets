@@ -12,6 +12,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -50,6 +53,16 @@ private String depExpenseAccount;
 private String selectedDepExpenseAccount;
 private int depreciationDay = 0;
 private boolean dataReady=false;
+private String depDate;
+
+    public String getDepDate() {
+        return depDate;
+    }
+
+    public void setDepDate(String depDate) {
+        this.depDate = depDate;
+    }
+  
 
     public boolean isDataReady()
     {
@@ -430,12 +443,22 @@ private Integer errorfieldcount;
     }
       System.out.println("depExpenseAccount is "+(depExpenseAccount)+" selectedDepreciationAccount is "+(selectedDepExpenseAccount));
  }
-  public void onSelectMonthDay(SelectEvent event) {
-    
-    
-        System.out.println("depreciationDay is "+depreciationDay);
-    
-}
+   public void onSelectMonthDay(SelectEvent event) 
+   {
+        System.out.println("depreciationDay is " + depreciationDay);
+
+        // Get current date
+        LocalDate today = LocalDate.now();
+
+        // Validate and set the date
+       
+            LocalDate updatedDate = today.withDayOfMonth(depreciationDay);
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            depDate = updatedDate.format(formatter);
+        
+
+        System.out.println("Depreciation Date: " + depDate);
+    }
 
 
    
@@ -492,6 +515,7 @@ private Integer errorfieldcount;
 
     HttpServletRequest checkrequest = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
     String stringCategoryID = checkrequest.getParameter("fixedAssetsForm:tabViewMVS:categoryId");
+    String depreciationDate = checkrequest.getParameter("fixedAssetsForm:tabViewMVS:depreciationDate");
 
     stringCategoryID = (stringCategoryID != null) ? stringCategoryID.trim() : "";
     int errorfieldcount = 0;
@@ -514,6 +538,14 @@ private Integer errorfieldcount;
     }
     if (depreciationDay == 0) {
         addFieldMessage("Depreciation Day:", "Missing!");
+        errorfieldcount++;
+    }
+    if(depreciationDate == null)
+    { 
+        System.out.println("depDate "+depDate);
+        System.out.println("faces depDate "+depreciationDate);
+        
+         addFieldMessage("Depreciation Date:", "Missing!");
         errorfieldcount++;
     }
 
@@ -542,6 +574,7 @@ private Integer errorfieldcount;
                             "AssetAccountNumber VARCHAR(255), " +
                             "DepExpenseAccountNumber VARCHAR(255), " +
                             "FAPdepDate VARCHAR(20), " +
+                            "FAPdepDay VARCHAR(20), "+
                             "RecordStatus VARCHAR(50), " +
                             "Inputter VARCHAR(255), " +
                             "InputterRec VARCHAR(255), " +
@@ -595,8 +628,8 @@ private Integer errorfieldcount;
         String insertSQL = "INSERT INTO fixedAssetParamTemp (" +
                 "FAPcatID, FAPcategory, FAPdepExpAcctNumber, FAPPrePayAcctNumber, " +
                 "AssetAccountNumber, DepExpenseAccountNumber, FAPdepDate, RecordStatus, " +
-                "Inputter, InputterRec, Authoriser, AuthoriserRec, updatetype, FAPtenancy) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                "Inputter, InputterRec, Authoriser, AuthoriserRec, updatetype, FAPtenancy, FAPdepDay) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?)";
 
         try (PreparedStatement insertStmt = connection.prepareStatement(insertSQL)) {
             insertStmt.setString(1, stringCategoryID);
@@ -605,14 +638,15 @@ private Integer errorfieldcount;
             insertStmt.setString(4, prepaymentAccountNumber);
             insertStmt.setString(5, assetAccountNumber);
             insertStmt.setString(6, depExpenseAccountNumber);
-            insertStmt.setString(7, String.valueOf(depreciationDay));
-            insertStmt.setString(8, "UNAUTH");
+            insertStmt.setString(7, depreciationDate);
+            insertStmt.setString(8, "INAU");
             insertStmt.setString(9, yuser);
             insertStmt.setString(10, AuditDateRecord);
             insertStmt.setString(11, yuser);
             insertStmt.setString(12, AuditDateRecord);
             insertStmt.setString(13, "NEW");
             insertStmt.setString(14, yTenancynum);
+            insertStmt.setString(15, String.valueOf(depreciationDay));
             insertStmt.executeUpdate();
         }
 

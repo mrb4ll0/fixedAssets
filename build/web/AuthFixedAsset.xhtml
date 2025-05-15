@@ -11,13 +11,40 @@
         <h:form id="fixedAssetForm">
             <p:growl id="growl" showDetail="true" life="3000" sticky="true"/>
             <h2>New Fixed Asset </h2>
+            <h:panelGrid columns="4"
+                         columnClasses="firstColumnPGrid,secondColumnPGrid,thirdColumnPGrid"
+                         style="margin-left: 150px;">
+
+
+                <p:outputLabel for="AssetSearch" value="Asset Search:"/>
+                <p:inputText id="AssetSearch" styleClass="GenInputTxt" maxlength="50" size="50" value="#{authNewFixedAsset.newAccSearch}"
+                             placeholder="Search by category or  asset name">
+                    <p:ajax event="keyup" listener="#{authNewFixedAsset.searchAccount}"
+                            update="authorizedFixedAsset" />
+                </p:inputText>
+
+
+                <p:commandButton  icon="pi pi-eye" disabled="false" 
+                                 actionListener="#{authNewFixedAsset.searchAccount}" 
+                                 process="@this" update="authorizedFixedAsset"/>
+
+                <p:selectOneMenu id="branch" style="margin-right: 10px;" styleClass="GenSELTxtreq" value="#{newFixedAsset.branch}"  >
+                    <f:selectItem itemLabel="Select Branch" itemValue=""/>
+                    <f:selectItems value="#{authNewFixedAsset.branches}" />
+                    <p:ajax  update="" listener="#{authNewFixedAsset.onSelectBranch}" />
+                </p:selectOneMenu>
+
+
+            </h:panelGrid>
+
+            <br/>
 
             <p:commandButton value="Export as CSV"
                              icon="pi pi-download"
                              styleClass="p-button-secondary"
                              ajax="false"
                              onclick="PrimeFaces.exporter.export('#{component.clientId}', {type: 'csv'}); return false;">
-                <p:dataTable id="unauthorizedAccountsTable"
+                <p:dataTable id="authorizedFixedAsset"
                              value="#{authNewFixedAsset.authNewFixedAsset}"
                              var="account"
                              rowIndexVar="r" 
@@ -64,12 +91,6 @@
                         <h:outputText value="#{account.durationsMonth}" />
                     </p:column>
 
-                    <!-- Branch -->
-                    <p:column headerText="Branch" style="font-size: 10pt;">
-                        <h:outputText value="#{account.branch}" />
-                    </p:column>
-
-
                     <!-- Purchase  Date(Required) -->
                     <p:column headerText="Purchased Date" style="font-size: 10pt;">
                         <h:outputText value="#{account.purchasedDate}">
@@ -77,6 +98,10 @@
                         </h:outputText>
                     </p:column>
 
+                    <!-- Branch -->
+                    <p:column headerText="Branch" style="font-size: 10pt;">
+                        <h:outputText value="#{account.branch}" />
+                    </p:column>
                 </p:dataTable>
 
             </p:commandButton>

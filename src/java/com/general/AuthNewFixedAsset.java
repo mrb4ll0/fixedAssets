@@ -6,6 +6,7 @@
 package com.general;
 
 import com.general.model.FixedAsset;
+import com.general.model.FixedAssetReport;
 import java.io.Serializable;
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
@@ -13,8 +14,11 @@ import javax.faces.bean.ViewScoped;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -30,8 +34,26 @@ import java.util.List;
 public class AuthNewFixedAsset implements Serializable{
 
     private List<FixedAsset> authNewFixedAsset  = new ArrayList<>(); // List to store fetched assets
+    private String newAccSearch; 
+    private String branches;
 
-    
+    public String getBranches() {
+        return branches;
+    }
+
+    public void setBranches(String branches) {
+        this.branches = branches;
+    }
+   
+
+
+    public String getNewAccSearch() {
+        return newAccSearch;
+    }
+
+    public void setNewAccSearch(String newAccSearch) {
+        this.newAccSearch = newAccSearch;
+    }
 
     @PostConstruct
     public void init() {
@@ -104,5 +126,155 @@ public class AuthNewFixedAsset implements Serializable{
     // Getter for the list
     public List<FixedAsset> getAuthNewFixedAsset() {
         return authNewFixedAsset;
+    }
+    
+    
+    public void searchAccount() {
+    List<FixedAsset> reportList = new ArrayList<>();
+    System.out.println("searchAccount got called");
+
+    String query = "SELECT * FROM fixedAsset WHERE FAPcategory LIKE ? OR AssetsName LIKE ?";
+    String accountQuery = "SELECT accounts, names FROM accountlist";
+
+    try {
+        Connection conn = new DBConnection().get_connection();
+        PreparedStatement ps = conn.prepareStatement(query);
+        PreparedStatement accountPs = conn.prepareStatement(accountQuery);
+
+        ps.setString(1, "%"+newAccSearch+"%");
+        ps.setString(2, "%"+newAccSearch+"%");
+
+        // Load account names into a map for quick lookup
+        ResultSet accountRs = accountPs.executeQuery();
+        Map<String, String> accountMap = new HashMap<>();
+        while (accountRs.next()) {
+            accountMap.put(accountRs.getString("accounts"), accountRs.getString("names"));
+        }
+
+        ResultSet rs = ps.executeQuery();
+
+        while (rs.next()) {
+            FixedAsset item = new FixedAsset();
+            item.setFAPcatID(rs.getString("FAPcatID"));
+                item.setFAPcategory(rs.getString("FAPcategory"));
+                item.setAssetName(rs.getString("AssetsName"));
+                item.setAssetAmount(rs.getString("AssetsAmount"));
+                item.setDurationsMonth(rs.getString("Duration"));
+                item.setBranch(rs.getString("Branch"));
+                item.setFAPdepExpAcct(rs.getString("FAPdepExpAcct"));
+                item.setFAPPrePayAcct(rs.getString("FAPPrePayAcct"));
+                item.setAssetAccount(rs.getString("AssetAccount"));
+                item.setDepExpenseAccount(rs.getString("DepExpenseAccount"));
+                item.setFAPdepDate(rs.getString("FAPdepDate"));
+                item.setRecordStatus(rs.getString("RecordStatus"));
+                item.setInputter(rs.getString("Inputter"));
+                item.setInputterRec(rs.getString("InputterRec"));
+                item.setAuthoriser(rs.getString("Authoriser"));
+                item.setAuthoriserRec(rs.getString("AuthoriserRec"));
+                item.setUpdatetype(rs.getString("updatetype"));
+                item.setFAPtenancy(rs.getString("FAPtenancy"));
+                item.setFAPtenancy(rs.getString("FAPtenancy"));
+                item.setPurchasedDate(rs.getDate("PurchasedDate"));
+               
+
+            // Add account names using lookup map
+          
+
+            reportList.add(item);
+        }
+
+        rs.close();
+        ps.close();
+        accountPs.close();
+        conn.close();
+
+    } catch (SQLException e) {
+        e.printStackTrace(); // Log for debugging
+    } catch (Exception ex) {
+        ex.printStackTrace();
+    }
+
+    System.out.println("in searchAccount the length of search Account is " + reportList.size());
+     if(!reportList.isEmpty())
+     {
+         this.authNewFixedAsset = reportList;
+     }
+     else
+     {
+         this.authNewFixedAsset = fetchAuthFixedAssets();
+     }
+}
+    
+    public void onSelectBranch()
+    {
+        String query;
+        if(branches != "All Branches")
+        {
+        query = "SELECT * FROM fixedAsset WHERE Branch = ? ";   
+        }
+        else
+        {
+            query = "SELECT * FROM fixedAsset ";
+        }
+         String accountQuery = "SELECT accounts, names FROM accountlist";       
+         try {
+        Connection conn = new DBConnection().get_connection();
+        PreparedStatement ps = conn.prepareStatement(query);
+        PreparedStatement accountPs = conn.prepareStatement(accountQuery);
+
+        ps.setString(1, branches);
+
+        // Load account names into a map for quick lookup
+        ResultSet accountRs = accountPs.executeQuery();
+        Map<String, String> accountMap = new HashMap<>();
+        while (accountRs.next()) {
+            accountMap.put(accountRs.getString("accounts"), accountRs.getString("names"));
+        }
+
+        ResultSet rs = ps.executeQuery();
+
+        while (rs.next()) {
+            FixedAsset item = new FixedAsset();
+            item.setFAPcatID(rs.getString("FAPcatID"));
+                item.setFAPcategory(rs.getString("FAPcategory"));
+                item.setAssetName(rs.getString("AssetsName"));
+                item.setAssetAmount(rs.getString("AssetsAmount"));
+                item.setDurationsMonth(rs.getString("Duration"));
+                item.setBranch(rs.getString("Branch"));
+                item.setFAPdepExpAcct(rs.getString("FAPdepExpAcct"));
+                item.setFAPPrePayAcct(rs.getString("FAPPrePayAcct"));
+                item.setAssetAccount(rs.getString("AssetAccount"));
+                item.setDepExpenseAccount(rs.getString("DepExpenseAccount"));
+                item.setFAPdepDate(rs.getString("FAPdepDate"));
+                item.setRecordStatus(rs.getString("RecordStatus"));
+                item.setInputter(rs.getString("Inputter"));
+                item.setInputterRec(rs.getString("InputterRec"));
+                item.setAuthoriser(rs.getString("Authoriser"));
+                item.setAuthoriserRec(rs.getString("AuthoriserRec"));
+                item.setUpdatetype(rs.getString("updatetype"));
+                item.setFAPtenancy(rs.getString("FAPtenancy"));
+                item.setFAPtenancy(rs.getString("FAPtenancy"));
+                item.setPurchasedDate(rs.getDate("PurchasedDate"));
+               
+
+            // Add account names using lookup map
+          
+
+            reportList.add(item);
+        }
+
+        rs.close();
+        ps.close();
+        accountPs.close();
+        conn.close();
+
+    } catch (SQLException e) {
+        e.printStackTrace(); // Log for debugging
+    } catch (Exception ex) {
+        ex.printStackTrace();
+    }
+
+    System.out.println("in searchAccount the length of search Account is " + reportList.size());
+    this.authNewFixedAsset = reportList;
     }
 }

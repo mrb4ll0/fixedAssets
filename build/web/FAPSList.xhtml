@@ -10,8 +10,30 @@
 <h:body>
     <h:form id="fixedAssetForm">
         <p:growl id="growl" showDetail="true" life="3000" sticky="true"/>
-        <h1>Authorized Fixed Asset Parameter </h1>
-            
+        <h1>Fixed Asset Parameter </h1>
+             
+          <h:panelGrid columns="4"
+                         columnClasses="firstColumnPGrid,secondColumnPGrid,thirdColumnPGrid"
+                         style="margin-left: 20px;">
+
+
+                <p:outputLabel for="AssetSearch" value="Asset Parameter Search:"/>
+                <p:inputText id="AssetSearch" styleClass="GenInputTxt" maxlength="50" size="50" value="#{fapsList.assetParam}"
+                             placeholder="Search by category ">
+                    <p:ajax event="keyup" listener="#{fapsList.searchParam}"
+                            update="unauthorizedAccountsTable" />
+                </p:inputText>
+
+
+                <p:commandButton  icon="pi pi-eye" disabled="false" 
+                                 actionListener="#{fapsList.searchParam}" 
+                                 process="@this" update="unauthorizedAccountsTable"/>
+
+               
+
+
+            </h:panelGrid>
+          <br/>
             <p:dataTable id="unauthorizedAccountsTable"
                          value="#{fapsList.authFixedAssetParam}"
                          var="account"
@@ -20,6 +42,7 @@
                          resizableColumns="true"  
                          rowHover="true" 
                          paginator="true" 
+                         paginatorPosition="bottom"
                          rowIndexVar="r" 
                          rowStyleClass="#{r % 2 == 0 ? 'evenClass' : 'oddClass'}"
                          showGridlines="true"

@@ -35,6 +35,34 @@ public class FAPSList implements Serializable
         this.authFixedAssetParam = authFixedAssetParam;
     }
     
+    private String assetParam;
+    private String branch;
+    private List<String> branches;
+
+    public List<String> getBranches() {
+        return branches;
+    }
+
+    public void setBranches(List<String> branches) {
+        this.branches = branches;
+    }
+
+    public String getAssetParam() {
+        return assetParam;
+    }
+
+    public void setAssetParam(String assetParam) {
+        this.assetParam = assetParam;
+    }
+
+    public String getBranch() {
+        return branch;
+    }
+
+    public void setBranch(String branch) {
+        this.branch = branch;
+    }
+    
   @PostConstruct
   public void init()
   {
@@ -89,4 +117,66 @@ public List<FixedAssetParameter> fetchAuthFixedAssetParams() {
 
     return resultList;
 }
+
+
+public void onSelectBranch()
+{
+    
+}
+
+public void searchParam()
+{
+    this.authFixedAssetParam = fetchFixedAssetParamsByCategory(assetParam);
+}
+
+
+public List<FixedAssetParameter> fetchFixedAssetParamsByCategory(String category) {
+    List<FixedAssetParameter> resultList = new ArrayList<>();
+    Connection connection = null;
+    PreparedStatement ps = null;
+    ResultSet rs = null;
+
+    try {
+        DBConnection obj_DB_connection = new DBConnection();
+        connection = obj_DB_connection.get_connection();
+
+        // Query to fetch fixed asset parameters where category contains the given string
+        String query = "SELECT FAPcategory, FAPcatID, AssetAccountNumber, FAPPrePayAcctNumber, " +
+                       "FAPdepExpAcctNumber, DepExpenseAccountNumber, FAPdepDate " +
+                       "FROM FixedAssetParamSetup " +
+                       "WHERE FAPcategory LIKE ?";
+
+        ps = connection.prepareStatement(query);
+        ps.setString(1, "%" + category + "%");  // contains search with wildcards
+
+        rs = ps.executeQuery();
+
+        while (rs.next()) {
+            FixedAssetParameter param = new FixedAssetParameter();
+            param.setCategory(rs.getString("FAPcategory"));
+            param.setCategoryId(rs.getString("FAPcatID"));
+            param.setAssetAccount(rs.getString("AssetAccountNumber"));
+            param.setPrepaymentAccount(rs.getString("FAPPrePayAcctNumber"));
+            param.setDepreciationAccount(rs.getString("FAPdepExpAcctNumber"));
+            param.setDepExpenseAccount(rs.getString("DepExpenseAccountNumber"));
+            param.setDepreciationDay(rs.getString("FAPdepDate"));
+
+            resultList.add(param);
+        }
+
+    } catch (Exception e) {
+        e.printStackTrace();
+    } finally {
+        try {
+            if (rs != null) rs.close();
+            if (ps != null) ps.close();
+            if (connection != null) connection.close();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    return resultList;
+}
+
 }

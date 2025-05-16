@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <title>Depreciation Record</title>
+        <h:outputStylesheet library="css" name="ComSetting.css"/>
+    </h:head>
+
+    <h:body>
+        <h:form id="fixedAssetForm">
+            <p:growl id="growl" showDetail="true" life="3000" sticky="true"/>
+            <h1>Depreciation Record</h1>
+
+            
+            
+
+                <!-- Dropdowns Row -->
+                <h:panelGroup layout="block" style="display: flex; justify-content: space-between;">
+
+                    <!-- Month Dropdown aligned under the heading -->
+                    <h:panelGroup layout="block" style="display: flex; align-items: center; gap: 10px; margin-left: 20px;">
+                        <p:outputLabel for="month" value="Month:" style="font-weight: bold;" />
+                        <p:selectOneMenu id="month" value="#{depRec.selectedMonth}" 
+                                         style="background-color: #e0f0f0; border: 1px solid #ccc; border-radius: 5px; width: 200px;">
+                            <f:selectItem itemLabel="Select Month" itemValue="" />
+                            <f:selectItems value="#{depRec.availableMonths}" />
+                            <p:ajax update="@form" listener="#{depRec.onSelectMonth}" />
+                        </p:selectOneMenu>
+                    </h:panelGroup>
+
+                    <!-- Branch Dropdown pushed to far right -->
+                    <h:panelGroup layout="block" style="display: flex; align-items: center; gap: 5px; margin-right: 70px" >
+                        <p:outputLabel for="branch" value="Branch:" style="font-weight: bold;" />
+                        <p:selectOneMenu id="branch" value="#{depRec.branch}" 
+                                         style="background-color: #e0f0f0; border: 1px solid #ccc; border-radius: 5px; width: 200px;">
+                            <f:selectItem itemLabel="Select Branch" itemValue="" />
+                            <f:selectItems value="#{depRec.branches}" />
+                            <p:ajax update="@form" listener="#{depRec.onSelectBranch}" />
+                        </p:selectOneMenu>
+                    </h:panelGroup>
+
+                </h:panelGroup>
+            
+
+            <br/>
+
+            <!-- Export Button + DataTable -->
+            <p:commandButton value="Export as CSV"
+                             icon="pi pi-download"
+                             styleClass="p-button-secondary"
+                             ajax="false"
+                             onclick="PrimeFaces.exporter.export('#{component.clientId}', {type: 'csv'}); return false;">
+                <p:dataTable id="authorizedFixedAsset"
+                             value="#{depRec.depreciations}"
+                             var="record"
+                             rowIndexVar="r"
+                             rowStyleClass="#{r % 2 == 0 ? 'evenClass' : 'oddClass'}"
+                             resizableColumns="true"
+                             widgetVar="unauthorizedAccountsTable"
+                             paginator="true"
+                             paginatorPosition="bottom"
+                             rows="10"
+                             showGridlines="true"
+                             stickyHeader="true"
+                             styleClass="myLDRepay">
+
+                    <!-- Serial Number -->
+                    <p:column headerText="S/N" style="text-align: center; font-size: 10pt;" width="50">
+                        <h:outputText value="#{r + 1}"/>
+                    </p:column>
+
+                    <p:column headerText="Run Date" style="font-size: 10pt;">
+                        <h:outputText value="#{record.runDate}">
+                        </h:outputText>
+                    </p:column>
+
+                    <p:column headerText="Asset ID" style="font-size: 10pt;">
+                        <h:outputText value="#{record.assetId}"/>
+                    </p:column>
+
+                    <p:column headerText="Monthly Depreciation" style="font-size: 10pt; text-align: right;">
+                        <h:outputText value="#{record.monthlyDepreciation}">
+                            <f:convertNumber type="currency" currencySymbol="₦"/>
+                        </h:outputText>
+                    </p:column>
+
+                    <p:column headerText="Times Depreciated" style="font-size: 10pt; text-align: center;">
+                        <h:outputText value="#{record.timesDepreciated}"/>
+                    </p:column>
+
+                    <p:column headerText="Total Depreciated" style="font-size: 10pt; text-align: right;">
+                        <h:outputText value="#{record.totalDepreciated}">
+                            <f:convertNumber type="currency" currencySymbol="₦"/>
+                        </h:outputText>
+                    </p:column>
+
+                    <p:column headerText="Start Date" style="font-size: 10pt;">
+                        <h:outputText value="#{record.startDate}">
+                        </h:outputText>
+                    </p:column>
+
+                    <p:column headerText="Final Depreciation Date" style="font-size: 10pt;">
+                        <h:outputText value="#{record.finalDepreciationDate}">
+                        </h:outputText>
+                    </p:column>
+
+                    <p:column headerText="Current Value" style="font-size: 10pt; text-align: right;">
+                        <h:outputText value="#{record.currentValue}">
+                            <f:convertNumber type="currency" currencySymbol="₦"/>
+                        </h:outputText>
+                    </p:column>
+
+                    <p:column headerText="Remaining Amount" style="font-size: 10pt; text-align: right;">
+                        <h:outputText value="#{record.remainingAmount}">
+                            <f:convertNumber type="currency" currencySymbol="₦"/>
+                        </h:outputText>
+                    </p:column>
+
+                    <p:column headerText="Times Remaining" style="font-size: 10pt; text-align: center;">
+                        <h:outputText value="#{record.timesRemaining}"/>
+                    </p:column>
+                </p:dataTable>
+            </p:commandButton>
+        </h:form>
+    </h:body>
+</html>

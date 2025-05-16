@@ -2,13 +2,12 @@ package com.general;
 
 import java.sql.*;
 import java.time.*;
+import java.util.List;
+import com.general.model.DepreciationRecord;
+import java.util.ArrayList;
 
 public class DepreciationLogService {
 
-    /**
-     * Ensures the DepreciationLog table exists.
-     * Call once at startup or before first run.
-     */
     public void ensureLogTableExists(Connection conn) throws SQLException {
         String ddl =
             "CREATE TABLE IF NOT EXISTS DepreciationLog (" +
@@ -19,6 +18,7 @@ public class DepreciationLogService {
             "  timesDepreciated INT NOT NULL, " +
             "  totalDepreciated BIGINT NOT NULL, " +
             "  startDate DATE NOT NULL, " +
+            "  Branch VARCHAR(255) NOT NULL, " +
             "  finalDepreciationDate DATE NOT NULL, " +
             "  currentValue BIGINT NOT NULL, " +
             "  remainingAmount BIGINT NOT NULL, " +
@@ -30,60 +30,62 @@ public class DepreciationLogService {
         }
     }
 
-    /**
-     * Performs one depreciation pass: 
-     *   - selects FixedAsset rows whose FAPdepDate == today.dayOfMonth 
-     *   - computes new counters 
-     *   - upserts into DepreciationLog
-     */
     public void processMonthlyDepreciation(Connection conn) throws SQLException {
         LocalDate today = LocalDate.now();
         int todayDay = today.getDayOfMonth();
 
-        // 1) make sure the log table exists
         ensureLogTableExists(conn);
 
-        // 2) query all FixedAsset rows
         String assetSql =
             "SELECT FAPcatID, AssetsAmount, Duration, DepreciationAmount, " +
-            "       timesDepreciated, totalDepreciated, startDate, FAPdepDate " +
+            "       FAPdepDate, PurchasedDate, Branch " +
             "  FROM FixedAsset";
+
         try (PreparedStatement ps = conn.prepareStatement(assetSql);
              ResultSet rs = ps.executeQuery()) {
 
             while (rs.next()) {
-                String catId      = rs.getString("FAPcatID");
-                long assetValue   = Long.parseLong(rs.getString("AssetsAmount").trim());
-                int  totalMonths  = Integer.parseInt(rs.getString("Duration").trim());
-                long monthlyDep   = rs.getLong("DepreciationAmount");
-                int  timesDep     = rs.getInt("timesDepreciated");
-                long totalDep     = rs.getLong("totalDepreciated");
-                LocalDate start   = rs.getDate("startDate").toLocalDate();
-                int  depDay       = Integer.parseInt(rs.getString("FAPdepDate").trim());
+                String catId = rs.getString("FAPcatID");
+                long assetValue = Long.parseLong(rs.getString("AssetsAmount").trim());
+                int totalMonths = Integer.parseInt(rs.getString("Duration").trim());
+                long monthlyDep = rs.getLong("DepreciationAmount");
+                int depDay = Integer.parseInt(rs.getString("FAPdepDate").trim());
+                LocalDate startDate = rs.getDate("PurchasedDate").toLocalDate();
+                String branch = rs.getString("Branch");
 
-                // only process if today is the depreciation day, and not fully depreciated
                 if (depDay != todayDay) continue;
+
+                String checkSql = "SELECT timesDepreciated, totalDepreciated FROM DepreciationLog WHERE assetId = ?";
+                int timesDep = 0;
+                long totalDep = 0;
+
+                try (PreparedStatement check = conn.prepareStatement(checkSql)) {
+                    check.setString(1, catId);
+                    try (ResultSet logRs = check.executeQuery()) {
+                        if (logRs.next()) {
+                            timesDep = logRs.getInt("timesDepreciated");
+                            totalDep = logRs.getLong("totalDepreciated");
+                        }
+                    }
+                }
+
                 if (timesDep >= totalMonths) continue;
 
-                // compute new counters
-                int    newTimesDep    = timesDep + 1;
-                long   newTotalDep    = totalDep + monthlyDep;
-                LocalDate finalDate   = start.plusMonths(totalMonths);
-                long   currentValue   = assetValue - newTotalDep;
-                long   remainingAmt   = assetValue - newTotalDep;
-                int    timesRemaining = totalMonths - newTimesDep;
+                int newTimesDep = timesDep + 1;
+                long newTotalDep = totalDep + monthlyDep;
+                long currentValue = assetValue - newTotalDep;
+                long remainingAmt = assetValue - newTotalDep;
+                int timesRemaining = totalMonths - newTimesDep;
+                LocalDate finalDate = startDate.plusMonths(totalMonths);
 
-                // upsert into DepreciationLog
-                upsertLog(conn, today, catId, monthlyDep,
-                          newTimesDep, newTotalDep, start, finalDate,
-                          currentValue, remainingAmt, timesRemaining);
+                upsertLog(conn, today, catId, monthlyDep, newTimesDep, newTotalDep,
+                          startDate, finalDate, currentValue, remainingAmt, timesRemaining, branch);
             }
         }
 
         System.out.println("✅ Depreciation pass completed for day " + todayDay);
     }
 
-    // --- internal upsert helper ---
     private void upsertLog(Connection conn,
                            LocalDate runDate,
                            String assetId,
@@ -94,13 +96,14 @@ public class DepreciationLogService {
                            LocalDate finalDate,
                            long currentValue,
                            long remainingAmount,
-                           int timesRemaining
+                           int timesRemaining,
+                           String branch
     ) throws SQLException {
-        // try update existing row
         String updateSql =
             "UPDATE DepreciationLog SET " +
             "  runDate=?, monthlyDepreciation=?, timesDepreciated=?, totalDepreciated=?, " +
-            "  startDate=?, finalDepreciationDate=?, currentValue=?, remainingAmount=?, timesRemaining=? " +
+            "  startDate=?, finalDepreciationDate=?, currentValue=?, remainingAmount=?, " +
+            "  timesRemaining=?, Branch=? " +
             "WHERE assetId=?";
 
         try (PreparedStatement upd = conn.prepareStatement(updateSql)) {
@@ -113,7 +116,8 @@ public class DepreciationLogService {
             upd.setLong(7, currentValue);
             upd.setLong(8, remainingAmount);
             upd.setInt(9, timesRemaining);
-            upd.setString(10, assetId);
+            upd.setString(10, branch);
+            upd.setString(11, assetId);
 
             int rows = upd.executeUpdate();
             if (rows > 0) {
@@ -122,12 +126,12 @@ public class DepreciationLogService {
             }
         }
 
-        // otherwise insert new
         String insertSql =
             "INSERT INTO DepreciationLog " +
             "(runDate, assetId, monthlyDepreciation, timesDepreciated, totalDepreciated, " +
-            " startDate, finalDepreciationDate, currentValue, remainingAmount, timesRemaining) " +
-            "VALUES (?,?,?,?,?,?,?,?,?,?)";
+            " startDate, finalDepreciationDate, currentValue, remainingAmount, timesRemaining, Branch) " +
+            "VALUES (?,?,?,?,?,?,?,?,?,?,?)";
+
         try (PreparedStatement ins = conn.prepareStatement(insertSql)) {
             ins.setDate(1, Date.valueOf(runDate));
             ins.setString(2, assetId);
@@ -139,9 +143,158 @@ public class DepreciationLogService {
             ins.setLong(8, currentValue);
             ins.setLong(9, remainingAmount);
             ins.setInt(10, timesRemaining);
+            ins.setString(11, branch);
 
             ins.executeUpdate();
             System.out.println(" Inserted DepreciationLog for new asset " + assetId);
         }
     }
+
+    public List<DepreciationRecord> fetchAllDepreciationRecords(Connection conn) throws SQLException {
+        List<DepreciationRecord> records = new ArrayList<>();
+
+        String query = "SELECT runDate, assetId, monthlyDepreciation, timesDepreciated, " +
+                       "totalDepreciated, startDate, finalDepreciationDate, currentValue, " +
+                       "remainingAmount, timesRemaining, Branch FROM DepreciationLog";
+
+        try (PreparedStatement stmt = conn.prepareStatement(query);
+             ResultSet rs = stmt.executeQuery()) {
+
+            while (rs.next()) {
+                DepreciationRecord record = new DepreciationRecord();
+                record.setRunDate(rs.getDate("runDate").toLocalDate());
+                record.setAssetId(rs.getString("assetId"));
+                record.setMonthlyDepreciation(rs.getDouble("monthlyDepreciation"));
+                record.setTimesDepreciated(rs.getInt("timesDepreciated"));
+                record.setTotalDepreciated(rs.getDouble("totalDepreciated"));
+                record.setStartDate(rs.getDate("startDate").toLocalDate());
+                record.setFinalDepreciationDate(rs.getDate("finalDepreciationDate").toLocalDate());
+                record.setCurrentValue(rs.getDouble("currentValue"));
+                record.setRemainingAmount(rs.getDouble("remainingAmount"));
+                record.setTimesRemaining(rs.getInt("timesRemaining"));
+                record.setBranch(rs.getString("Branch"));
+                records.add(record);
+            }
+        }
+
+        return records;
+    }
+
+    public List<DepreciationRecord> fetchFutureDepreciationRecords(Connection conn) throws SQLException {
+        List<DepreciationRecord> records = new ArrayList<>();
+
+        String query = "SELECT runDate, assetId, monthlyDepreciation, timesDepreciated, " +
+                       "totalDepreciated, startDate, finalDepreciationDate, currentValue, " +
+                       "remainingAmount, timesRemaining, Branch " +
+                       "FROM DepreciationLog " +
+                       "WHERE finalDepreciationDate > CURRENT_DATE";
+
+        try (PreparedStatement stmt = conn.prepareStatement(query);
+             ResultSet rs = stmt.executeQuery()) {
+
+            while (rs.next()) {
+                DepreciationRecord record = new DepreciationRecord();
+                record.setRunDate(rs.getDate("runDate").toLocalDate());
+                record.setAssetId(rs.getString("assetId"));
+                record.setMonthlyDepreciation(rs.getDouble("monthlyDepreciation"));
+                record.setTimesDepreciated(rs.getInt("timesDepreciated"));
+                record.setTotalDepreciated(rs.getDouble("totalDepreciated"));
+                record.setStartDate(rs.getDate("startDate").toLocalDate());
+                record.setFinalDepreciationDate(rs.getDate("finalDepreciationDate").toLocalDate());
+                record.setCurrentValue(rs.getDouble("currentValue"));
+                record.setRemainingAmount(rs.getDouble("remainingAmount"));
+                record.setTimesRemaining(rs.getInt("timesRemaining"));
+                record.setBranch(rs.getString("Branch"));
+                records.add(record);
+            }
+        }
+
+        return records;
+    }
+
+    public List<DepreciationRecord> fetchAssetsToBeDepreciatedInMonth(String monthName) {
+        List<DepreciationRecord> records = new ArrayList<>();
+        String sql = "SELECT runDate, assetId, monthlyDepreciation, timesDepreciated, totalDepreciated, " +
+                     "startDate, finalDepreciationDate, currentValue, remainingAmount, timesRemaining, Branch " +
+                     "FROM DepreciationLog " +
+                     "WHERE MONTH(runDate) = ? AND YEAR(runDate) = ?";
+
+        try (Connection conn = new DBConnection().get_connection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            Month month = Month.valueOf(monthName.toUpperCase());
+            int monthNumber = month.getValue();
+            int currentYear = LocalDate.now().getYear();
+
+            stmt.setInt(1, monthNumber);
+            stmt.setInt(2, currentYear);
+
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                DepreciationRecord record = new DepreciationRecord();
+                record.setRunDate(rs.getDate("runDate").toLocalDate());
+                record.setAssetId(rs.getString("assetId"));
+                record.setMonthlyDepreciation(rs.getDouble("monthlyDepreciation"));
+                record.setTimesDepreciated(rs.getInt("timesDepreciated"));
+                record.setTotalDepreciated(rs.getDouble("totalDepreciated"));
+                record.setStartDate(rs.getDate("startDate").toLocalDate());
+                record.setFinalDepreciationDate(rs.getDate("finalDepreciationDate").toLocalDate());
+                record.setCurrentValue(rs.getDouble("currentValue"));
+                record.setRemainingAmount(rs.getDouble("remainingAmount"));
+                record.setTimesRemaining(rs.getInt("timesRemaining"));
+                record.setBranch(rs.getString("Branch"));
+                records.add(record);
+            }
+
+        } catch (SQLException | IllegalArgumentException e) {
+            e.printStackTrace();
+        } catch (Exception exception) {
+            System.out.println("An error occurred: " + exception);
+        }
+
+        return records;
+    }
+    
+    
+    public List<DepreciationRecord> fetchAssetsToBeDepreciatedInBranch(String branchCode) {
+    List<DepreciationRecord> records = new ArrayList<>();
+    String sql = "SELECT runDate, assetId, monthlyDepreciation, timesDepreciated, totalDepreciated, " +
+                 "startDate, finalDepreciationDate, currentValue, remainingAmount, timesRemaining, Branch " +
+                 "FROM DepreciationLog " +
+                 "WHERE Branch = ? " +
+                 "ORDER BY runDate DESC";
+
+    try (Connection conn = new DBConnection().get_connection();
+         PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+        stmt.setString(1, branchCode);
+
+        ResultSet rs = stmt.executeQuery();
+
+        while (rs.next()) {
+            DepreciationRecord record = new DepreciationRecord();
+            record.setRunDate(rs.getDate("runDate").toLocalDate());
+            record.setAssetId(rs.getString("assetId"));
+            record.setMonthlyDepreciation(rs.getDouble("monthlyDepreciation"));
+            record.setTimesDepreciated(rs.getInt("timesDepreciated"));
+            record.setTotalDepreciated(rs.getDouble("totalDepreciated"));
+            record.setStartDate(rs.getDate("startDate").toLocalDate());
+            record.setFinalDepreciationDate(rs.getDate("finalDepreciationDate").toLocalDate());
+            record.setCurrentValue(rs.getDouble("currentValue"));
+            record.setRemainingAmount(rs.getDouble("remainingAmount"));
+            record.setTimesRemaining(rs.getInt("timesRemaining"));
+            record.setBranch(rs.getString("Branch"));
+            records.add(record);
+        }
+
+    } catch (SQLException e) {
+        e.printStackTrace();
+    } catch (Exception exception) {
+        System.out.println("An error occurred: " + exception);
+    }
+
+    return records;
+}
+
 }

@@ -42,7 +42,7 @@ public class DepreciationScheduler {
                 // process one day's depreciation
                 logService.processMonthlyDepreciation(conn);
             } catch (Exception e) {
-                System.out.println("❌ Depreciation job failed: " + e.getMessage());
+                System.out.println(" Depreciation job failed: " + e.getMessage());
                 e.printStackTrace();
             }
         }, initialDelay, period, TimeUnit.MILLISECONDS);

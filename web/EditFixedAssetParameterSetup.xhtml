@@ -22,85 +22,60 @@
             <div class="SingleForm">
                 <br/>
                 <p:tabView multiViewState="true" id="tabViewMVS" styleClass="MyTabView">
-<p:tab title="Edit Setup">
-    <div class="TabDiv">
-        <h:panelGrid columns="3" columnClasses="firstColumnPGrid,secondColumnPGrid,thirdColumnPGrid" style="width:100%">
+                    <p:tab title="Edit Setup">
+                        <div class="TabDiv">
+                            <h:panelGrid columns="3" columnClasses="firstColumnPGrid,secondColumnPGrid,thirdColumnPGrid" style="width:100%">
 
-            <p:outputLabel for="editCategory" value="Category:" />
-            <p:selectOneMenu id="editCategory" value="#{editFixedAssetSetup.category}" 
-                             styleClass="GenSELTxtreq" >
-                <f:selectItem itemLabel="Select Category" itemValue=""/>
-                <f:selectItems value="#{editFixedAssetSetup.categories}" />
-                <p:ajax event="change" listener="#{editFixedAssetSetup.onselectedCategory}" update="editCategoryId"/>
-            </p:selectOneMenu>
-            <p:outputLabel />
+                                <p:outputLabel for="editCategory" value="Category:" />
+                                <p:inputText id="editCategory" value="#{editFixedAssetSetup.category}" styleClass="GenInputTxtreq"/>
+                                <p:outputLabel />
 
-            <p:outputLabel for="editCategoryId" value="Category ID:" />
-            <p:inputText id="editCategoryId" value="#{editFixedAssetSetup.categoryId}" 
-                         size="5" styleClass="GenInputTxtNoInput" readonly="true" />
-            <p:outputLabel/>
+                                <p:outputLabel for="editCategoryId" value="Category ID:" />
+                                <p:inputText id="editCategoryId" value="#{editFixedAssetSetup.categoryId}" size="5" styleClass="GenInputTxtNoInput" readonly="true" />
+                                <p:outputLabel/>
 
-             <p:outputLabel for="assetAccount" value="Asset Account:" />
-             <p:selectOneMenu maxlength="10" id="assetAccount" styleClass="GenSELTxtreq" value="#{editFixedAssetSetup.assetAccount}" >
-                <f:selectItem itemLabel="Select Account" itemValue=""/>
-                <f:selectItems value="#{editFixedAssetSetup.assetAccounts}"/>
-                <p:ajax       
-                    listener="#{editFixedAssetSetup.onSelectAssetAccount}" 
-                    update="FASelectedAssetAccount"/>
-            </p:selectOneMenu>
-            <p:outputLabel styleClass="GenEnrichTxt" id="FASelectedAssetAccount" value="#{editFixedAssetSetup.selectedAssetAccount}"/>
+                                <p:outputLabel for="assetAccount" value="Asset Account:" />
+                                <p:inputText id="assetAccount" value="#{editFixedAssetSetup.assetAccount}" styleClass="GenInputTxtreq">
+                                    <p:ajax event="change" update="FASelectedAssetAccount" listener="#{editFixedAssetSetup.onAssetAccountChange}"/>
+                                </p:inputText>
+                                <p:outputLabel id="FASelectedAssetAccount" styleClass="GenEnrichTxt" value="#{editFixedAssetSetup.selectedAssetAccount}"/>
 
+                                <p:outputLabel for="editPrepaymentAccount" value="Prepayment Account:" />
+                                <p:inputText id="editPrepaymentAccount" value="#{editFixedAssetSetup.prepaymentAccount}" styleClass="GenInputTxtreq">
+                                    <p:ajax event="change" update="editFASelectedPrepaymentAccount" listener="#{editFixedAssetSetup.onPrepaymentAccountChange}"/>
+                                </p:inputText>
+                                <p:outputLabel id="editFASelectedPrepaymentAccount" value="#{editFixedAssetSetup.selectedPrepaymentAccount}" styleClass="GenEnrichTxt"/>
 
-            
-            <p:outputLabel  for="editPrepaymentAccount" value="Prepayment Account:" />
-            <p:selectOneMenu id="editPrepaymentAccount" value="#{editFixedAssetSetup.prepaymentAccount}" 
-                             styleClass="GenSELTxtreq" >
-                <f:selectItem itemLabel="Select Account" itemValue=""/>
-                <f:selectItems value="#{editFixedAssetSetup.prepaymentAccounts}" />
-                <p:ajax listener="#{editFixedAssetSetup.onSelectPrepaymentAccount}" update="editFASelectedPrepaymentAccount"/>
-            </p:selectOneMenu>
-            <p:outputLabel id="editFASelectedPrepaymentAccount" value="#{editFixedAssetSetup.selectedPrepaymentAccount}" 
-                           styleClass="GenEnrichTxt"/>
+                                <p:outputLabel for="editDepreciationAccount" value="Depreciation Account:" />
+                                <p:inputText id="editDepreciationAccount" value="#{editFixedAssetSetup.depreciationAccount}" styleClass="GenInputTxtreq">
+                                    <p:ajax event="change" update="editFASelectedDepreciationAccount" listener="#{editFixedAssetSetup.onDepreciationAccountChange}"/>
+                                </p:inputText>
+                                <p:outputLabel id="editFASelectedDepreciationAccount" value="#{editFixedAssetSetup.selectedDepreciationAccount}" styleClass="GenEnrichTxt"/>
 
-            <p:outputLabel for="editDepreciationAccount" value="Depreciation Account:" />
-            <p:selectOneMenu id="editDepreciationAccount" value="#{editFixedAssetSetup.depreciationAccount}" 
-                             styleClass="GenSELTxtreq" >
-                <f:selectItem itemLabel="Select Account" itemValue=""/>
-                <f:selectItems value="#{editFixedAssetSetup.depreciationAccounts}" />
-                <p:ajax event="change" listener="#{editFixedAssetSetup.onSelectDepreciationAccount}" update="editFASelectedDepreciationAccount"/>
-            </p:selectOneMenu>
-            <p:outputLabel id="editFASelectedDepreciationAccount" value="#{editFixedAssetSetup.selectedDepreciationAccount}" 
-                           styleClass="GenEnrichTxt"/>
+                                <p:outputLabel for="editDepExpenseAccount" value="Dep. Expense Account:" />
+                                <p:inputText id="editDepExpenseAccount" value="#{editFixedAssetSetup.depExpenseAccount}" styleClass="GenInputTxtreq">
+                                    <p:ajax event="change" update="editFASelectedAccumDepAccount" 
+                                            listener="#{editFixedAssetSetup.onDepExpenseAccountChange}"/>
+                                </p:inputText>
+                                <p:outputLabel id="editFASelectedAccumDepAccount" value="#{editFixedAssetSetup.selectedDepExpenseAccount}" styleClass="GenEnrichTxt"/>
 
-            <p:outputLabel for="editDepExpenseAccount" value="Dep. Expense Account:" />
-            <p:selectOneMenu id="editDepExpenseAccount" value="#{editFixedAssetSetup.depExpenseAccount}" 
-                             styleClass="GenSELTxtreq" >
-                <f:selectItem itemLabel="Select Account" itemValue=""/>
-                <f:selectItems value="#{editFixedAssetSetup.depExpenseAccounts}" />
-                <p:ajax event="change" listener="#{editFixedAssetSetup.onSelectDepExpenseAccount}" update="editFASelectedAccumDepAccount"/>
-            </p:selectOneMenu>
-            <p:outputLabel id="editFASelectedAccumDepAccount" value="#{editFixedAssetSetup.depExpenseAccount}" 
-                           styleClass="GenEnrichTxt"/>
-
-            <p:outputLabel for="depreciationDay" value="Depreciation (Day):" />
-                                <p:selectOneMenu  maxlength="10" id="depreciationDay" styleClass="GenSELTxtreq" value="#{editFixedAssetSetup.depreciationDay}" required="true">
-                                    <f:selectItem itemLabel="Select Day" itemValue=""/>
-                                    <f:selectItems value="#{editFixedAssetSetup.depreciationDays}"/>
-                                    <p:ajax 
-                                        event="change"
-                                        listener="#{editFixedAssetSetup.onSelectMonthDay(event)}" 
-                                        update="FASelectedDay depreciationDate"/>
-                                </p:selectOneMenu>
+                                <p:outputLabel for="depreciationDay" value="Depreciation (Day):" />
+                                <p:inputText id="depreciationDay" value="#{editFixedAssetSetup.depreciationDay}" styleClass="GenInputTxtreq" required="true">
+                                    <p:ajax event="change" update="FASelectedDay depreciationDate" 
+                                            listener="#{editFixedAssetSetup.onDepreciationDayChange}"
+                                            />
+                                </p:inputText>
                                 <p:outputLabel id="FASelectedDay" styleClass="GenEnrichTxt" value="#{editFixedAssetSetup.depreciationDay}"/>
 
-            <p:outputLabel for="depreciationDate" value="Depreciation Date"/>
+                                <p:outputLabel for="depreciationDate" value="Depreciation Date"/>
                                 <p:inputText styleClass="GenInputTxtreq" readonly="true"  id="depreciationDate" maxlength="25" size="35" value="#{editFixedAssetSetup.depDate}" required="true"/>
                                 <p:outputLabel/>
 
-        </h:panelGrid>
-         <p:spacer height="10"/>
-    </div>
-</p:tab>
+                            </h:panelGrid>
+                            <p:spacer height="10"/>
+                        </div>
+                    </p:tab>
+
                     <p:tab title="Audit Section">
                         <div class="TabDiv">
                             <h:panelGrid columns="3" columnClasses="firstColumnPGrid,secondColumnPGrid,thirdColumnPGrid">

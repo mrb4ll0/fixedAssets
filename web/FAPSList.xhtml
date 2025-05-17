@@ -3,16 +3,16 @@
       xmlns:f="http://xmlns.jcp.org/jsf/core"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:p="http://primefaces.org/ui">
-<h:head>
-    <title>Authorized Fixed Asset Parameter </title>
-     <h:outputStylesheet library="css" name="ComSetting.css" />
-</h:head>
-<h:body>
-    <h:form id="fixedAssetForm">
-        <p:growl id="growl" showDetail="true" life="3000" sticky="true"/>
-        <h1>Fixed Asset Parameter </h1>
-             
-          <h:panelGrid columns="4"
+    <h:head>
+        <title>Authorized Fixed Asset Parameter </title>
+        <h:outputStylesheet library="css" name="ComSetting.css" />
+    </h:head>
+    <h:body>
+        <h:form id="fixedAssetForm">
+            <p:growl id="growl" showDetail="true" life="3000" sticky="true"/>
+            <h1>Fixed Asset Parameter </h1>
+
+            <h:panelGrid columns="4"
                          columnClasses="firstColumnPGrid,secondColumnPGrid,thirdColumnPGrid"
                          style="margin-left: 20px;">
 
@@ -26,14 +26,14 @@
 
 
                 <p:commandButton  icon="pi pi-eye" disabled="false" 
-                                 actionListener="#{fapsList.searchParam}" 
-                                 process="@this" update="unauthorizedAccountsTable"/>
+                                  actionListener="#{fapsList.searchParam}" 
+                                  process="@this" update="unauthorizedAccountsTable"/>
 
-               
+
 
 
             </h:panelGrid>
-          <br/>
+            <br/>
             <p:dataTable id="unauthorizedAccountsTable"
                          value="#{fapsList.authFixedAssetParam}"
                          var="account"
@@ -49,11 +49,11 @@
                          stickyHeader="true"
                          styleClass="myLDRepay">
 
-                 <!-- Serial Number Column -->
-    <p:column headerText="S/N" style="font-size: 10pt; text-align: center;" width="50">
-        <h:outputText value="#{r + 1}" />
-    </p:column>
-                
+                <!-- Serial Number Column -->
+                <p:column headerText="S/N" style="font-size: 10pt; text-align: center;" width="50">
+                    <h:outputText value="#{r + 1}" />
+                </p:column>
+
                 <p:column headerText="Category:">
                     <h:outputText value="#{account.category}" />
                 </p:column>
@@ -81,13 +81,20 @@
                 <p:column headerText="Depreciation Day:">
                     <h:outputText value="#{account.depreciationDay}" />
                 </p:column>
+                <p:column headerText="Actions" style="text-align:center;" width="100" exportable="false">
+                    <p:commandButton  icon="pi pi-pencil"
+                                      action="#{fapsList.goToEditPage(account)}"
+                                      update="@none"
+                                      ajax="false" />
+                </p:column>
+
 
                 <f:facet name="footer">
-            <p:commandButton value="Export as csv" icon="pi pi-download" ajax="false" >
-               <p:dataExporter type="csv" target="unauthorizedAccountsTable" fileName="Fixed_Asset_Parameter_Setup_List"/>
-    </p:commandButton> 
-        </f:facet>
+                    <p:commandButton value="Export as csv" icon="pi pi-download" ajax="false" >
+                        <p:dataExporter type="csv" target="unauthorizedAccountsTable" fileName="Fixed Asset Parameter"/>
+                    </p:commandButton> 
+                </f:facet>
             </p:dataTable>
-    </h:form>
-</h:body>
+        </h:form>
+    </h:body>
 </html>

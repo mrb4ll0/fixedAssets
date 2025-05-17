@@ -43,11 +43,8 @@
                                 <p:outputLabel/>
                                 
                                 <p:outputLabel for="assetname" value="Assets Name" />
-                                <p:selectOneMenu id="assetname" styleClass="GenSELTxtreq" value="#{editFixedAsset.assetsName}" >
-                                    <f:selectItem itemLabel="Select Asset Name" itemValue=""/>
-                                    <f:selectItems value="#{editFixedAsset.assetNames}" />
-                                    <p:ajax listener="#{editFixedAsset.onSelectAssetsName(event)}" />
-                                </p:selectOneMenu>
+                                <p:inputText styleClass="GenInputTxtreq"
+                                             id="assetname" maxlength="25" size="20" value="#{editFixedAsset.assetsName}" />
                                 <p:outputLabel/>
 
 

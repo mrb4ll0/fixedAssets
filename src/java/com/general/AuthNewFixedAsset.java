@@ -6,6 +6,7 @@
 package com.general;
 
 import com.general.model.FixedAsset;
+import com.general.model.FixedAssetParameter;
 import com.general.model.FixedAssetReport;
 import java.io.Serializable;
 import javax.annotation.PostConstruct;
@@ -19,6 +20,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javax.faces.context.FacesContext;
 
 /**
  *
@@ -278,4 +280,16 @@ public class AuthNewFixedAsset implements Serializable{
     System.out.println("in searchAccount the length of search Account is " + reportList.size());
     this.authNewFixedAsset = reportList;
     }
+    
+    
+    public String goToEditPage(FixedAsset selectedParam) 
+ {
+     System.out.println("Asset Param is "+selectedParam);
+    // Store selected record in session or flash scope
+    FacesContext.getCurrentInstance().getExternalContext().getFlash().put("selectedFixedAssetParam", selectedParam);
+
+    // Redirect to edit page
+    return "EditFixedAssets?faces-redirect=true";
+}
+
 }

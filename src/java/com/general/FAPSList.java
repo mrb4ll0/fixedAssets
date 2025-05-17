@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
+import javax.faces.context.FacesContext;
 import javax.faces.view.ViewScoped;
 
 /**
@@ -178,5 +179,16 @@ public List<FixedAssetParameter> fetchFixedAssetParamsByCategory(String category
 
     return resultList;
 }
+
+ public String goToEditPage(FixedAssetParameter selectedParam) 
+ {
+     System.out.println("Asset Param is "+selectedParam);
+    // Store selected record in session or flash scope
+    FacesContext.getCurrentInstance().getExternalContext().getFlash().put("selectedFixedAssetParam", selectedParam);
+
+    // Redirect to edit page
+    return "EditFixedAssetParameterSetup?faces-redirect=true";
+}
+
 
 }

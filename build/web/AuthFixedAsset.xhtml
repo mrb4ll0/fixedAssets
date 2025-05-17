@@ -25,8 +25,8 @@
 
 
                 <p:commandButton  icon="pi pi-eye" disabled="false" 
-                                 actionListener="#{authNewFixedAsset.searchAccount}" 
-                                 process="@this" update="authorizedFixedAsset"/>
+                                  actionListener="#{authNewFixedAsset.searchAccount}" 
+                                  process="@this" update="authorizedFixedAsset"/>
 
                 <p:selectOneMenu id="branch" style="margin-right: 10px;" styleClass="GenSELTxtreq" value="#{newFixedAsset.branch}"  >
                     <f:selectItem itemLabel="Select Branch" itemValue=""/>
@@ -102,6 +102,13 @@
                     <!-- Branch -->
                     <p:column headerText="Branch" style="font-size: 10pt;">
                         <h:outputText value="#{account.branch}" />
+                    </p:column>
+
+                    <p:column headerText="Actions" style="text-align:center;" width="100">
+                        <p:commandButton  icon="pi pi-pencil"
+                                          action="#{authNewFixedAsset.goToEditPage(account)}"
+                                          update="@none"
+                                          ajax="false" />
                     </p:column>
                 </p:dataTable>
 

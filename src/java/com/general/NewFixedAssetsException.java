@@ -142,7 +142,6 @@ public class NewFixedAssetsException implements Serializable
     FacesContext facesContext = FacesContext.getCurrentInstance();
     HttpSession session = (HttpSession) facesContext.getExternalContext().getSession(true);
 
-    // Retrieve session variables
     String yuser = (String) session.getAttribute("user");
     String yprofileuser = (String) session.getAttribute("usernames");
     String ytransit = (String) session.getAttribute("usertransit");
@@ -154,7 +153,6 @@ public class NewFixedAssetsException implements Serializable
         connection = obj_DB_connection.get_connection();
         connection.setAutoCommit(false);
 
-        // **Create Table If It Doesn't Exist (Without Account Name Fields)**
         String createTableSQL = "CREATE TABLE IF NOT EXISTS FixedAsset ("
                 + "FAPcatID VARCHAR(255) UNIQUE, "
                 + "FAPcategory VARCHAR(255) UNIQUE, "
@@ -168,8 +166,8 @@ public class NewFixedAssetsException implements Serializable
                 + "FAPdepDate VARCHAR(100), "
                 + "FAPdepDay VARCHAR(100), "
                 + "Branch VARCHAR(200), "
-                +"PurchasedDate Date, "
-                +"DepreciationAmount BIGINT, "
+                + "PurchasedDate DATE, "
+                + "DepreciationAmount BIGINT, "
                 + "RecordStatus VARCHAR(50), "
                 + "Inputter VARCHAR(255), "
                 + "InputterRec VARCHAR(255), "
@@ -182,76 +180,107 @@ public class NewFixedAssetsException implements Serializable
                 + "ProfileUser VARCHAR(255), "
                 + "UserTransit VARCHAR(255), "
                 + "UserTenancy VARCHAR(255))";
-
         statement = connection.createStatement();
         statement.execute(createTableSQL);
 
-        // **Insert Data into authFixedAsset (Without Account Name Fields)**
-        String insertSQL = "INSERT INTO FixedAsset "
-                + "(FAPcatID, FAPcategory, AssetsName, AssetsAmount, Duration, Branch, "
-                + "FAPdepExpAcct, FAPPrePayAcct, AssetAccount, DepExpenseAccount, "
-                + "FAPdepDate, RecordStatus, Inputter, InputterRec, Authoriser, AuthoriserRec, "
-                + "updatetype, FAPtenancy, AuditDateRecord, YUser, ProfileUser, UserTransit, UserTenancy,PurchasedDate, DepreciationAmount , FAPdepDay"
-                + ")VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?,?)";
-          Long depreciationAmount =Long.parseLong(asset.getAssetAmount())/ FADepreciationService.getDepreciationDayByCategoryId(connection,asset.getFAPcatID());
-          System.out.println("Depreciation Amount is "+depreciationAmount);
-        ps = connection.prepareStatement(insertSQL);
+        // Check if record exists
+        String checkSQL = "SELECT COUNT(*) FROM FixedAsset WHERE FAPcatID = ?";
+        ps = connection.prepareStatement(checkSQL);
         ps.setString(1, asset.getFAPcatID());
-        ps.setString(2, asset.getFAPcategory());
-        ps.setString(3, asset.getAssetName());
-        ps.setString(4, asset.getAssetAmount());
-        ps.setString(5, asset.getDurationsMonth());
-        ps.setString(6, asset.getBranch());
-        ps.setString(7, asset.getFAPdepExpAcct());
-        ps.setString(8, asset.getFAPPrePayAcct());
-        ps.setString(9, asset.getAssetAccount());
-        ps.setString(10, asset.getDepExpenseAccount());
-        ps.setString(11, asset.getFAPdepDate());
-        ps.setString(12, "AUTH");  // Default RecordStatus
-        ps.setString(13, yuser);
-        ps.setString(14, yprofileuser);
-        ps.setString(15, "DefaultAuthoriser"); // Modify if needed
-        ps.setString(16, "DefaultAuthoriserRec"); // Modify if needed
-        ps.setString(17, "Insert");  // Default updatetype
-        ps.setString(18, yTenancynum);
-        ps.setString(19, auditDateRecord);
-        ps.setString(20, yuser);
-        ps.setString(21, yprofileuser);
-        ps.setString(22, ytransit);
-        ps.setString(23, yTenancynum);
-        ps.setDate(24, asset.getPurchasedDate());
-        ps.setLong(25, depreciationAmount);
-        ps.setString(26, asset.getFAPdepDay());
+        ResultSet rs = ps.executeQuery();
+        rs.next();
+        boolean recordExists = rs.getInt(1) > 0;
+        ps.close();
 
-        ps.executeUpdate();
+        Long depreciationAmount = Long.parseLong(asset.getAssetAmount()) / FADepreciationService.getDepreciationDayByCategoryId(connection, asset.getFAPcatID());
+        String depreciationDay = String.valueOf(FADepreciationService.getDepreciationDayByCategoryId(connection, asset.getFAPcatID()));
+
+        if (recordExists) {
+            // UPDATE logic
+            String updateSQL = "UPDATE FixedAsset SET FAPcategory=?, AssetsName=?, AssetsAmount=?, Duration=?, Branch=?, "
+                    + "FAPdepExpAcct=?, FAPPrePayAcct=?, AssetAccount=?, DepExpenseAccount=?, FAPdepDate=?, "
+                    + "RecordStatus=?, Inputter=?, InputterRec=?, Authoriser=?, AuthoriserRec=?, "
+                    + "updatetype=?, FAPtenancy=?, AuditDateRecord=?, YUser=?, ProfileUser=?, UserTransit=?, "
+                    + "UserTenancy=?, PurchasedDate=?, DepreciationAmount=?, FAPdepDay=? WHERE FAPcatID=?";
+            ps = connection.prepareStatement(updateSQL);
+
+            ps.setString(1, asset.getFAPcategory());
+            ps.setString(2, asset.getAssetName());
+            ps.setString(3, asset.getAssetAmount());
+            ps.setString(4, asset.getDurationsMonth());
+            ps.setString(5, asset.getBranch());
+            ps.setString(6, asset.getFAPdepExpAcct());
+            ps.setString(7, asset.getFAPPrePayAcct());
+            ps.setString(8, asset.getAssetAccount());
+            ps.setString(9, asset.getDepExpenseAccount());
+            ps.setString(10, asset.getFAPdepDate());
+            ps.setString(11, "AUTH");
+            ps.setString(12, yuser);
+            ps.setString(13, yprofileuser);
+            ps.setString(14, "DefaultAuthoriser");
+            ps.setString(15, "DefaultAuthoriserRec");
+            ps.setString(16, "Update");
+            ps.setString(17, yTenancynum);
+            ps.setString(18, auditDateRecord);
+            ps.setString(19, yuser);
+            ps.setString(20, yprofileuser);
+            ps.setString(21, ytransit);
+            ps.setString(22, yTenancynum);
+            ps.setDate(23, asset.getPurchasedDate());
+            ps.setLong(24, depreciationAmount);
+            ps.setString(25, depreciationDay);
+            ps.setString(26, asset.getFAPcatID());
+
+            ps.executeUpdate();
+            System.out.println("Record updated successfully.");
+        } else {
+            // INSERT logic
+            String insertSQL = "INSERT INTO FixedAsset (FAPcatID, FAPcategory, AssetsName, AssetsAmount, Duration, Branch, "
+                    + "FAPdepExpAcct, FAPPrePayAcct, AssetAccount, DepExpenseAccount, FAPdepDate, RecordStatus, Inputter, "
+                    + "InputterRec, Authoriser, AuthoriserRec, updatetype, FAPtenancy, AuditDateRecord, YUser, ProfileUser, "
+                    + "UserTransit, UserTenancy, PurchasedDate, DepreciationAmount, FAPdepDay) "
+                    + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+            ps = connection.prepareStatement(insertSQL);
+
+            ps.setString(1, asset.getFAPcatID());
+            ps.setString(2, asset.getFAPcategory());
+            ps.setString(3, asset.getAssetName());
+            ps.setString(4, asset.getAssetAmount());
+            ps.setString(5, asset.getDurationsMonth());
+            ps.setString(6, asset.getBranch());
+            ps.setString(7, asset.getFAPdepExpAcct());
+            ps.setString(8, asset.getFAPPrePayAcct());
+            ps.setString(9, asset.getAssetAccount());
+            ps.setString(10, asset.getDepExpenseAccount());
+            ps.setString(11, asset.getFAPdepDate());
+            ps.setString(12, "AUTH");
+            ps.setString(13, yuser);
+            ps.setString(14, yprofileuser);
+            ps.setString(15, "DefaultAuthoriser");
+            ps.setString(16, "DefaultAuthoriserRec");
+            ps.setString(17, "Insert");
+            ps.setString(18, yTenancynum);
+            ps.setString(19, auditDateRecord);
+            ps.setString(20, yuser);
+            ps.setString(21, yprofileuser);
+            ps.setString(22, ytransit);
+            ps.setString(23, yTenancynum);
+            ps.setDate(24, asset.getPurchasedDate());
+            ps.setLong(25, depreciationAmount);
+            ps.setString(26, depreciationDay);
+
+            ps.executeUpdate();
+            System.out.println("Insertion successful in FixedAsset!");
+        }
+
         connection.commit();
-        System.out.println("Insertion successful in authFixedAsset!");
-        
         return true;
 
-    }
-       catch (SQLIntegrityConstraintViolationException e)
-       {
-    // Duplicate key error handling
-    System.out.println("Duplicate key error: " + e.getMessage());
-
-    facesContext.addMessage(null, 
-        new FacesMessage(FacesMessage.SEVERITY_ERROR, 
-        "Cannot authorize", "Category ID already exists!"));
-
-    try {
-        if (connection != null) connection.rollback();
-        System.out.println("Transaction rolled back due to duplicate key error.");
-    } catch (SQLException rollbackEx) {
-        rollbackEx.printStackTrace();
-    }}
-
-    
-    catch (Exception e) {
+    } catch (Exception e) {
         e.printStackTrace();
         try {
             if (connection != null) connection.rollback();
-            System.out.println("Transaction rolled back due to error.");
         } catch (SQLException rollbackEx) {
             rollbackEx.printStackTrace();
         }
@@ -263,10 +292,11 @@ public class NewFixedAssetsException implements Serializable
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-        
     }
+
     return false;
-} 
+}
+
     public void deleteFixedAsset(String categoryId) {
     Connection connection = null;
     PreparedStatement deletePs = null;

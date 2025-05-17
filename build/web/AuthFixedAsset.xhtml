@@ -104,7 +104,7 @@
                         <h:outputText value="#{account.branch}" />
                     </p:column>
 
-                    <p:column headerText="Actions" style="text-align:center;" width="100">
+                    <p:column headerText="Actions" style="text-align:center;" width="100" exportable="false">
                         <p:commandButton  icon="pi pi-pencil"
                                           action="#{authNewFixedAsset.goToEditPage(account)}"
                                           update="@none"

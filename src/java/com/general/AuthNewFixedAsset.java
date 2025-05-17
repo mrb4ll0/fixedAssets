@@ -286,7 +286,7 @@ public class AuthNewFixedAsset implements Serializable{
  {
      System.out.println("Asset Param is "+selectedParam);
     // Store selected record in session or flash scope
-    FacesContext.getCurrentInstance().getExternalContext().getFlash().put("selectedFixedAssetParam", selectedParam);
+    FacesContext.getCurrentInstance().getExternalContext().getFlash().put("selectedFixedAsset", selectedParam);
 
     // Redirect to edit page
     return "EditFixedAssets?faces-redirect=true";

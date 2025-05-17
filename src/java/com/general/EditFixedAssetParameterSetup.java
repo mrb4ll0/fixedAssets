@@ -129,7 +129,7 @@ public class EditFixedAssetParameterSetup implements Serializable {
     private Map<String, String> assetAccounts = new HashMap();
     private List<Map<String, Object>> fixedAssetsData = new ArrayList<>();
     private List<Integer> depreciationDays = new ArrayList<>();
-    private String depDate;
+    private String depDate ="";
     private FixedAssetParameter fixedAssetParameter;
 
     public FixedAssetParameter getFixedAssetParameter() {
@@ -204,16 +204,16 @@ public class EditFixedAssetParameterSetup implements Serializable {
                 new FacesMessage(FacesMessage.SEVERITY_INFO, "Success", "Fixed asset category updated."));
     }
 
-    private String categoryId;
-    private String prepaymentAccount;
-    private String depreciationAccount;
-    private String assetAccount;
-    private String depExpenseAccount;
+    private String categoryId = "";
+    private String prepaymentAccount ="";
+    private String depreciationAccount ="";
+    private String assetAccount ="";
+    private String depExpenseAccount ="";
     private int depreciationDay = 0;
-    private String status;
-    private String createdDate;
-    private String createdBy;
-    private String category;
+    private String status ="";
+    private String createdDate="";
+    private String createdBy="";
+    private String category="";
 
     // Getters and setters
     public String getCategory() {
@@ -522,78 +522,108 @@ public class EditFixedAssetParameterSetup implements Serializable {
     }
 
     public boolean insertFixedAssetParamByCategoryId() {
-        FacesContext facesContext = FacesContext.getCurrentInstance();
-        HttpSession session = (HttpSession) facesContext.getExternalContext().getSession(true);
+    FacesContext facesContext = FacesContext.getCurrentInstance();
+    HttpSession session = (HttpSession) facesContext.getExternalContext().getSession(true);
 
-        String yuser = (String) session.getAttribute("user");
-        String ytransit = (String) session.getAttribute("usertransit");
-        String yTenancynum = (String) session.getAttribute("usertenancy");
-        String AuditDateRecord = GetSystemDates.GetAuditTrailDate();
+    String yuser = (String) session.getAttribute("user");
+    String ytransit = (String) session.getAttribute("usertransit");
+    String yTenancynum = (String) session.getAttribute("usertenancy");
+    String auditDate = GetSystemDates.GetAuditTrailDate();
 
-        if (fixedAssetParameter == null || fixedAssetParameter.getCategoryId() == null) {
-            addFieldMessage("Category ID:", "Missing!");
-            return false;
+    if (fixedAssetParameter == null || fixedAssetParameter.getCategoryId() == null) {
+        addFieldMessage("Category ID:", "Missing!");
+        return false;
+    }
+
+    Connection connection = null;
+
+    try {
+        connection = new DBConnection().get_connection();
+
+        // Check if table exists
+        boolean tableExists;
+        try (ResultSet rs = connection.getMetaData().getTables(null, null, "fixedAssetParamTemp", null)) {
+            tableExists = rs.next();
         }
 
-        try (Connection connection = new DBConnection().get_connection()) {
-            // Check if the table exists
-            boolean tableExists = false;
-            try (ResultSet rs = connection.getMetaData().getTables(null, null, "fixedAssetParamTemp", null)) {
-                if (rs.next()) {
-                    tableExists = true;
-                }
+        // Create table if it doesn't exist
+        if (!tableExists) {
+            try (PreparedStatement stmt = connection.prepareStatement(
+                    "CREATE TABLE IF NOT EXISTS fixedAssetParamTemp ("
+                            + "FAPcatID VARCHAR(255) UNIQUE, "
+                            + "FAPcategory VARCHAR(255) UNIQUE, "
+                            + "AssetsName VARCHAR(255), "
+                            + "AssetsAmount VARCHAR(255), "
+                            + "Duration VARCHAR(255), "
+                            + "FAPdepExpAcctNumber VARCHAR(255), "
+                            + "FAPPrePayAcctNumber VARCHAR(255), "
+                            + "AssetAccountNumber VARCHAR(255), "
+                            + "DepExpenseAccountNumber VARCHAR(255), "
+                            + "FAPdepDate VARCHAR(20), "
+                            + "FAPdepDay VARCHAR(20), "
+                            + "RecordStatus VARCHAR(50), "
+                            + "Inputter VARCHAR(255), "
+                            + "InputterRec VARCHAR(255), "
+                            + "Authoriser VARCHAR(255), "
+                            + "AuthoriserRec VARCHAR(255), "
+                            + "updatetype VARCHAR(50), "
+                            + "FAPtenancy VARCHAR(255))")) {
+                stmt.execute();
+                System.out.println("Table fixedAssetParamTemp created successfully.");
             }
+        }
 
-            // Create the table if it doesn't exist
-            if (!tableExists) {
-                try (PreparedStatement createTableStmt = connection.prepareStatement(
-                        "CREATE TABLE IF NOT EXISTS fixedAssetParamTemp ("
-                        + "FAPcatID VARCHAR(255) UNIQUE, "
-                        + "FAPcategory VARCHAR(255) UNIQUE, "
-                        + "AssetsName VARCHAR(255), "
-                        + "AssetsAmount VARCHAR(255), "
-                        + "Duration VARCHAR(255), "
-                        + "FAPdepExpAcctNumber VARCHAR(255), "
-                        + "FAPPrePayAcctNumber VARCHAR(255), "
-                        + "AssetAccountNumber VARCHAR(255), "
-                        + "DepExpenseAccountNumber VARCHAR(255), "
-                        + "FAPdepDate VARCHAR(20), "
-                        + "FAPdepDay VARCHAR(20), "
-                        + "RecordStatus VARCHAR(50), "
-                        + "Inputter VARCHAR(255), "
-                        + "InputterRec VARCHAR(255), "
-                        + "Authoriser VARCHAR(255), "
-                        + "AuthoriserRec VARCHAR(255), "
-                        + "updatetype VARCHAR(50), "
-                        + "FAPtenancy VARCHAR(255))")) {
-                    createTableStmt.execute();
-                }
+        // Check if record exists
+        boolean recordExists = false;
+        try (PreparedStatement checkStmt = connection.prepareStatement(
+                "SELECT 1 FROM fixedAssetParamTemp WHERE FAPcatID = ?")) {
+            checkStmt.setString(1, fixedAssetParameter.getCategoryId());
+            try (ResultSet rs = checkStmt.executeQuery()) {
+                recordExists = rs.next();
             }
+        }
 
-            // Re-check table creation
-            try (ResultSet rs = connection.getMetaData().getTables(null, null, "fixedAssetParamTemp", null)) {
-                if (!rs.next()) {
-                    FacesContext.getCurrentInstance().addMessage(null,
-                            new FacesMessage(FacesMessage.SEVERITY_ERROR, "Transaction Failed", "Table fixedAssetParamTemp does not exist."));
-                    return false;
-                }
+        // Prepare parameter values
+        String fCategory = category.isEmpty()? fixedAssetParameter.getCategory() : category;
+        String fAssetAcc = assetAccount.isEmpty() ? fixedAssetParameter.getAssetAccount() : assetAccount;
+        String fPrepaymentAcc = prepaymentAccount.isEmpty()? fixedAssetParameter.getPrepaymentAccount() : prepaymentAccount;
+        String fDepreciationAcc = depreciationAccount.isEmpty() ? fixedAssetParameter.getDepreciationAccount() : depreciationAccount;
+        String fDepExpenseAcc = depExpenseAccount.isEmpty() ? fixedAssetParameter.getDepExpenseAccount() : depExpenseAccount;
+        int fDepreciationDay = depreciationDay == 0 ? Integer.parseInt(fixedAssetParameter.getDepreciationDay()) : depreciationDay;
+        String fDepreciationDate = depDate.isEmpty()? fixedAssetParameter.getDepreciationDate() : depDate;
+
+        connection.setAutoCommit(false);
+
+        if (recordExists) {
+            // UPDATE
+            String updateSQL = "UPDATE fixedAssetParamTemp SET "
+                    + "FAPcategory = ?, FAPdepExpAcctNumber = ?, FAPPrePayAcctNumber = ?, "
+                    + "AssetAccountNumber = ?, DepExpenseAccountNumber = ?, FAPdepDate = ?, "
+                    + "RecordStatus = ?, Inputter = ?, InputterRec = ?, Authoriser = ?, "
+                    + "AuthoriserRec = ?, updatetype = ?, FAPtenancy = ?, FAPdepDay = ? "
+                    + "WHERE FAPcatID = ?";
+
+            try (PreparedStatement updateStmt = connection.prepareStatement(updateSQL)) {
+                updateStmt.setString(1, fCategory);
+                updateStmt.setString(2, fDepreciationAcc);
+                updateStmt.setString(3, fPrepaymentAcc);
+                updateStmt.setString(4, fAssetAcc);
+                updateStmt.setString(5, fDepExpenseAcc);
+                updateStmt.setString(6, fDepreciationDate);
+                updateStmt.setString(7, "INAU");
+                updateStmt.setString(8, yuser);
+                updateStmt.setString(9, auditDate);
+                updateStmt.setString(10, yuser);
+                updateStmt.setString(11, auditDate);
+                updateStmt.setString(12, "EDIT");
+                updateStmt.setString(13, yTenancynum);
+                updateStmt.setString(14, String.valueOf(fDepreciationDay));
+                updateStmt.setString(15, fixedAssetParameter.getCategoryId());
+                updateStmt.executeUpdate();
+                System.out.println("Record updated for FAPcatID: " + fixedAssetParameter.getCategoryId());
             }
-
-            // Delete old records just in case
-            try (PreparedStatement deleteStmt = connection.prepareStatement(
-                    "DELETE FROM fixedAssetParamTemp WHERE FAPcatID = ?")) {
-                deleteStmt.setString(1, fixedAssetParameter.getCategoryId());
-                deleteStmt.executeUpdate();
-            }
-            // Delete existing record from fixedassetparametersetup
-            try (PreparedStatement deleteFromSetup = connection.prepareStatement(
-                    "DELETE FROM fixedAssetParamSetup WHERE FAPcatID = ?")) {
-                deleteFromSetup.setString(1, fixedAssetParameter.getCategoryId());
-                deleteFromSetup.executeUpdate();
-            }
-
-            connection.setAutoCommit(false);
-
+        } else {
+            // INSERT
             String insertSQL = "INSERT INTO fixedAssetParamTemp ("
                     + "FAPcatID, FAPcategory, FAPdepExpAcctNumber, FAPPrePayAcctNumber, "
                     + "AssetAccountNumber, DepExpenseAccountNumber, FAPdepDate, RecordStatus, "
@@ -601,13 +631,6 @@ public class EditFixedAssetParameterSetup implements Serializable {
                     + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
             try (PreparedStatement insertStmt = connection.prepareStatement(insertSQL)) {
-                String fCategory = category == null ? fixedAssetParameter.getCategory() : category;
-                String fAssetAcc = assetAccount == null ? fixedAssetParameter.getAssetAccount() : assetAccount;
-                String fPrepaymentAcc = prepaymentAccount == null ? fixedAssetParameter.getPrepaymentAccount() : prepaymentAccount;
-                String fDepreciationAcc = depreciationAccount == null ? fixedAssetParameter.getDepreciationAccount() : depreciationAccount;
-                String fDepExpenseAcc = depExpenseAccount == null ? fixedAssetParameter.getDepExpenseAccount() : depExpenseAccount;
-                int fDepreciationDay = depreciationDay == 0 ? Integer.parseInt(fixedAssetParameter.getDepreciationDay()) : depreciationDay;
-                String fDepreciationDate = depDate == null ? fixedAssetParameter.getDepreciationDate() : depDate;
                 insertStmt.setString(1, fixedAssetParameter.getCategoryId());
                 insertStmt.setString(2, fCategory);
                 insertStmt.setString(3, fDepreciationAcc);
@@ -617,32 +640,49 @@ public class EditFixedAssetParameterSetup implements Serializable {
                 insertStmt.setString(7, fDepreciationDate);
                 insertStmt.setString(8, "INAU");
                 insertStmt.setString(9, yuser);
-                insertStmt.setString(10, AuditDateRecord);
+                insertStmt.setString(10, auditDate);
                 insertStmt.setString(11, yuser);
-                insertStmt.setString(12, AuditDateRecord);
+                insertStmt.setString(12, auditDate);
                 insertStmt.setString(13, "EDIT");
                 insertStmt.setString(14, yTenancynum);
                 insertStmt.setString(15, String.valueOf(fDepreciationDay));
                 insertStmt.executeUpdate();
+                System.out.println("New record inserted for FAPcatID: " + fixedAssetParameter.getCategoryId());
             }
-
-            connection.commit();
-            connection.setAutoCommit(true);
-
-            FacesContext.getCurrentInstance().addMessage(null,
-                    new FacesMessage(FacesMessage.SEVERITY_INFO, "Transaction Completed", "Record ID: " + fixedAssetParameter.getCategoryId()));
-            facesContext.getExternalContext().getFlash().setKeepMessages(true);
-            facesContext.getExternalContext().redirect(((HttpServletRequest) facesContext.getExternalContext().getRequest()).getRequestURI());
-            return true;
-
-        } catch (Exception e) {
-            logException(e);
-            FacesContext.getCurrentInstance().addMessage(null,
-                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Transaction Failed:", "Error: " + e.getMessage()));
-            facesContext.getExternalContext().getFlash().setKeepMessages(true);
         }
-        return false;
+
+        connection.commit();
+        connection.setAutoCommit(true);
+
+        FacesContext.getCurrentInstance().addMessage(null,
+                new FacesMessage(FacesMessage.SEVERITY_INFO, "Transaction Completed", "Record ID: " + fixedAssetParameter.getCategoryId()));
+        facesContext.getExternalContext().getFlash().setKeepMessages(true);
+        facesContext.getExternalContext().redirect(((HttpServletRequest) facesContext.getExternalContext().getRequest()).getRequestURI());
+
+        return true;
+
+    } catch (Exception e) {
+        System.out.println("Error during insert/update fixed asset param: " + e.getMessage());
+        e.printStackTrace();
+        FacesContext.getCurrentInstance().addMessage(null,
+                new FacesMessage(FacesMessage.SEVERITY_ERROR, "Transaction Failed", "Error: " + e.getMessage()));
+        facesContext.getExternalContext().getFlash().setKeepMessages(true);
+        try {
+            if (connection != null) {
+                connection.rollback();
+            }
+        } catch (SQLException ex) {
+            System.out.println("Rollback failed: " + ex.getMessage());
+        }
+    } finally {
+        try {
+            if (connection != null) connection.close();
+        } catch (SQLException ex) {
+            System.out.println("Failed to close connection: " + ex.getMessage());
+        }
     }
+    return false;
+}
 
     private void addFieldMessage(String title, String message) {
         FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_ERROR, title, message);

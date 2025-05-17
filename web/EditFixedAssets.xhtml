@@ -31,8 +31,6 @@
                                 <p:selectOneMenu id="FACategories" styleClass="GenSELTxtreq" value="#{editFixedAsset.fixedAssetCategory}" >
                                     <f:selectItem itemLabel="Select Category" itemValue=""/>
                                     <f:selectItems value="#{editFixedAsset.fixedAssetsCategories}" />
-                                    <p:ajax update="categoryId assetaccount assetAccountLabel deprecationaccount depreciationAccountLabel prepaymentaccount prepaymentAccountLabel depExpenseAccount depExpenseAccountLabel" 
-                                            listener="#{editFixedAsset.onSelectCategory(event)}" />
                                 </p:selectOneMenu>
                                 <p:outputLabel/>
 

@@ -115,13 +115,12 @@ public List<FixedAssetParameter> fetchFixedAssetParams() {
 
    public boolean saveFixedAssetParameter(FixedAssetParameter param) {
     Connection connection = null;
-    PreparedStatement psTemp = null;
     PreparedStatement psAuth = null;
+    PreparedStatement psUpdate = null;
     Statement statement = null;
     FacesContext facesContext = FacesContext.getCurrentInstance();
-     HttpSession session = (HttpSession) facesContext.getExternalContext().getSession(true);
+    HttpSession session = (HttpSession) facesContext.getExternalContext().getSession(true);
 
-    // Retrieve session variables
     String yuser = (String) session.getAttribute("user");
     String yprofileuser = (String) session.getAttribute("usernames");
     String ytransit = (String) session.getAttribute("usertransit");
@@ -131,103 +130,136 @@ public List<FixedAssetParameter> fetchFixedAssetParams() {
     try {
         DBConnection obj_DB_connection = new DBConnection();
         connection = obj_DB_connection.get_connection();
+        connection.setAutoCommit(false);
 
-        // **Create fixedAssetTemp Table If It Doesn't Exist**
-        // **Create fixedAssetTemp Table If It Doesn't Exist**
-statement = connection.createStatement();
+        // Create table if it doesn't exist
+        statement = connection.createStatement();
+        String createTableSQL = "CREATE TABLE IF NOT EXISTS FixedAssetParamSetup ("
+                + "FAPcatID VARCHAR(255) UNIQUE, "
+                + "FAPcategory VARCHAR(255) UNIQUE, "
+                + "AssetsName VARCHAR(255), "
+                + "AssetsAmount VARCHAR(255), "
+                + "Duration VARCHAR(255), "
+                + "FAPdepExpAcctNumber VARCHAR(255), "
+                + "FAPPrePayAcctNumber VARCHAR(255), "
+                + "AssetAccountNumber VARCHAR(255), "
+                + "DepExpenseAccountNumber VARCHAR(255), "
+                + "FAPdepDate VARCHAR(100), "
+                + "FAPdepDay VARCHAR(100), "
+                + "RecordStatus VARCHAR(50), "
+                + "Inputter VARCHAR(255), "
+                + "InputterRec VARCHAR(255), "
+                + "Authoriser VARCHAR(255), "
+                + "AuthoriserRec VARCHAR(255), "
+                + "updatetype VARCHAR(50), "
+                + "FAPtenancy VARCHAR(255), "
+                + "AuditDateRecord VARCHAR(100), "
+                + "YUser VARCHAR(255), "
+                + "ProfileUser VARCHAR(255), "
+                + "UserTransit VARCHAR(255), "
+                + "UserTenancy VARCHAR(255))";
+        statement.execute(createTableSQL);
 
-// **Create authFixedAssetParamSetup Table If It Doesn't Exist**
-String createAuthTableSQL = "CREATE TABLE IF NOT EXISTS FixedAssetParamSetup ("
-        + "FAPcatID VARCHAR(255) UNIQUE, "
-        + "FAPcategory VARCHAR(255) UNIQUE, "
-        + "AssetsName VARCHAR(255), "
-        + "AssetsAmount VARCHAR(255), "
-        + "Duration VARCHAR(255), "
-        + "FAPdepExpAcctNumber VARCHAR(255), "
-        + "FAPPrePayAcctNumber VARCHAR(255), "
-        + "AssetAccountNumber VARCHAR(255), "
-        + "DepExpenseAccountNumber VARCHAR(255), "
-        + "FAPdepDate VARCHAR(100), "
-        + "FAPdepDay VARCHAR(100), "
-        + "RecordStatus VARCHAR(50), "
-        + "Inputter VARCHAR(255), "
-        + "InputterRec VARCHAR(255), "
-        + "Authoriser VARCHAR(255), "
-        + "AuthoriserRec VARCHAR(255), "
-        + "updatetype VARCHAR(50), "
-        + "FAPtenancy VARCHAR(255), "
-        + "AuditDateRecord VARCHAR(100), "
-        + "YUser VARCHAR(255), "
-        + "ProfileUser VARCHAR(255), "
-        + "UserTransit VARCHAR(255), "
-        + "UserTenancy VARCHAR(255))";
+        // Try to insert
+        String insertAuthSQL = "INSERT INTO FixedAssetParamSetup "
+                + "(FAPcategory, FAPcatID, AssetAccountNumber, FAPPrePayAcctNumber, "
+                + "FAPdepExpAcctNumber, DepExpenseAccountNumber, FAPdepDate, RecordStatus, "
+                + "Inputter, InputterRec, Authoriser, AuthoriserRec, updatetype, FAPtenancy, "
+                + "AuditDateRecord, YUser, ProfileUser, UserTransit, UserTenancy, FAPdepDay) "
+                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
-statement.execute(createAuthTableSQL);
-// **Insert Data into authFixedAssetParamSetup**
-String insertAuthSQL = "INSERT INTO FixedAssetParamSetup "
-        + "(FAPcategory, FAPcatID, AssetAccountNumber, FAPPrePayAcctNumber, "
-        + "FAPdepExpAcctNumber, DepExpenseAccountNumber, FAPdepDate, RecordStatus, "
-        + "Inputter, InputterRec, Authoriser, AuthoriserRec, updatetype, FAPtenancy, "
-        + "AuditDateRecord, YUser, ProfileUser, UserTransit, UserTenancy,FAPdepDay) "
-        + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?)";
+        try {
+            psAuth = connection.prepareStatement(insertAuthSQL);
+            psAuth.setString(1, param.getCategory());
+            psAuth.setString(2, param.getCategoryId());
+            psAuth.setString(3, param.getAssetAccount());
+            psAuth.setString(4, param.getPrepaymentAccount());
+            psAuth.setString(5, param.getDepreciationAccount());
+            psAuth.setString(6, param.getDepExpenseAccount());
+            psAuth.setString(7, param.getDepreciationDate());
+            psAuth.setString(8, "AUTH");
+            psAuth.setString(9, yuser);
+            psAuth.setString(10, auditDateRecord);
+            psAuth.setString(11, "SYSTEM");
+            psAuth.setString(12, auditDateRecord);
+            psAuth.setString(13, "Insert");
+            psAuth.setString(14, yTenancynum);
+            psAuth.setString(15, auditDateRecord);
+            psAuth.setString(16, yuser);
+            psAuth.setString(17, yprofileuser);
+            psAuth.setString(18, ytransit);
+            psAuth.setString(19, yTenancynum);
+            psAuth.setString(20, param.getDepreciationDay());
 
-psAuth = connection.prepareStatement(insertAuthSQL);
-psAuth.setString(1, param.getCategory());
-psAuth.setString(2, param.getCategoryId());
-psAuth.setString(3, param.getAssetAccount());
-psAuth.setString(4, param.getPrepaymentAccount());
-psAuth.setString(5, param.getDepreciationAccount());
-psAuth.setString(6, param.getDepExpenseAccount());
-psAuth.setString(7, param.getDepreciationDate());
-psAuth.setString(8, "AUTH"); 
-psAuth.setString(9, yuser);
-psAuth.setString(10, auditDateRecord);
-psAuth.setString(11, "SYSTEM"); 
-psAuth.setString(12, auditDateRecord); 
-psAuth.setString(13, "Insert"); 
-psAuth.setString(14, yTenancynum);
-psAuth.setString(15, auditDateRecord);
-psAuth.setString(16, yuser);
-psAuth.setString(17, yprofileuser);
-psAuth.setString(18, ytransit);
-psAuth.setString(19, yTenancynum);
-psAuth.setString(20, param.getDepreciationDay());
+            psAuth.executeUpdate();
+            System.out.println("Inserted new record into FixedAssetParamSetup.");
+        } catch (SQLIntegrityConstraintViolationException e) {
+            // Record exists, perform update
+            System.out.println("Duplicate key found. Updating existing record...");
 
-psAuth.executeUpdate();
-        System.out.println("Insertion successful in fixedAssetTemp and authFixedAssetParamSetup!");
+            String updateSQL = "UPDATE FixedAssetParamSetup SET "
+                    + "FAPcategory = ?, AssetAccountNumber = ?, FAPPrePayAcctNumber = ?, "
+                    + "FAPdepExpAcctNumber = ?, DepExpenseAccountNumber = ?, FAPdepDate = ?, "
+                    + "RecordStatus = ?, Inputter = ?, InputterRec = ?, Authoriser = ?, "
+                    + "AuthoriserRec = ?, updatetype = ?, FAPtenancy = ?, AuditDateRecord = ?, "
+                    + "YUser = ?, ProfileUser = ?, UserTransit = ?, UserTenancy = ?, FAPdepDay = ? "
+                    + "WHERE FAPcatID = ?";
+
+            psUpdate = connection.prepareStatement(updateSQL);
+            psUpdate.setString(1, param.getCategory());
+            psUpdate.setString(2, param.getAssetAccount());
+            psUpdate.setString(3, param.getPrepaymentAccount());
+            psUpdate.setString(4, param.getDepreciationAccount());
+            psUpdate.setString(5, param.getDepExpenseAccount());
+            psUpdate.setString(6, param.getDepreciationDate());
+            psUpdate.setString(7, "AUTH");
+            psUpdate.setString(8, yuser);
+            psUpdate.setString(9, auditDateRecord);
+            psUpdate.setString(10, "SYSTEM");
+            psUpdate.setString(11, auditDateRecord);
+            psUpdate.setString(12, "Update");
+            psUpdate.setString(13, yTenancynum);
+            psUpdate.setString(14, auditDateRecord);
+            psUpdate.setString(15, yuser);
+            psUpdate.setString(16, yprofileuser);
+            psUpdate.setString(17, ytransit);
+            psUpdate.setString(18, yTenancynum);
+            psUpdate.setString(19, param.getDepreciationDay());
+            psUpdate.setString(20, param.getCategoryId());
+
+            int rowsUpdated = psUpdate.executeUpdate();
+            System.out.println("Updated existing record. Rows affected: " + rowsUpdated);
+        }
+
+        connection.commit();
+        System.out.println("Transaction committed successfully.");
         return true;
 
-    }
-    
-    catch (SQLIntegrityConstraintViolationException e)
-       {
-    // Duplicate key error handling
-    System.out.println("Duplicate key error: " + e.getMessage());
-
-    facesContext.addMessage(null, 
-        new FacesMessage(FacesMessage.SEVERITY_ERROR, 
-        "Cannot authorize", "Category ID already exists!"));
-
-    try {
-        if (connection != null) connection.rollback();
-        System.out.println("Transaction rolled back due to duplicate key error.");
-    } catch (SQLException rollbackEx) {
-        rollbackEx.printStackTrace();
-    }}
-    catch (Exception e) {
+    } catch (Exception e) {
+        System.out.println("Error occurred: " + e.getMessage());
         e.printStackTrace();
+        try {
+            if (connection != null) {
+                connection.rollback();
+                System.out.println("Transaction rolled back.");
+            }
+        } catch (SQLException rollbackEx) {
+            rollbackEx.printStackTrace();
+        }
     } finally {
         try {
             if (statement != null) statement.close();
-            if (psTemp != null) psTemp.close();
             if (psAuth != null) psAuth.close();
+            if (psUpdate != null) psUpdate.close();
             if (connection != null) connection.close();
         } catch (Exception ex) {
             ex.printStackTrace();
         }
     }
+
     return false;
 }
+
     
     
     public void deleteFixedAsset(String categoryId) {

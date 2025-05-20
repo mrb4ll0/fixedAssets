@@ -11,13 +11,15 @@
         <h:form id="fixedAssetForm">
             <p:growl id="growl" showDetail="true" life="3000" sticky="true"/>
             <h1>New Fixed Asset </h1>
-            <h:panelGrid columns="4"
+            <h:panelGrid columns="3"
                          columnClasses="firstColumnPGrid,secondColumnPGrid,thirdColumnPGrid"
-                         style="margin-left: 150px;">
+                         style="margin-left: 10px;">
 
-
-                <p:outputLabel for="AssetSearch" value="Asset Search:"/>
-                <p:inputText id="AssetSearch" styleClass="GenInputTxt" maxlength="50" size="50" value="#{authNewFixedAsset.newAccSearch}"
+             <h:panelGroup layout="block" style="display: flex; align-items: center; gap: 20px; margin-left: 10px;">
+                <p:outputLabel for="AssetSearch" value="Asset Search:" style="width: 100px"/>
+                <p:inputText id="AssetSearch" styleClass="GenInputTxt" 
+                             style="margin-right: 10px; "
+                             maxlength="50" size="30" value="#{authNewFixedAsset.newAccSearch}"
                              placeholder="Search by category or  asset name">
                     <p:ajax event="keyup" listener="#{authNewFixedAsset.searchAccount}"
                             update="authorizedFixedAsset" />
@@ -27,14 +29,24 @@
                 <p:commandButton  icon="pi pi-eye" disabled="false" 
                                   actionListener="#{authNewFixedAsset.searchAccount}" 
                                   process="@this" update="authorizedFixedAsset"/>
+             </h:panelGroup>
+                
+                <p:outputLabel/>
+                
+                <h:panelGroup layout="block" style="display: flex; align-items: center; gap: 20px; margin-left: 10px;">
+                    <p:selectOneMenu id="searchByCategory" style="margin-right: 10px;" styleClass="GenSELTxtreq" value="#{authNewFixedAsset.newAccSearch}"  >
+                    <f:selectItem itemLabel="Select Category" itemValue=""/>
+                    <f:selectItems value="#{authNewFixedAsset.categories}" />
+                    <p:ajax  update="authorizedFixedAsset" listener="#{authNewFixedAsset.searchAccount()}" />
+                </p:selectOneMenu>
 
                 <p:selectOneMenu id="branch" style="margin-right: 10px;" styleClass="GenSELTxtreq" value="#{newFixedAsset.branch}"  >
                     <f:selectItem itemLabel="Select Branch" itemValue=""/>
                     <f:selectItems value="#{authNewFixedAsset.branches}" />
-                    <p:ajax  update="" listener="#{authNewFixedAsset.onSelectBranch}" />
+                    <p:ajax  update="authorizedFixedAsset" listener="#{authNewFixedAsset.onSelectBranch}" />
                 </p:selectOneMenu>
 
-
+                    </h:panelGroup>
             </h:panelGrid>
 
             <br/>

@@ -38,7 +38,17 @@ public class AuthNewFixedAsset implements Serializable{
     private List<FixedAsset> authNewFixedAsset  = new ArrayList<>(); // List to store fetched assets
     private String newAccSearch; 
     private String branches;
-
+    private List<String> categories = new ArrayList<>();
+     
+    public List<String> getCategories()
+    {
+        return categories;
+    }
+    
+    public void setCategories(List<String> categories)
+    {
+        this.categories = categories;
+    }
     public String getBranches() {
         return branches;
     }
@@ -87,6 +97,7 @@ public class AuthNewFixedAsset implements Serializable{
 
                 asset.setFAPcatID(rs.getString("FAPcatID"));
                 asset.setFAPcategory(rs.getString("FAPcategory"));
+                categories.add(rs.getString("FAPcategory"));
                 asset.setAssetName(rs.getString("AssetsName"));
                 asset.setAssetAmount(rs.getString("AssetsAmount"));
                 asset.setDurationsMonth(rs.getString("Duration"));
@@ -291,5 +302,5 @@ public class AuthNewFixedAsset implements Serializable{
     // Redirect to edit page
     return "EditFixedAssets?faces-redirect=true";
 }
-
+ 
 }

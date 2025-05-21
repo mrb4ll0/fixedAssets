@@ -22,7 +22,7 @@ public class DepreciationScheduler {
     private final DepreciationLogService logService;
 
     // Set the daily run time here:
-    private final int runHour = 0;
+    private final int runHour = 7;
     private final int runMinute = 0;
 
     public DepreciationScheduler(DBConnection dbConn) {
@@ -36,7 +36,7 @@ public class DepreciationScheduler {
     public void start() {
         long initialDelay = computeDelayMillis(runHour, runMinute);
         long period       = TimeUnit.DAYS.toMillis(1);
-
+       
         scheduler.scheduleAtFixedRate(() -> {
             try (Connection conn = dbConn.get_connection()) {
                 // process one day's depreciation

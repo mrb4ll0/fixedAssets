@@ -33,12 +33,13 @@ public class DepreciationLogService {
     public void processMonthlyDepreciation(Connection conn) throws SQLException {
         LocalDate today = LocalDate.now();
         int todayDay = today.getDayOfMonth();
-
+         System.out.println("processMonthlyDepreciation got called");
         ensureLogTableExists(conn);
+        recoverMissedDepreciation(conn);
 
         String assetSql =
             "SELECT FAPcatID, AssetsAmount, Duration, DepreciationAmount, " +
-            "       FAPdepDate, PurchasedDate, Branch " +
+            "       FAPdepDay, PurchasedDate, Branch " +
             "  FROM FixedAsset";
 
         try (PreparedStatement ps = conn.prepareStatement(assetSql);
@@ -49,7 +50,7 @@ public class DepreciationLogService {
                 long assetValue = Long.parseLong(rs.getString("AssetsAmount").trim());
                 int totalMonths = Integer.parseInt(rs.getString("Duration").trim());
                 long monthlyDep = rs.getLong("DepreciationAmount");
-                int depDay = Integer.parseInt(rs.getString("FAPdepDate").trim());
+                int depDay = Integer.parseInt(rs.getString("FAPdepDay").trim());
                 LocalDate startDate = rs.getDate("PurchasedDate").toLocalDate();
                 String branch = rs.getString("Branch");
 
@@ -324,6 +325,71 @@ public class DepreciationLogService {
             System.out.println("WARNING: No FixedAsset found for asset ID " + assetId);
         }
     }
+}
+
+    
+    
+    public void recoverMissedDepreciation(Connection conn) throws SQLException
+    {
+    ensureLogTableExists(conn);
+    System.out.println("recoverMissedDepreciation got called");
+
+    String assetSql = "SELECT FAPcatID, AssetsAmount, Duration, DepreciationAmount, " +
+                      "FAPdepDay, PurchasedDate, Branch FROM FixedAsset";
+
+    try (PreparedStatement ps = conn.prepareStatement(assetSql);
+         ResultSet rs = ps.executeQuery()) {
+
+        LocalDate today = LocalDate.now();
+
+        while (rs.next()) {
+            String assetId = rs.getString("FAPcatID");
+            long assetValue = Long.parseLong(rs.getString("AssetsAmount").trim());
+            int totalMonths = Integer.parseInt(rs.getString("Duration").trim());
+            long monthlyDep = rs.getLong("DepreciationAmount");
+            int depDay = Integer.parseInt(rs.getString("FAPdepDay").trim());
+            LocalDate startDate = rs.getDate("PurchasedDate").toLocalDate();
+            String branch = rs.getString("Branch");
+
+            // Get depreciation log
+            String logSql = "SELECT timesDepreciated, totalDepreciated, runDate FROM DepreciationLog WHERE assetId = ?";
+            int timesDep = 0;
+            long totalDep = 0;
+            LocalDate lastRunDate = startDate.minusMonths(1);
+
+            try (PreparedStatement logPs = conn.prepareStatement(logSql)) {
+                logPs.setString(1, assetId);
+                try (ResultSet logRs = logPs.executeQuery()) {
+                    if (logRs.next()) {
+                        timesDep = logRs.getInt("timesDepreciated");
+                        totalDep = logRs.getLong("totalDepreciated");
+                        lastRunDate = logRs.getDate("runDate").toLocalDate();
+                    }
+                }
+            }
+
+            if (timesDep >= totalMonths) continue;
+
+            // Find months to catch up
+            LocalDate nextExpectedDate = lastRunDate.withDayOfMonth(depDay).plusMonths(1);
+            LocalDate finalDate = startDate.plusMonths(totalMonths);
+
+            while (!nextExpectedDate.isAfter(today) && timesDep < totalMonths && !nextExpectedDate.isAfter(finalDate)) {
+                timesDep += 1;
+                totalDep += monthlyDep;
+                long currentValue = assetValue - totalDep;
+                long remainingAmt = assetValue - totalDep;
+                int timesRemaining = totalMonths - timesDep;
+
+                upsertLog(conn, nextExpectedDate, assetId, monthlyDep, timesDep, totalDep,
+                          startDate, finalDate, currentValue, remainingAmt, timesRemaining, branch);
+
+                nextExpectedDate = nextExpectedDate.plusMonths(1);
+            }
+        }
+    }
+
+    System.out.println("✅ Missed depreciation periods recovered.");
 }
 
 }

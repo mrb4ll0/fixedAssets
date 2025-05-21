@@ -5,9 +5,7 @@
  */
 package com.general;
 
-import com.general.model.FixedAsset;
-import com.general.model.FixedAssetParameter;
-import com.general.model.FixedAssetReport;
+
 import java.io.Serializable;
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
@@ -35,7 +33,7 @@ import javax.faces.context.FacesContext;
 @ViewScoped
 public class AuthNewFixedAsset implements Serializable{
 
-    private List<FixedAsset> authNewFixedAsset  = new ArrayList<>(); // List to store fetched assets
+    private List<NewFixedAsset.FixedAsset> authNewFixedAsset  = new ArrayList<>(); // List to store fetched assets
     private String newAccSearch; 
     private String branches;
     private List<String> categories = new ArrayList<>();
@@ -72,8 +70,8 @@ public class AuthNewFixedAsset implements Serializable{
         authNewFixedAsset = fetchAuthFixedAssets();
     }
 
-    public List<FixedAsset> fetchAuthFixedAssets() {
-        List<FixedAsset> resultList = new ArrayList<>();
+    public List<NewFixedAsset.FixedAsset> fetchAuthFixedAssets() {
+        List<NewFixedAsset.FixedAsset> resultList = new ArrayList<>();
         Connection connection = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
@@ -93,7 +91,7 @@ public class AuthNewFixedAsset implements Serializable{
             rs = ps.executeQuery();
 
             while (rs.next()) {
-                FixedAsset asset = new FixedAsset();
+                NewFixedAsset.FixedAsset asset = new NewFixedAsset.FixedAsset();
 
                 asset.setFAPcatID(rs.getString("FAPcatID"));
                 asset.setFAPcategory(rs.getString("FAPcategory"));
@@ -137,13 +135,13 @@ public class AuthNewFixedAsset implements Serializable{
     }
 
     // Getter for the list
-    public List<FixedAsset> getAuthNewFixedAsset() {
+    public List<NewFixedAsset.FixedAsset> getAuthNewFixedAsset() {
         return authNewFixedAsset;
     }
     
     
     public void searchAccount() {
-    List<FixedAsset> reportList = new ArrayList<>();
+    List<NewFixedAsset.FixedAsset> reportList = new ArrayList<>();
     System.out.println("searchAccount got called");
 
     String query = "SELECT * FROM fixedAsset WHERE FAPcategory LIKE ? OR AssetsName LIKE ?";
@@ -167,7 +165,7 @@ public class AuthNewFixedAsset implements Serializable{
         ResultSet rs = ps.executeQuery();
 
         while (rs.next()) {
-            FixedAsset item = new FixedAsset();
+            NewFixedAsset.FixedAsset item = new NewFixedAsset.FixedAsset();
             item.setFAPcatID(rs.getString("FAPcatID"));
                 item.setFAPcategory(rs.getString("FAPcategory"));
                 item.setAssetName(rs.getString("AssetsName"));
@@ -220,7 +218,7 @@ public class AuthNewFixedAsset implements Serializable{
     
     public void onSelectBranch()
     {
-        List<FixedAsset> reportList = new ArrayList<>();
+        List<NewFixedAsset.FixedAsset> reportList = new ArrayList<>();
         String query;
         if(branches != "All Branches")
         {
@@ -248,7 +246,7 @@ public class AuthNewFixedAsset implements Serializable{
         ResultSet rs = ps.executeQuery();
 
         while (rs.next()) {
-            FixedAsset item = new FixedAsset();
+            NewFixedAsset.FixedAsset item = new NewFixedAsset.FixedAsset();
             item.setFAPcatID(rs.getString("FAPcatID"));
                 item.setFAPcategory(rs.getString("FAPcategory"));
                 item.setAssetName(rs.getString("AssetsName"));
@@ -293,7 +291,7 @@ public class AuthNewFixedAsset implements Serializable{
     }
     
     
-    public String goToEditPage(FixedAsset selectedParam) 
+    public String goToEditPage(NewFixedAsset.FixedAsset selectedParam) 
  {
      System.out.println("Asset Param is "+selectedParam);
     // Store selected record in session or flash scope
@@ -304,3 +302,143 @@ public class AuthNewFixedAsset implements Serializable{
 }
  
 }
+
+
+
+
+class FixedAssetReport {
+    private String category;
+    private String assetsName;
+    private Double assetsAmount;
+    private Integer durationMonths;
+    private String assetsAccount;
+    private String depreciationAccount;
+    private String prepaymentAccount;
+    private String depExpenseAccount;
+    private String responsiblePersonnel;
+    private String recordId; // used for rowKey & commit button
+
+    // Getters and Setters
+    
+    private String assetsAccountName;
+private String depreciationAccountName;
+private String prepaymentAccountName;
+private String depExpenseAccountName;
+
+public String getAssetsAccountName() {
+    return assetsAccountName;
+}
+
+public void setAssetsAccountName(String assetsAccountName) {
+    this.assetsAccountName = assetsAccountName;
+}
+
+public String getDepreciationAccountName() {
+    return depreciationAccountName;
+}
+
+public void setDepreciationAccountName(String depreciationAccountName) {
+    this.depreciationAccountName = depreciationAccountName;
+}
+
+public String getPrepaymentAccountName() {
+    return prepaymentAccountName;
+}
+
+public void setPrepaymentAccountName(String prepaymentAccountName) {
+    this.prepaymentAccountName = prepaymentAccountName;
+}
+
+public String getDepExpenseAccountName() {
+    return depExpenseAccountName;
+}
+
+public void setDepExpenseAccountName(String depExpenseAccountName) {
+    this.depExpenseAccountName = depExpenseAccountName;
+}
+
+
+    public Double getAssetsAmount() {
+        return assetsAmount;
+    }
+
+    public void setAssetsAmount(Double assetsAmount) {
+        this.assetsAmount = assetsAmount;
+    }
+
+    
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
+    public String getAssetsName() {
+        return assetsName;
+    }
+
+    public void setAssetsName(String assetsName) {
+        this.assetsName = assetsName;
+    }
+
+    public Integer getDurationMonths() {
+        return durationMonths;
+    }
+
+    public void setDurationMonths(Integer durationMonths) {
+        this.durationMonths = durationMonths;
+    }
+
+    public String getAssetsAccount() {
+        return assetsAccount;
+    }
+
+    public void setAssetsAccount(String assetsAccount) {
+        this.assetsAccount = assetsAccount;
+    }
+
+    public String getDepreciationAccount() {
+        return depreciationAccount;
+    }
+
+    public void setDepreciationAccount(String depreciationAccount) {
+        this.depreciationAccount = depreciationAccount;
+    }
+
+    public String getPrepaymentAccount() {
+        return prepaymentAccount;
+    }
+
+    public void setPrepaymentAccount(String prepaymentAccount) {
+        this.prepaymentAccount = prepaymentAccount;
+    }
+
+    public String getDepExpenseAccount() {
+        return depExpenseAccount;
+    }
+
+    public void setDepExpenseAccount(String depExpenseAccount) {
+        this.depExpenseAccount = depExpenseAccount;
+    }
+
+    public String getResponsiblePersonnel() {
+        return responsiblePersonnel;
+    }
+
+    public void setResponsiblePersonnel(String responsiblePersonnel) {
+        this.responsiblePersonnel = responsiblePersonnel;
+    }
+
+    public String getRecordId() {
+        return recordId;
+    }
+
+    public void setRecordId(String recordId) {
+        this.recordId = recordId;
+    }
+    
+    
+}
+

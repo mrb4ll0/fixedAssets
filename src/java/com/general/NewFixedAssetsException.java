@@ -5,8 +5,7 @@
  */
 package com.general;
 
-import com.general.model.FixedAsset;
-import com.general.model.FixedAssetParameter;
+
 import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -34,13 +33,13 @@ import javax.servlet.http.HttpSession;
 @ViewScoped
 public class NewFixedAssetsException implements Serializable
 {
- private List<FixedAsset> fixedAssets;
+ private List<NewFixedAsset.FixedAsset> fixedAssets;
 
-    public List<FixedAsset> getFixedAssets() {
+    public List<NewFixedAsset.FixedAsset> getFixedAssets() {
         return fixedAssets;
     }
 
-    public void setFixedAssets(List<FixedAsset> fixedAssets) {
+    public void setFixedAssets(List<NewFixedAsset.FixedAsset> fixedAssets) {
         this.fixedAssets = fixedAssets;
     }
  
@@ -53,8 +52,8 @@ public class NewFixedAssetsException implements Serializable
       }
  
       
- public List<FixedAsset> fetchFixedAssets() {
-    List<FixedAsset> resultList = new ArrayList<>();
+ public List<NewFixedAsset.FixedAsset> fetchFixedAssets() {
+    List<NewFixedAsset.FixedAsset> resultList = new ArrayList<>();
     Connection connection = null;
     PreparedStatement ps = null;
     ResultSet rs = null;
@@ -74,7 +73,7 @@ public class NewFixedAssetsException implements Serializable
         rs = ps.executeQuery();
 
         while (rs.next()) {
-            FixedAsset asset = new FixedAsset();
+            NewFixedAsset.FixedAsset asset = new NewFixedAsset.FixedAsset();
 
             asset.setFAPcatID(rs.getString("FAPcatID"));
             asset.setFAPcategory(rs.getString("FAPcategory"));
@@ -118,7 +117,7 @@ public class NewFixedAssetsException implements Serializable
 }
 
  
- public void authorize(FixedAsset fa)
+ public void authorize(NewFixedAsset.FixedAsset fa)
  {   
      boolean savedSuccess = saveFixedAsset(fa);
      if(savedSuccess)
@@ -130,12 +129,12 @@ public class NewFixedAssetsException implements Serializable
      }
  }
  
- public void delete(FixedAssetParameter fap)
+ public void delete(FixedAsserParameterSetup.FixedAssetParameter fap)
  {
      deleteFixedAsset(fap.getCategoryId());
  }
 
-   public Boolean saveFixedAsset(FixedAsset asset) {
+   public Boolean saveFixedAsset(NewFixedAsset.FixedAsset asset) {
     Connection connection = null;
     PreparedStatement ps = null;
     Statement statement = null;
@@ -310,8 +309,8 @@ public class NewFixedAssetsException implements Serializable
         connection = obj_DB_connection.get_connection();
 
         // **Check if Data Exists in List Before Deleting**
-        FixedAsset existingFixedAsset = null;
-        for (FixedAsset param : fixedAssets) {
+        NewFixedAsset.FixedAsset existingFixedAsset = null;
+        for (NewFixedAsset.FixedAsset param : fixedAssets) {
             if (param.getFAPcatID().equals(categoryId)) {
                 existingFixedAsset = param;
                 break;

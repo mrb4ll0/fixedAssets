@@ -5,8 +5,7 @@
  */
 package com.general;
 
-import com.general.model.FixedAsset;
-import com.general.model.FixedAssetParameter;
+
 import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -422,12 +421,12 @@ public void onSelectPurchasedDate(SelectEvent event)
     selectedPurchasedDate= purchasedDate;
     System.out.println("Purchased Date is "+selectedPurchasedDate);
 }
-  private FixedAsset fixedAsset;
+  private NewFixedAsset.FixedAsset fixedAsset;
 
     @PostConstruct
    public void init()
    {
-        fixedAsset = (FixedAsset) FacesContext.getCurrentInstance()
+        fixedAsset = (NewFixedAsset.FixedAsset) FacesContext.getCurrentInstance()
                 .getExternalContext().getFlash().get("selectedFixedAsset");
         System.out.println("fixed Asset is null "+(fixedAsset == null));
         if(fixedAsset !=null) categoryID = fixedAsset.getFAPcatID();
@@ -875,4 +874,7 @@ public Map<String,String> getDepExpenseDateByCategoryId(String categoryId) {
   }
   }
  
+  
+  
 }
+ 

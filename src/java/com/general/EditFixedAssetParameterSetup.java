@@ -30,7 +30,6 @@ import java.util.Date;
 import java.util.LinkedHashMap;
 import javax.servlet.http.HttpServletRequest;
 import org.primefaces.event.SelectEvent;
-import com.general.model.FixedAssetParameter;
 import javax.servlet.http.HttpSession;
 
 @ManagedBean(name = "editFixedAssetSetup")
@@ -130,13 +129,13 @@ public class EditFixedAssetParameterSetup implements Serializable {
     private List<Map<String, Object>> fixedAssetsData = new ArrayList<>();
     private List<Integer> depreciationDays = new ArrayList<>();
     private String depDate ="";
-    private FixedAssetParameter fixedAssetParameter;
+    private FixedAsserParameterSetup.FixedAssetParameter fixedAssetParameter;
 
-    public FixedAssetParameter getFixedAssetParameter() {
+    public FixedAsserParameterSetup.FixedAssetParameter getFixedAssetParameter() {
         return fixedAssetParameter;
     }
 
-    public void setFixedAssetParameter(FixedAssetParameter fixedAssetParameter) {
+    public void setFixedAssetParameter(FixedAsserParameterSetup.FixedAssetParameter fixedAssetParameter) {
         this.fixedAssetParameter = fixedAssetParameter;
     }
 
@@ -159,7 +158,7 @@ public class EditFixedAssetParameterSetup implements Serializable {
     @PostConstruct
     public void init() {
 
-        fixedAssetParameter = (FixedAssetParameter) FacesContext.getCurrentInstance()
+        fixedAssetParameter = (FixedAsserParameterSetup.FixedAssetParameter) FacesContext.getCurrentInstance()
                 .getExternalContext().getFlash().get("selectedFixedAssetParam");
         if (fixedAssetParameter != null) {
             categoryId = fixedAssetParameter.getCategoryId();

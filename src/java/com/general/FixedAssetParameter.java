@@ -5,7 +5,7 @@
  */
 package com.general;
 
-import com.general.model.FixedAssetParameter;
+
 import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -23,16 +23,16 @@ import javax.faces.view.ViewScoped;
  */
 @ManagedBean(name="fapsList")
 @ViewScoped
-public class FAPSList implements Serializable
+public class FixedAssetParameter implements Serializable
 {
   
-  private List<FixedAssetParameter> authFixedAssetParam;  
+  private List<FixedAsserParameterSetup.FixedAssetParameter> authFixedAssetParam;  
 
-    public List<FixedAssetParameter> getAuthFixedAssetParam() {
+    public List<FixedAsserParameterSetup.FixedAssetParameter> getAuthFixedAssetParam() {
         return authFixedAssetParam;
     }
 
-    public void setAuthFixedAssetParam(List<FixedAssetParameter> authFixedAssetParam) {
+    public void setAuthFixedAssetParam(List<FixedAsserParameterSetup.FixedAssetParameter> authFixedAssetParam) {
         this.authFixedAssetParam = authFixedAssetParam;
     }
     
@@ -72,8 +72,8 @@ public class FAPSList implements Serializable
     
    
 
-public List<FixedAssetParameter> fetchAuthFixedAssetParams() {
-    List<FixedAssetParameter> resultList = new ArrayList<>();
+public List<FixedAsserParameterSetup.FixedAssetParameter> fetchAuthFixedAssetParams() {
+    List<FixedAsserParameterSetup.FixedAssetParameter> resultList = new ArrayList<>();
     Connection connection = null;
     PreparedStatement ps = null;
     ResultSet rs = null;
@@ -92,7 +92,7 @@ public List<FixedAssetParameter> fetchAuthFixedAssetParams() {
 
         // **Processing the result set**
         while (rs.next()) {
-            FixedAssetParameter param = new FixedAssetParameter();
+            FixedAsserParameterSetup.FixedAssetParameter param = new FixedAsserParameterSetup.FixedAssetParameter();
             param.setCategory(rs.getString("FAPcategory"));
             param.setCategoryId(rs.getString("FAPcatID"));
             param.setAssetAccount(rs.getString("AssetAccountNumber"));
@@ -131,8 +131,8 @@ public void searchParam()
 }
 
 
-public List<FixedAssetParameter> fetchFixedAssetParamsByCategory(String category) {
-    List<FixedAssetParameter> resultList = new ArrayList<>();
+public List<FixedAsserParameterSetup.FixedAssetParameter> fetchFixedAssetParamsByCategory(String category) {
+    List<FixedAsserParameterSetup.FixedAssetParameter> resultList = new ArrayList<>();
     Connection connection = null;
     PreparedStatement ps = null;
     ResultSet rs = null;
@@ -153,7 +153,7 @@ public List<FixedAssetParameter> fetchFixedAssetParamsByCategory(String category
         rs = ps.executeQuery();
 
         while (rs.next()) {
-            FixedAssetParameter param = new FixedAssetParameter();
+            FixedAsserParameterSetup.FixedAssetParameter param = new FixedAsserParameterSetup.FixedAssetParameter();
             param.setCategory(rs.getString("FAPcategory"));
             param.setCategoryId(rs.getString("FAPcatID"));
             param.setAssetAccount(rs.getString("AssetAccountNumber"));
@@ -180,7 +180,7 @@ public List<FixedAssetParameter> fetchFixedAssetParamsByCategory(String category
     return resultList;
 }
 
- public String goToEditPage(FixedAssetParameter selectedParam) 
+ public String goToEditPage(FixedAsserParameterSetup.FixedAssetParameter selectedParam) 
  {
      System.out.println("Asset Param is "+selectedParam);
     // Store selected record in session or flash scope

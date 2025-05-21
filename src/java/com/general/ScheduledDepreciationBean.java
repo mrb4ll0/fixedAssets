@@ -10,7 +10,7 @@ package com.general;
  * @author dell
  */
 
-import com.general.model.DepreciationRecord;
+
 import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -21,7 +21,6 @@ import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.view.ViewScoped;
-import services.DepreciationService;
 
 @ManagedBean(name="sdepRec")
 @ViewScoped
@@ -33,7 +32,7 @@ public class ScheduledDepreciationBean implements Serializable {
     private List<String> branches;
     private DepreciationLogService depreciationLogService = new DepreciationLogService();
 
-    private List<DepreciationRecord> depreciations;
+    private List<DepreciationRecordBean.DepreciationRecord> depreciations;
 
     @PostConstruct
     public void init() {
@@ -94,7 +93,7 @@ public class ScheduledDepreciationBean implements Serializable {
         return branches;
     }
 
-    public List<DepreciationRecord> getDepreciations() {
+    public List<DepreciationRecordBean.DepreciationRecord> getDepreciations() {
         return depreciations;
     }
     
@@ -113,3 +112,6 @@ public class ScheduledDepreciationBean implements Serializable {
         
     }
 }
+
+
+

@@ -3,7 +3,7 @@ package com.general;
 import java.sql.*;
 import java.time.*;
 import java.util.List;
-import com.general.model.DepreciationRecord;
+import java.io.Serializable;
 import java.util.ArrayList;
 
 public class DepreciationLogService {
@@ -150,8 +150,8 @@ public class DepreciationLogService {
         }
     }
 
-    public List<DepreciationRecord> fetchAllDepreciationRecords(Connection conn) throws SQLException {
-        List<DepreciationRecord> records = new ArrayList<>();
+    public List<DepreciationRecordBean.DepreciationRecord> fetchAllDepreciationRecords(Connection conn) throws SQLException {
+        List<DepreciationRecordBean.DepreciationRecord> records = new ArrayList<>();
 
         String query = "SELECT runDate, assetId, monthlyDepreciation, timesDepreciated, " +
                        "totalDepreciated, startDate, finalDepreciationDate, currentValue, " +
@@ -161,7 +161,7 @@ public class DepreciationLogService {
              ResultSet rs = stmt.executeQuery()) {
 
             while (rs.next()) {
-                DepreciationRecord record = new DepreciationRecord();
+                DepreciationRecordBean.DepreciationRecord record = new DepreciationRecordBean.DepreciationRecord();
                 record.setRunDate(rs.getDate("runDate").toLocalDate());
                 record.setAssetId(rs.getString("assetId"));
                 record.setMonthlyDepreciation(rs.getDouble("monthlyDepreciation"));
@@ -180,8 +180,8 @@ public class DepreciationLogService {
         return records;
     }
 
-    public List<DepreciationRecord> fetchFutureDepreciationRecords(Connection conn) throws SQLException {
-        List<DepreciationRecord> records = new ArrayList<>();
+    public List<DepreciationRecordBean.DepreciationRecord> fetchFutureDepreciationRecords(Connection conn) throws SQLException {
+        List<DepreciationRecordBean.DepreciationRecord> records = new ArrayList<>();
 
         String query = "SELECT runDate, assetId, monthlyDepreciation, timesDepreciated, " +
                        "totalDepreciated, startDate, finalDepreciationDate, currentValue, " +
@@ -193,7 +193,7 @@ public class DepreciationLogService {
              ResultSet rs = stmt.executeQuery()) {
 
             while (rs.next()) {
-                DepreciationRecord record = new DepreciationRecord();
+                DepreciationRecordBean.DepreciationRecord record = new DepreciationRecordBean.DepreciationRecord();
                 record.setRunDate(rs.getDate("runDate").toLocalDate());
                 record.setAssetId(rs.getString("assetId"));
                 record.setMonthlyDepreciation(rs.getDouble("monthlyDepreciation"));
@@ -212,8 +212,8 @@ public class DepreciationLogService {
         return records;
     }
 
-    public List<DepreciationRecord> fetchAssetsToBeDepreciatedInMonth(String monthName) {
-        List<DepreciationRecord> records = new ArrayList<>();
+    public List<DepreciationRecordBean.DepreciationRecord> fetchAssetsToBeDepreciatedInMonth(String monthName) {
+        List<DepreciationRecordBean.DepreciationRecord> records = new ArrayList<>();
         String sql = "SELECT runDate, assetId, monthlyDepreciation, timesDepreciated, totalDepreciated, " +
                      "startDate, finalDepreciationDate, currentValue, remainingAmount, timesRemaining, Branch " +
                      "FROM DepreciationLog " +
@@ -232,7 +232,7 @@ public class DepreciationLogService {
             ResultSet rs = stmt.executeQuery();
 
             while (rs.next()) {
-                DepreciationRecord record = new DepreciationRecord();
+                DepreciationRecordBean.DepreciationRecord record = new DepreciationRecordBean.DepreciationRecord();
                 record.setRunDate(rs.getDate("runDate").toLocalDate());
                 record.setAssetId(rs.getString("assetId"));
                 record.setMonthlyDepreciation(rs.getDouble("monthlyDepreciation"));
@@ -257,8 +257,8 @@ public class DepreciationLogService {
     }
     
     
-    public List<DepreciationRecord> fetchAssetsToBeDepreciatedInBranch(String branchCode) {
-    List<DepreciationRecord> records = new ArrayList<>();
+    public List<DepreciationRecordBean.DepreciationRecord> fetchAssetsToBeDepreciatedInBranch(String branchCode) {
+    List<DepreciationRecordBean.DepreciationRecord> records = new ArrayList<>();
     String sql = "SELECT runDate, assetId, monthlyDepreciation, timesDepreciated, totalDepreciated, " +
                  "startDate, finalDepreciationDate, currentValue, remainingAmount, timesRemaining, Branch " +
                  "FROM DepreciationLog " +
@@ -273,7 +273,7 @@ public class DepreciationLogService {
         ResultSet rs = stmt.executeQuery();
 
         while (rs.next()) {
-            DepreciationRecord record = new DepreciationRecord();
+            DepreciationRecordBean.DepreciationRecord record = new DepreciationRecordBean.DepreciationRecord();
             record.setRunDate(rs.getDate("runDate").toLocalDate());
             record.setAssetId(rs.getString("assetId"));
             record.setMonthlyDepreciation(rs.getDouble("monthlyDepreciation"));
@@ -298,3 +298,5 @@ public class DepreciationLogService {
 }
 
 }
+
+

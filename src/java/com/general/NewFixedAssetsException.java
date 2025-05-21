@@ -167,6 +167,9 @@ public class NewFixedAssetsException implements Serializable
                 + "Branch VARCHAR(200), "
                 + "PurchasedDate DATE, "
                 + "DepreciationAmount BIGINT, "
+                + "TotalDepreciated BIGINT, "
+                + "CurrentValue BIGINT, "
+                + "TimesDepreciated BIGINT, "
                 + "RecordStatus VARCHAR(50), "
                 + "Inputter VARCHAR(255), "
                 + "InputterRec VARCHAR(255), "
@@ -216,8 +219,8 @@ public class NewFixedAssetsException implements Serializable
             ps.setString(11, "AUTH");
             ps.setString(12, yuser);
             ps.setString(13, yprofileuser);
-            ps.setString(14, "DefaultAuthoriser");
-            ps.setString(15, "DefaultAuthoriserRec");
+            ps.setString(14, "SYSTEM");
+            ps.setString(15, auditDateRecord);
             ps.setString(16, "Update");
             ps.setString(17, yTenancynum);
             ps.setString(18, auditDateRecord);
@@ -256,8 +259,8 @@ public class NewFixedAssetsException implements Serializable
             ps.setString(12, "AUTH");
             ps.setString(13, yuser);
             ps.setString(14, yprofileuser);
-            ps.setString(15, "DefaultAuthoriser");
-            ps.setString(16, "DefaultAuthoriserRec");
+            ps.setString(15, "SYSTEM");
+            ps.setString(16, auditDateRecord);
             ps.setString(17, "Insert");
             ps.setString(18, yTenancynum);
             ps.setString(19, auditDateRecord);

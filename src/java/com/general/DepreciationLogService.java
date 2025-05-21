@@ -122,6 +122,7 @@ public class DepreciationLogService {
             int rows = upd.executeUpdate();
             if (rows > 0) {
                 System.out.println(" Updated DepreciationLog for asset " + assetId);
+                 updateFixedAsset(conn, assetId, totalDepreciated, currentValue, timesDepreciated);
                 return;
             }
         }
@@ -132,7 +133,8 @@ public class DepreciationLogService {
             " startDate, finalDepreciationDate, currentValue, remainingAmount, timesRemaining, Branch) " +
             "VALUES (?,?,?,?,?,?,?,?,?,?,?)";
 
-        try (PreparedStatement ins = conn.prepareStatement(insertSql)) {
+        try (PreparedStatement ins = conn.prepareStatement(insertSql))
+        {
             ins.setDate(1, Date.valueOf(runDate));
             ins.setString(2, assetId);
             ins.setLong(3, monthlyDep);
@@ -147,6 +149,7 @@ public class DepreciationLogService {
 
             ins.executeUpdate();
             System.out.println(" Inserted DepreciationLog for new asset " + assetId);
+            updateFixedAsset(conn, assetId, totalDepreciated, currentValue, timesDepreciated);
         }
     }
 
@@ -295,6 +298,32 @@ public class DepreciationLogService {
     }
 
     return records;
+}
+    
+    
+    private void updateFixedAsset(Connection conn,
+                              String assetId,
+                              long totalDepreciated,
+                              long currentValue,
+                              int timesDepreciated) throws SQLException {
+    String updateFixedAssetSql =
+        "UPDATE FixedAsset SET " +
+        "  TotalDepreciated=?, CurrentValue=?, TimesDepreciated=? " +
+        "WHERE FAPcatID=?";
+
+    try (PreparedStatement stmt = conn.prepareStatement(updateFixedAssetSql)) {
+        stmt.setLong(1, totalDepreciated);
+        stmt.setLong(2, currentValue);
+        stmt.setInt(3, timesDepreciated);
+        stmt.setString(4, assetId);
+
+        int affected = stmt.executeUpdate();
+        if (affected > 0) {
+            System.out.println("FixedAsset updated for asset ID " + assetId);
+        } else {
+            System.out.println("WARNING: No FixedAsset found for asset ID " + assetId);
+        }
+    }
 }
 
 }

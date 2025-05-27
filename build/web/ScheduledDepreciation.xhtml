@@ -5,7 +5,7 @@
       xmlns:p="http://primefaces.org/ui">
     <h:head>
         <title>Scheduled Depreciation </title>
-        <h:outputStylesheet library="css" name="ComSetting.css"/>
+        <h:outputStylesheet library="css" name="ComSettingNew.css"/>
     </h:head>
 
     <h:body>
@@ -73,7 +73,7 @@
 
                     <p:column headerText="Run Date" style="font-size: 10pt;">
                         <h:outputText value="#{record.runDate}">
-                            <f:convertDateTime pattern="dd-MM-yyyy"/>
+                           
                         </h:outputText>
                     </p:column>
 
@@ -99,13 +99,11 @@
 
                     <p:column headerText="Start Date" style="font-size: 10pt;">
                         <h:outputText value="#{record.startDate}">
-                            <f:convertDateTime pattern="dd-MM-yyyy"/>
                         </h:outputText>
                     </p:column>
 
                     <p:column headerText="Final Depreciation Date" style="font-size: 10pt;">
                         <h:outputText value="#{record.finalDepreciationDate}">
-                            <f:convertDateTime pattern="dd-MM-yyyy"/>
                         </h:outputText>
                     </p:column>
 

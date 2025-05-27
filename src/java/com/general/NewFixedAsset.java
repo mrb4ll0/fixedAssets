@@ -5,6 +5,10 @@
  */
 package com.general;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -29,6 +33,8 @@ import javax.faces.view.ViewScoped;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import org.primefaces.event.SelectEvent;
+import org.primefaces.event.TabChangeEvent;
+import org.primefaces.model.file.UploadedFile;
 
 /**
  *
@@ -174,7 +180,17 @@ public class NewFixedAsset implements Serializable {
 
    
  
+private int activeTabIndex;
 
+    public int getActiveTabIndex() 
+    {
+        System.out.println("activeIndex is "+activeTabIndex);
+        return activeTabIndex;
+    }
+
+    public void setActiveTabIndex(int activeTabIndex) {
+        this.activeTabIndex = activeTabIndex;
+    }
 private String category;
 private String categoryID;
 private String assetAccountNumber;
@@ -188,6 +204,8 @@ private String assetsAmount;
 private int duration;
 private Date purchasedDate = new Date();
 
+
+    
     public Date getPurchasedDate() {
         return purchasedDate;
     }
@@ -403,6 +421,24 @@ public void onSelectPurchasedDate(SelectEvent event)
 {
    System.out.println("purchased date is "+purchasedDate);   
 }
+     public void onTabChange(TabChangeEvent event) {
+     String tabId = event.getTab().getId();
+     System.out.println("onTabchange got called");
+    switch (tabId) {
+        case "singleFixedAsset":
+            activeTabIndex = 0;
+            System.out.println("activeTabIndex "+activeTabIndex);
+            break;
+        case "bulkFixedAsset":
+            activeTabIndex = 1;
+            System.out.println("activeTabIndex "+activeTabIndex);
+            break;
+        case "auditTab":
+            activeTabIndex = 2;
+            System.out.println("activeTabIndex "+activeTabIndex);
+            break;
+    }
+}
 
     @PostConstruct
    public void init() {
@@ -442,18 +478,18 @@ public void onSelectPurchasedDate(SelectEvent event)
             row.put("FAPcatID", rs.getString("FAPcatID"));
             row.put("FAPcategory", rs.getString("FAPcategory"));
             row.put("FAPdepExpAcctNumber", depExpAcct);
-            row.put("FAPdepExpAcctName", getAccountName(connection, depExpAcct));
+            row.put("FAPdepExpAcctName", GetAccountCustomer.GetAccountName( depExpAcct));
             row.put("FAPdepDate", depDate);
             row.put("FAPdepDay",depDay);
 
             row.put("FAPPrePayAcctNumber", prePayAcct);
-            row.put("FAPPrePayAcctName", getAccountName(connection, prePayAcct));
+            row.put("FAPPrePayAcctName", GetAccountCustomer.GetAccountName( prePayAcct));
 
             row.put("AssetAccountNumber", assetAcct);
-            row.put("AssetAccountName", getAccountName(connection, assetAcct));
+            row.put("AssetAccountName", GetAccountCustomer.GetAccountName(assetAcct));
 
             row.put("DepExpenseAccountNumber", depExpAccount);
-            row.put("DepExpenseAccountName", getAccountName(connection, depExpAccount));
+            row.put("DepExpenseAccountName", GetAccountCustomer.GetAccountName(depExpAccount));
 
             resultList.add(row);
         }
@@ -503,31 +539,6 @@ public String getDepDateByCategoryId(String categoryId) {
     return depDate;  // Returns null if not found
 }
    
- private String getAccountName(Connection connection, String accountNumber) {
-    String accountName = "";
-    PreparedStatement ps = null;
-    ResultSet rs = null;
-    try {
-        ps = connection.prepareStatement("SELECT Names FROM accountlist WHERE Accounts = ?");
-        ps.setString(1, accountNumber);
-        rs = ps.executeQuery();
-
-        if (rs.next()) {
-            accountName = rs.getString("Names");
-        }
-
-    } catch (SQLException e) {
-        e.printStackTrace();
-    } finally {
-        try {
-            if (rs != null) rs.close();
-            if (ps != null) ps.close();
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-        }
-    }
-    return accountName;
-}
 
   public void onSelectBranch()
   {
@@ -566,8 +577,9 @@ public String getDepDateByCategoryId(String categoryId) {
   
 
 
-
-public void newFixedAssetCategoryCheck() {
+public void newFixedAssetCategoryCheck() 
+{
+    System.out.println("");
     FacesContext facesContext = FacesContext.getCurrentInstance();
     HttpSession session = (HttpSession) facesContext.getExternalContext().getSession(true);
     String yuser = (String) session.getAttribute("user");
@@ -824,8 +836,10 @@ if ( selectedMap != null)
  private String catId;
  
  
- 
- 
+   
+    
+    
+
  
  public static class FixedAsset {
 

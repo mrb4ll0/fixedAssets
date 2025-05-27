@@ -78,13 +78,13 @@ public class NewFixedAssetsException implements Serializable
             asset.setFAPcatID(rs.getString("FAPcatID"));
             asset.setFAPcategory(rs.getString("FAPcategory"));
             asset.setFAPdepExpAcct(rs.getString("FAPdepExpAcctNumber"));
-            asset.setFAPdepExpAcctName(GetAccountCustomer.getAccountName(rs.getString("FAPdepExpAcctNumber")));
+            asset.setFAPdepExpAcctName(GetAccountCustomer.GetAccountName(rs.getString("FAPdepExpAcctNumber")));
             asset.setFAPPrePayAcct(rs.getString("FAPPrePayAcctNumber"));
-            asset.setFAPPrePayAcctName(GetAccountCustomer.getAccountName(rs.getString("FAPPrePayAcctNumber")));
+            asset.setFAPPrePayAcctName(GetAccountCustomer.GetAccountName(rs.getString("FAPPrePayAcctNumber")));
             asset.setAssetAccount(rs.getString("AssetAccountNumber"));
-            asset.setAssetAccountName(GetAccountCustomer.getAccountName(rs.getString("AssetAccountNumber")));
+            asset.setAssetAccountName(GetAccountCustomer.GetAccountName(rs.getString("AssetAccountNumber")));
             asset.setDepExpenseAccount(rs.getString("DepExpenseAccountNumber"));
-            asset.setDepExpenseAccountName(GetAccountCustomer.getAccountName(rs.getString("DepExpenseAccountNumber")));
+            asset.setDepExpenseAccountName(GetAccountCustomer.GetAccountName(rs.getString("DepExpenseAccountNumber")));
             asset.setFAPdepDate(rs.getString("FAPdepDate")); // Changed to `String` to avoid potential type mismatch
             asset.setRecordStatus(rs.getString("RecordStatus"));
             asset.setInputter(rs.getString("Inputter"));

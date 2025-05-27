@@ -1,0 +1,126 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <h:outputStylesheet library="css" name="ComSettingNew.css" />
+    <title>Upload Fixed Asset</title>
+</h:head>
+
+<h:body>
+    <h:form enctype="multipart/form-data" id="uploadFixedAssetForm">
+        <p:growl id="growl" showDetail="true" life="3000" sticky="true"/>
+        <h1>Upload Fixed Asset</h1>
+        <hr style="height:5px;border-width:0;color:white;background-color:gray"/>
+         <p:tabView  id="tabViewMVS" styleClass="MyTabView">
+                 <p:tab title="Fixed Asset" id="bulkFixedAsset">
+        <div class="SingleForm">
+            
+            <p:panel style="margin-top:10px; border: none; background: transparent; box-shadow: none;">
+                <p:fileUpload value="#{uploadFixedAsset.uploadedFile}"
+                              mode="advanced"
+                              auto="true"
+                              dragDropSupport="false"
+                              label="Choose"
+                              update=":uploadFixedAssetForm:growl authorizedFixedAsset"
+                              styleClass="small-file-upload" />
+
+                <p:dataTable id="authorizedFixedAsset"
+                             value="#{uploadFixedAsset.fixedAssets}"
+                             var="account"
+                             rowIndexVar="r"
+                             rowStyleClass="#{r % 2 == 0 ? 'evenClass' : 'oddClass'}"
+                             resizableColumns="true"
+                             widgetVar="authorizedAccountsTable"
+                             paginator="true"
+                             paginatorPosition="bottom"
+                             rows="10"
+                             showGridlines="true"
+                             stickyHeader="true"
+                             styleClass="myLDRepay">
+
+                    <p:column headerText="S/N" style="font-size: 10pt; text-align: center;" width="50">
+                        <h:outputText value="#{r + 1}" />
+                    </p:column>
+
+                    <p:column headerText="Category" style="font-size: 10pt;">
+                        <h:outputText value="#{account.FAPcategory}" />
+                    </p:column>
+
+                    <p:column headerText="Category ID" style="font-size: 10pt;">
+                        <h:outputText value="#{account.FAPcatID}" />
+                    </p:column>
+
+                    <p:column headerText="Assets Name" style="font-size: 10pt;">
+                        <h:outputText value="#{account.assetName}" />
+                    </p:column>
+
+                    <p:column headerText="Assets Amount" style="font-size: 10pt; text-align: right;">
+                        <h:outputText value="#{account.assetAmount}">
+                            <f:convertNumber type="currency" currencySymbol="₦" />
+                        </h:outputText>
+                    </p:column>
+
+                    <p:column headerText="Duration (Months)" style="font-size: 10pt; text-align: center;">
+                        <h:outputText value="#{account.durationsMonth}" />
+                    </p:column>
+
+                    <p:column headerText="Purchased Date" style="font-size: 10pt;">
+                        <h:outputText value="#{account.purchasedDate}">
+                            <f:convertDateTime pattern="dd-MM-yyyy" />
+                        </h:outputText>
+                    </p:column>
+
+                    <p:column headerText="Branch" style="font-size: 10pt;">
+                        <h:outputText value="#{account.branch}" />
+                    </p:column>
+                </p:dataTable>
+            </p:panel>
+        </div>
+        </p:tab>
+              <p:tab title="Audit Section" id="auditTab">
+                        <div class="TabDiv">
+                            <h:panelGrid columns="3" columnClasses="firstColumnPGrid,secondColumnPGrid,thirdColumnPGrid">
+                                <p:outputLabel for="AllRecordStatus" value="Record Status:" />
+                                <p:inputText id="AllRecordStatus" styleClass="GenInputTxtNoInput" value="#{uploadFixedAsset.allAuthRecStatus}" readonly="true" >
+                                </p:inputText>
+                                <p:outputLabel/>
+
+                                <p:outputLabel for="AllInputterStatus" value="Inputter:" />
+                                <p:inputText id="AllInputterStatus" styleClass="GenInputTxtNoInput" value="#{uploadFixedAsset.allInputterStatus}" readonly="true" >
+                                </p:inputText>
+                                <p:outputLabel/>
+
+                                <p:outputLabel for="AllInpRecStatus" value="Input Timing:" />
+                                <p:inputText id="AllInpRecStatus" styleClass="GenInputTxtNoInput" value="#{uploadFixedAsset.allInpRecStatus}" readonly="true" >
+                                </p:inputText>
+                                <p:outputLabel/>
+
+                                <p:outputLabel for="AllAuthoriserStatus" value="Authoriser:" />
+                                <p:inputText id="AllAuthoriserStatus" styleClass="GenInputTxtNoInput" value="#{uploadFixedAsset.allAuthoriserStatus}" readonly="true" >
+                                </p:inputText>
+                                <p:outputLabel/>
+
+                                <p:outputLabel for="AllAuthRecStatus" value="Authoriser Timing:" />
+                                <p:inputText id="AllAuthRecStatus" styleClass="GenInputTxtNoInput" value="#{uploadFixedAsset.allAuthRecStatus}" readonly="true" >
+                                </p:inputText>
+                                <p:outputLabel/>
+                            </h:panelGrid>
+                        </div>
+                    </p:tab>
+             </p:tabView>
+        
+        <p:commandButton value="Commit" 
+                         action="#{uploadFixedAsset.newFixedAssetBulkcheck}" 
+                             class="rounded-button ui-button-success" 
+                             update=":uploadFixedAssetForm:growl @(authorizedFixedAsset) "
+                             />
+    </h:form>
+</h:body>
+</html>

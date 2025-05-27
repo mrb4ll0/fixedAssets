@@ -145,7 +145,7 @@ public class AuthNewFixedAsset implements Serializable{
     System.out.println("searchAccount got called");
 
     String query = "SELECT * FROM fixedAsset WHERE FAPcategory LIKE ? OR AssetsName LIKE ?";
-    String accountQuery = "SELECT accounts, names FROM accountlist";
+    String accountQuery = "SELECT accountid, accounttitle FROM account";
 
     try {
         Connection conn = new DBConnection().get_connection();
@@ -159,7 +159,7 @@ public class AuthNewFixedAsset implements Serializable{
         ResultSet accountRs = accountPs.executeQuery();
         Map<String, String> accountMap = new HashMap<>();
         while (accountRs.next()) {
-            accountMap.put(accountRs.getString("accounts"), accountRs.getString("names"));
+            accountMap.put(accountRs.getString("accountid"), accountRs.getString("accounttitle"));
         }
 
         ResultSet rs = ps.executeQuery();

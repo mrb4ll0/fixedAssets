@@ -5,27 +5,7 @@
       xmlns:p="http://primefaces.org/ui">
 <h:head>
     <title>Fixed Asset Parameter Authorization</title>
-     <h:outputStylesheet library="css" name="ComSetting.css" />
-     <style>
-            /* Ensure Growl appears above the table */
-            /* Ensure Growl appears above all components */
-            .overlay-growl {
-                position: absolute; /* Change to absolute */
-                top: 5px; /* Align it at the top */
-                right: 5px;
-                width: 350px;
-                z-index: 99999; /* Ensure it's above everything */
-                pointer-events: none;
-            }
-
-            /* PrimeFaces growl specific styling */
-            .ui-growl {
-                position: fixed !important; /* Force it to be fixed */
-                top: 5px !important;
-                right: 5px !important;
-                z-index: 100000 !important; /* Highest z-index to avoid conflicts */
-            }
-        </style>
+     <h:outputStylesheet library="css" name="ComSettingNew.css" />
 </h:head>
 <h:body>
       <div class="overlay-growl">
@@ -33,7 +13,7 @@
         </div>
     <h:form id="fixedAssetForm">
         
-        <h2>Fixed Asset Parameter Authorization</h2>
+        <h1>Fixed Asset Parameter Authorization</h1>
             
             <p:dataTable id="unauthorizedAccountsTable"
                          value="#{fapsException.unAuthFixedAssetParams}"
@@ -45,6 +25,7 @@
                          resizableColumns="true"  
                          rowHover="true" 
                          paginator="true" 
+                         paginatorPosition="bottom"
                          showGridlines="true"
                          stickyHeader="true"
                          styleClass="myLDRepay">
@@ -53,31 +34,31 @@
         <h:outputText value="#{r + 1}" />
     </p:column>
 
-                <p:column headerText="Category:">
+                <p:column headerText="Category">
                     <h:outputText value="#{account.category}" />
                 </p:column>
 
-                <p:column headerText="Category ID:">
+                <p:column headerText="Category ID">
                     <h:outputText value="#{account.categoryId}" />
                 </p:column>
 
-                <p:column headerText="Asset Account:">
+                <p:column headerText="Asset Account">
                     <h:outputText value="#{account.assetAccount}" />
                 </p:column>
 
-                <p:column headerText="Prepayment Account:">
+                <p:column headerText="Prepayment Account">
                     <h:outputText value="#{account.prepaymentAccount}" />
                 </p:column>
 
-                <p:column headerText="Depreciation Account:">
+                <p:column headerText="Depreciation Account">
                     <h:outputText value="#{account.depreciationAccount}" />
                 </p:column>
 
-                <p:column headerText="Dep. Expense Account:">
+                <p:column headerText="Dep. Expense Account">
                     <h:outputText value="#{account.depExpenseAccount}" />
                 </p:column>
 
-                <p:column headerText="Depreciation Day:">
+                <p:column headerText="Depreciation Day">
                     <h:outputText value="#{account.depreciationDay}" />
                 </p:column>
 

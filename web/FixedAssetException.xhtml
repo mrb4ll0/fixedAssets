@@ -5,7 +5,7 @@
       xmlns:p="http://primefaces.org/ui">
 <h:head>
     <title>Fixed Asset Parameter Authorization</title>
-    <h:outputStylesheet library="css" name="ComSetting.css" />
+    <h:outputStylesheet library="css" name="ComSettingNew.css" />
 </h:head>
 <h:body>
     <h:form id="fixedAssetForm">
@@ -13,7 +13,7 @@
         <h2>New Fixed Asset  Authorization</h2>
 
         <p:dataTable id="unauthorizedAssetsTable"
-                     value="#{newFixedAssetAuth.unAuthFixedAsset}"
+                     value="#{newFixedAssetAuth.fixedAssets}"
                      var="asset"
                      widgetVar="unauthorizedAssetsTable"
                      rows="10"

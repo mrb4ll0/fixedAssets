@@ -860,13 +860,13 @@ public Map<String,String> getDepExpenseDateByCategoryId(String categoryId) {
        
     assetAccountNumber = fixedAsset.getAssetAccount();
     System.out.println("Asset Account Name "+fixedAsset.getAssetAccountName());
-    assetAccountName = GetAccountCustomer.getAccountName(assetAccountNumber);
+    assetAccountName = GetAccountCustomer.GetAccountName(assetAccountNumber);
     depExpenseAccountNumber = fixedAsset.getDepExpenseAccount();
-    depExpenseAccountName = GetAccountCustomer.getAccountName(depExpenseAccountNumber);
+    depExpenseAccountName = GetAccountCustomer.GetAccountName(depExpenseAccountNumber);
     depreciationAccountNumber = fixedAsset.getFAPdepExpAcct();
-    depreciationAccountName = GetAccountCustomer.getAccountName(depreciationAccountNumber);
+    depreciationAccountName = GetAccountCustomer.GetAccountName(depreciationAccountNumber);
     prepaymentAccountNumber = fixedAsset.getFAPPrePayAcct();
-    prepaymentAccountName = GetAccountCustomer.getAccountName(prepaymentAccountNumber);
+    prepaymentAccountName = GetAccountCustomer.GetAccountName(prepaymentAccountNumber);
     System.out.println("while setting the parameter categoryID is");
 } else {
     System.out.println("fixed Asset is null");

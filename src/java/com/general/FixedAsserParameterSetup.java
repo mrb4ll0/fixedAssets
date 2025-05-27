@@ -52,7 +52,6 @@ private String selectedPrepaymentAccount;
 private String depExpenseAccount;
 private String selectedDepExpenseAccount;
 private int depreciationDay = 0;
-private boolean dataReady=false;
 private String depDate;
 
     public String getDepDate() {
@@ -61,17 +60,6 @@ private String depDate;
 
     public void setDepDate(String depDate) {
         this.depDate = depDate;
-    }
-  
-
-    public boolean isDataReady()
-    {
-        System.out.print("isDataReady is "+dataReady);
-        return dataReady;
-    }
-
-    public void setDataReady(boolean dataReady) {
-        this.dataReady = dataReady;
     }
     public String getSelectedDepreciationAccount() {
         return selectedDepreciationAccount;
@@ -145,7 +133,7 @@ private List<Integer> depreciationDays =  new ArrayList<>();
     public void setAccountsMapList(List<Map<String, Object>> accountsMapList) {
         this.accountsMapList = accountsMapList;
     }
-private List<Map<String,Object>> accountsMapList;
+private List<Map<String,Object>> accountsMapList = new ArrayList<>();
 private Integer errorfieldcount;
    
     public String getNewCategory() {
@@ -309,45 +297,7 @@ private Integer errorfieldcount;
     @PostConstruct
    public void init() 
    {
-       try
-       {
-          accountsMapList = fetchTwentyAccountMaps(); 
-          
-        System.out.println("fixedAssetData size is "+accountsMapList.size());
        
-        for (int i = 0; i<accountsMapList.size(); i++)
-        {
-           
-            prepaymentAccounts.put(
-                    accountsMapList.get(i).get("accountNumber").toString(),
-                    accountsMapList.get(i).get("accountName").toString());
-             prepaymentAccountsName.put(
-                    accountsMapList.get(i).get("accountName").toString(),
-                    accountsMapList.get(i).get("accountNumber").toString());
-            depreciationAccounts.put(
-                    accountsMapList.get(i).get("accountNumber").toString(),
-                    accountsMapList.get(i).get("accountName").toString());
-             depreciationAccountsName.put(
-                    accountsMapList.get(i).get("accountName").toString(),
-                    accountsMapList.get(i).get("accountNumber").toString());
-            depExpenseAccounts.put(
-                    accountsMapList.get(i).get("accountNumber").toString(),
-                    accountsMapList.get(i).get("accountName").toString());
-             depExpenseAccountsName.put(
-                    accountsMapList.get(i).get("accountName").toString(),
-                    accountsMapList.get(i).get("accountNumber").toString());
-            assetAccounts.put(
-            accountsMapList.get(i).get("accountNumber").toString(),
-                    accountsMapList.get(i).get("accountName").toString());
-             assetAccountsName.put(
-                    accountsMapList.get(i).get("accountName").toString(),
-                    accountsMapList.get(i).get("accountNumber").toString());
-        }
-       }
-       catch(Exception e)
-       {
-           e.printStackTrace();
-       }
        depreciationDays = new ArrayList<>();
         for (int i = 1; i<29; i++){
             depreciationDays.add(i);
@@ -363,9 +313,10 @@ private Integer errorfieldcount;
     }
 }
  public void onSelectDepreciationAccount(){
-     if (depreciationAccount != null) {
+     if (depreciationAccount != null)
+     {
         depreciationAccount = depreciationAccount.trim();
-        selectedDepreciationAccount = GetAccountCustomer.getAccountName(depreciationAccount);
+        selectedDepreciationAccount = GetAccountCustomer.GetAccountName(depreciationAccount);
     }
 
     if (selectedDepreciationAccount == null && isInteger(depreciationAccount)) 
@@ -373,17 +324,14 @@ private Integer errorfieldcount;
         
         selectedDepreciationAccount = "Can't find Account";
     }
-    else
-    {
-        selectedDepreciationAccount = depreciationAccount;
-    }
+    
      
       System.out.println("depreciationAccount is "+(depreciationAccount)+" selectedDepreciationAccount is "+(selectedDepreciationAccount));
  }
   public void onSelectPrepaymentAccount() {
     if (prepaymentAccount != null) {
         prepaymentAccount = prepaymentAccount.trim();
-        selectedPrepaymentAccount = GetAccountCustomer.getAccountName(prepaymentAccount);
+        selectedPrepaymentAccount = GetAccountCustomer.GetAccountName(prepaymentAccount);
     }
 
     if (selectedPrepaymentAccount == null && isInteger(prepaymentAccount)) 
@@ -391,23 +339,15 @@ private Integer errorfieldcount;
         
         selectedPrepaymentAccount = "Can't find Account";
     }
-    else
-    {
-        selectedPrepaymentAccount = prepaymentAccount;
-    }
-     
-
-    dataReady = true;
-    System.out.println("is data ready after set "+dataReady);
-    System.out.println("prepaymentAccount is " + prepaymentAccount +
-                       " selectedPrepaymentAccount is " + selectedPrepaymentAccount);
+   
 }
 
   
   public void onSelectAssetAccount(){
     if (assetAccount!= null) {
         assetAccount = assetAccount.trim();
-        selectedAssetAccount = GetAccountCustomer.getAccountName(assetAccount);
+        selectedAssetAccount = GetAccountCustomer.GetAccountName(assetAccount);
+        System.out.println("selectedAssetAccount is "+selectedAssetAccount);
     }
 
     if (selectedAssetAccount == null && isInteger(assetAccount)) 
@@ -418,7 +358,7 @@ private Integer errorfieldcount;
     else
     {
         System.out.println("assetAccount is not number number");
-        selectedAssetAccount = assetAccount;
+        
     }
      
 
@@ -429,7 +369,7 @@ private Integer errorfieldcount;
   public void onSelectedDepExpenseAccount(){
     if (depExpenseAccount!= null) {
         depExpenseAccount = depExpenseAccount.trim();
-        selectedDepExpenseAccount = GetAccountCustomer.getAccountName(depExpenseAccount);
+        selectedDepExpenseAccount = GetAccountCustomer.GetAccountName(depExpenseAccount);
     }
 
     if (selectedDepExpenseAccount == null && isInteger(depExpenseAccount)) 
@@ -437,10 +377,7 @@ private Integer errorfieldcount;
         
         selectedDepExpenseAccount = "Can't find Account";
     }
-    else
-    {
-        selectedDepExpenseAccount = depExpenseAccount;
-    }
+    
       System.out.println("depExpenseAccount is "+(depExpenseAccount)+" selectedDepreciationAccount is "+(selectedDepExpenseAccount));
  }
    public void onSelectMonthDay(SelectEvent event) 
@@ -462,47 +399,7 @@ private Integer errorfieldcount;
 
 
    
-   public static List<Map<String, Object>> fetchTwentyAccountMaps() {
-    Connection connection = null;
-    List<Map<String, Object>> resultList = new ArrayList<>();
-
-    try {
-        DBConnection obj_DB_connection = new DBConnection();
-        connection = obj_DB_connection.get_connection();
-
-        PreparedStatement ps = connection.prepareStatement(
-            "SELECT Accounts, Names FROM accountlist LIMIT 20"
-        );
-
-        ResultSet rs = ps.executeQuery();
-
-        while (rs.next()) {
-            Map<String, Object> row = new HashMap<>();
-
-            String accountNumber = rs.getString("Accounts");
-            String accountName = rs.getString("Names");
-
-            row.put("accountNumber", accountNumber);
-            row.put("accountName", accountName);
-
-            resultList.add(row);
-        }
-
-        ps.close();
-        connection.close();
-
-    } catch (Exception e) {
-        System.out.println("Exception: " + e);
-        try {
-            if (connection != null) connection.close();
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-    }
-
-    return resultList;
-}
-
+   
 
  public void newFixedAssetCategoryCheck() {
     FacesContext facesContext = FacesContext.getCurrentInstance();
@@ -566,8 +463,6 @@ private Integer errorfieldcount;
                     "CREATE TABLE IF NOT EXISTS fixedAssetParamTemp (" +
                             "FAPcatID VARCHAR(255) UNIQUE, " +
                             "FAPcategory VARCHAR(255) UNIQUE, " +
-                            "AssetsName VARCHAR(255), " +
-                            "AssetsAmount VARCHAR(255), " +
                             "Duration VARCHAR(255), " +
                             "FAPdepExpAcctNumber VARCHAR(255), " +
                             "FAPPrePayAcctNumber VARCHAR(255), " +
@@ -620,33 +515,28 @@ private Integer errorfieldcount;
         connection.setAutoCommit(false);
 
         // Resolve account numbers
-        String depreciationAccountNumber = depreciationAccountsName.getOrDefault(depreciationAccount, "");
-        String prepaymentAccountNumber = prepaymentAccountsName.getOrDefault(prepaymentAccount, "");
-        String assetAccountNumber = assetAccountsName.getOrDefault(assetAccount, "");
-        String depExpenseAccountNumber = depExpenseAccountsName.getOrDefault(depExpenseAccount, "");
+       
 
         String insertSQL = "INSERT INTO fixedAssetParamTemp (" +
                 "FAPcatID, FAPcategory, FAPdepExpAcctNumber, FAPPrePayAcctNumber, " +
                 "AssetAccountNumber, DepExpenseAccountNumber, FAPdepDate, RecordStatus, " +
-                "Inputter, InputterRec, Authoriser, AuthoriserRec, updatetype, FAPtenancy, FAPdepDay) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?)";
+                "Inputter, InputterRec, updatetype, FAPtenancy, FAPdepDay) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (PreparedStatement insertStmt = connection.prepareStatement(insertSQL)) {
             insertStmt.setString(1, stringCategoryID);
             insertStmt.setString(2, newCategory);
-            insertStmt.setString(3, depreciationAccountNumber);
-            insertStmt.setString(4, prepaymentAccountNumber);
-            insertStmt.setString(5, assetAccountNumber);
-            insertStmt.setString(6, depExpenseAccountNumber);
+            insertStmt.setString(3, depreciationAccount);
+            insertStmt.setString(4, prepaymentAccount);
+            insertStmt.setString(5, assetAccount);
+            insertStmt.setString(6, depExpenseAccount);
             insertStmt.setString(7, depreciationDate);
             insertStmt.setString(8, "INAU");
             insertStmt.setString(9, yuser);
             insertStmt.setString(10, AuditDateRecord);
-            insertStmt.setString(11, yuser);
-            insertStmt.setString(12, AuditDateRecord);
-            insertStmt.setString(13, "NEW");
-            insertStmt.setString(14, yTenancynum);
-            insertStmt.setString(15, String.valueOf(depreciationDay));
+            insertStmt.setString(11, "NEW");
+            insertStmt.setString(12, yTenancynum);
+            insertStmt.setString(13, String.valueOf(depreciationDay));
             insertStmt.executeUpdate();
         }
 

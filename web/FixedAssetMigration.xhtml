@@ -1,0 +1,133 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+
+    <h:head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <h:outputStylesheet library="css" name="ComSettingNew.css" />
+        <title>Fixed Assets Migration</title>
+    </h:head>
+
+    <h:body>
+        <h:form enctype="multipart/form-data" id="fixedAssetsForm">
+            <p:growl id="growl" showDetail="true" life="3000" sticky="true"/>
+            <h1>Fixed Assets Migration</h1>
+
+            <div class="SingleForm">
+                <br/>
+                <p:tabView multiViewState="true" id="tabViewMVS" styleClass="MyTabView">
+                    <p:tab title="Setup" >
+                        <div class="TabDiv">
+                            <h:panelGrid columns="3" columnClasses="firstColumnPGrid,secondColumnPGrid,thirdColumnPGrid">
+
+                                <p:outputLabel for="initialPurchaseDate" value="Initial Purchase Date:" />
+                                <p:calendar showOn="button" size="15" styleClass="GenInputTxtreq" id="initialPurchaseDate" value="#{fixedAssetMigration.initialPurchaseDate}" pattern="yyyy-MM-dd"  required="true"/>
+                                <p:outputLabel/>
+
+                                <p:outputLabel for="assetName" value="Asset Name:" />
+                                <p:inputText id="assetName"  styleClass="GenInputTxtreq" value="#{fixedAssetMigration.assetName}" required="true"/>
+                                <p:outputLabel/>
+
+                                <p:outputLabel for="initialPurchaseAmount" value="Initial Purchase Amount:" />
+                                <p:inputText id="initialPurchaseAmount" styleClass="GenInputTxtreq" value="#{fixedAssetMigration.initialPurchaseAmount}" required="true"/>
+                                <p:outputLabel/>
+
+                                <p:outputLabel for="initialDuration" value="Initial Duration:" />
+                                <p:inputText id="initialDuration" size="5" styleClass="GenInputTxtreq" value="#{fixedAssetMigration.initialDuration}" required="true"/>
+                                <p:outputLabel/>
+
+                                <p:outputLabel for="branch" value="Branch:" />
+                                <p:selectOneMenu style="width:160px;" id="branch" value="#{fixedAssetMigration.category}" required="true">
+                                    <f:selectItem itemLabel="Select Branch" itemValue=""/>
+                                    <f:selectItems value="#{fixedAssetMigration.categories}" />
+                                </p:selectOneMenu>
+                                <p:outputLabel/>
+
+                                <p:outputLabel for="category" value="Category:" />
+                                <p:selectOneMenu id="category" value="#{fixedAssetMigration.category}" required="true">
+                                    <f:selectItem itemLabel="Select Category" itemValue="" />
+                                    <f:selectItems value="#{fixedAssetMigration.categories}" />
+                                </p:selectOneMenu>
+                                <p:outputLabel/>
+
+                                <p:outputLabel for="currentDuration" value="Current Duration:" />
+                                <p:inputText id="currentDuration" size="5" styleClass="GenInputTxtreq" value="#{fixedAssetMigration.currentDuration}" required="true"/>
+                                <p:outputLabel/>
+
+                                <p:outputLabel for="depreciationStartDate" value="Depreciation Start Date:" />
+                                <p:calendar size="15" showOn="button" id="depreciationStartDate" styleClass="GenInputTxtreq" value="#{fixedAssetMigration.depreciationStartDate}" pattern="yyyy-MM-dd"  required="true"/>
+                                <p:outputLabel/>
+
+                                <p:outputLabel for="currentValue" value="Current Value:" />
+                                <p:inputText  id="currentValue" styleClass="GenInputTxtNoInput" value="#{fixedAssetMigration.currentValue}" readonly="true" />
+                                <p:outputLabel/>
+
+                                <p:outputLabel for="monthlyDepAmount" value="Monthly Dep. Amount:" />
+                                <p:inputText id="monthlyDepAmount" value="#{fixedAssetMigration.monthlyDepAmount}" readonly="true" styleClass="GenInputTxtNoInput"/>
+                                <p:outputLabel/>
+
+                                <p:outputLabel for="depOverdue" value="Depreciation Overdue:" />
+                                <p:inputText id="depOverdue" value="#{fixedAssetMigration.depreciationOverdue}" readonly="true" styleClass="GenInputTxtNoInput"/>
+                                <p:outputLabel/>
+
+                            </h:panelGrid>
+                        </div>
+                    </p:tab>
+
+                    <p:tab title="Upload Fixed Asset">
+                        <p:panel style="margin-top:10px; border: none; background: transparent; box-shadow: none;">
+                            <p:fileUpload value="#{fixedAssetMigration.uploadedFile}"
+                                          mode="advanced" auto="true" dragDropSupport="false"
+                                          label="Choose" update=":fixedAssetsForm:growl"
+                                          styleClass="small-file-upload"/>
+
+                            <p:panelGrid columns="2" 
+                                         style="border: none; background: transparent; 
+                                         margin: 0; padding: 0;
+                                         column-gap: 0;">
+                                <p:outputLabel for="fileRef" value="File Reference:" 
+                                               style="display:block; margin: 0; padding: 0;"/>
+                                <p:inputText id="fileRef" size="60" readonly="true" 
+                                             styleClass="GenInputTxtNoInput compact-input"
+                                             value="#{fixedAssetMigration.fileReference}"/>
+                            </p:panelGrid>
+                            <h:outputText value="Initial Audit" style="display:block; margin-top:10px;"/>
+                        </p:panel>
+                    </p:tab>
+
+
+                    <p:tab title="Audit Section">
+                        <div class="TabDiv">
+                            <h:panelGrid columns="3" columnClasses="firstColumnPGrid,secondColumnPGrid,thirdColumnPGrid">
+                                <p:outputLabel for="AllRecordStatus" value="Record Status:" />
+                                <p:inputText id="AllRecordStatus" styleClass="GenInputTxtNoInput" value="#{fixedAssetSetup.getAllRecordStatus}" readonly="true"/>
+                                <p:outputLabel/>
+
+                                <p:outputLabel for="AllInputterStatus" value="Inputter:" />
+                                <p:inputText id="AllInputterStatus" styleClass="GenInputTxtNoInput" value="#{fixedAssetSetup.getAllInputterStatus}" readonly="true"/>
+                                <p:outputLabel/>
+
+                                <p:outputLabel for="AllInpRecStatus" value="Input Timing:" />
+                                <p:inputText id="AllInpRecStatus" styleClass="GenInputTxtNoInput" value="#{fixedAssetSetup.getAllInpRecStatus}" readonly="true"/>
+                                <p:outputLabel/>
+
+                                <p:outputLabel for="AllAuthoriserStatus" value="Authoriser:" />
+                                <p:inputText id="AllAuthoriserStatus" styleClass="GenInputTxtNoInput" value="#{fixedAssetSetup.getAllAuthoriserStatus}" readonly="true"/>
+                                <p:outputLabel/>
+
+                                <p:outputLabel for="AllAuthRecStatus" value="Authoriser Timing:" />
+                                <p:inputText id="AllAuthRecStatus" styleClass="GenInputTxtNoInput" value="#{fixedAssetSetup.getAllAuthRecStatus}" readonly="true"/>
+                                <p:outputLabel/>
+                            </h:panelGrid>
+                        </div>
+                    </p:tab>
+                </p:tabView>
+            </div>
+            <p:commandButton value="Commit" action="#{fixedAssetMigration.commitMigration}" class="rounded-button ui-button-success" update="@this"/>
+        </h:form>
+    </h:body>
+</html>

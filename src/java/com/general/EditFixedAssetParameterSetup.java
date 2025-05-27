@@ -345,83 +345,6 @@ public class EditFixedAssetParameterSetup implements Serializable {
         this.getAllAuthRecStatus = getAllAuthRecStatus;
     }
 
-//   public void fetchFixedAssetParams() {
-//        Connection connection = null;
-//        PreparedStatement statement = null;
-//        ResultSet rs = null;
-//
-//        List<String> categoriesFDB = new ArrayList<>();
-//        List<String> prepaymentAccountsFDB = new ArrayList<>();
-//        List<String> depreciationAccountsFDB = new ArrayList<>();
-//        List<String> depExpenseAccountsFDB = new ArrayList<>();
-//        List<String> assetAccountsFDB = new ArrayList<>();
-//
-//        try {
-//            DBConnection dbConnection = new DBConnection();
-//            connection = dbConnection.get_connection();
-//
-//            String query = "SELECT  FAPcatID, FAPcategory, FAPPrePayAcctNumber, DepExpenseAccountNumber, "
-//                         + "FAPdepExpAcctNumber, AssetAccountNumber FROM fixedAssetParam "
-//                         ;
-//
-//            statement = connection.prepareStatement(query);
-//            rs = statement.executeQuery();
-//
-//            while (rs.next()) {
-//                String id = rs.getString("FAPcatID");
-//
-//                String categoryFDB = rs.getString("FAPcategory");
-//                if (categoryFDB != null && !categoryFDB.trim().isEmpty()) {
-//                    categoriesFDB.add(categoryFDB );
-//                }
-//
-//                String prePayAcct = rs.getString("FAPPrePayAcctNumber");
-//                if (prePayAcct != null && !prePayAcct.trim().isEmpty()) {
-//                    prepaymentAccountsFDB.add(prePayAcct );
-//                }
-//               
-//                String depAcct = rs.getString("DepExpenseAccountNumber");
-//                if (depAcct != null && !depAcct.trim().isEmpty()) {
-//                    depreciationAccountsFDB.add(depAcct);
-//                }
-//                System.out.println("depAcct "+depAcct);
-//
-//                String depExpAcct = rs.getString("FAPdepExpAcctNumber");
-//                if (depExpAcct != null && !depExpAcct.trim().isEmpty()) {
-//                    depExpenseAccountsFDB.add(depExpAcct);
-//                }
-//                System.out.println("depExpAcct "+depExpAcct);
-//
-//                String assetAcct = rs.getString("AssetAccountNumber");
-//                if (assetAcct != null && !assetAcct.trim().isEmpty()) {
-//                    assetAccountsFDB.add(assetAcct );
-//                }
-//            }
-//
-//            // Populate map
-//           
-//            categories = categoriesFDB;
-//            prepaymentAccounts= prepaymentAccountsFDB;
-//            depreciationAccounts = depreciationAccountsFDB;
-//            System.out.println("depreciationAccounts "+depreciationAccounts.size());
-//            depExpenseAccounts = depExpenseAccountsFDB;
-//            System.out.println("depExpenseAccount "+depExpenseAccounts.size());
-//            assetAccounts = assetAccountsFDB;
-//
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        } finally {
-//            // Clean up JDBC resources
-//            try {
-//                if (rs != null) rs.close();
-//                if (statement != null) statement.close();
-//                if (connection != null) connection.close();
-//            } catch (Exception cleanupEx) {
-//                cleanupEx.printStackTrace();
-//            }
-//        }
-//
-//   }
     public List<Map<String, Object>> getDataFromDatabase() {
         Connection connection = null;
         List<Map<String, Object>> resultList = new ArrayList<>();
@@ -468,18 +391,18 @@ public class EditFixedAssetParameterSetup implements Serializable {
                 row.put("FAPcatID", rs.getString("FAPcatID"));
                 row.put("FAPcategory", rs.getString("FAPcategory"));
                 row.put("FAPdepExpAcctNumber", depExpAcct);
-                row.put("FAPdepExpAcctName", GetAccountCustomer.getAccountName(depExpAcct));
+                row.put("FAPdepExpAcctName", GetAccountCustomer.GetAccountName(depExpAcct));
 
                 row.put("FAPPrePayAcctNumber", prePayAcct);
-                row.put("FAPPrePayAcctName", GetAccountCustomer.getAccountName(prePayAcct));
+                row.put("FAPPrePayAcctName", GetAccountCustomer.GetAccountName(prePayAcct));
 
                 row.put("FAPdepDay", rs.getString("FAPdepDay"));
 
                 row.put("AssetAccountNumber", assetAcct);
-                row.put("AssetAccountName", GetAccountCustomer.getAccountName(assetAcct));
+                row.put("AssetAccountName", GetAccountCustomer.GetAccountName(assetAcct));
 
                 row.put("DepExpenseAccountNumber", depExpAccount);
-                row.put("DepExpenseAccountName", GetAccountCustomer.getAccountName(depExpAccount));
+                row.put("DepExpenseAccountName", GetAccountCustomer.GetAccountName(depExpAccount));
 
                 resultList.add(row);
             }
@@ -835,7 +758,7 @@ public class EditFixedAssetParameterSetup implements Serializable {
 
     public void onAssetAccountChange() {
         System.out.println("Asset Account changed to: " + assetAccount);
-        String accountName = GetAccountCustomer.getAccountName(assetAccount);
+        String accountName = GetAccountCustomer.GetAccountName(assetAccount);
         assetAccFound = accountName != null;
         selectedAssetAccount = accountName == null ? "Can't find Account" : accountName;
         System.out.println("Asset Account Name changed to: " + selectedAssetAccount);
@@ -843,7 +766,7 @@ public class EditFixedAssetParameterSetup implements Serializable {
 
     public void onPrepaymentAccountChange() {
         System.out.println("Prepayment Account changed to: " + prepaymentAccount);
-        String accountName = GetAccountCustomer.getAccountName(prepaymentAccount);
+        String accountName = GetAccountCustomer.GetAccountName(prepaymentAccount);
         prepaymentAccFound = accountName != null;
         selectedPrepaymentAccount = accountName == null ? "Can't find Account" : accountName;
         System.out.println("Asset Account Name changed to: " + selectedPrepaymentAccount);
@@ -851,7 +774,7 @@ public class EditFixedAssetParameterSetup implements Serializable {
 
     public void onDepreciationAccountChange() {
         System.out.println("Depreciation Account changed to: " + depreciationAccount);
-        String accountName = GetAccountCustomer.getAccountName(depreciationAccount);
+        String accountName = GetAccountCustomer.GetAccountName(depreciationAccount);
         depreciationAccFound = accountName != null;
         selectedDepreciationAccount = accountName == null ? "Can't find Account" : accountName;
         System.out.println("Asset Account Name changed to: " + selectedDepreciationAccount);
@@ -859,7 +782,7 @@ public class EditFixedAssetParameterSetup implements Serializable {
 
     public void onDepExpenseAccountChange() {
         System.out.println("Dep. Expense Account changed to: " + depExpenseAccount);
-        String accountName = GetAccountCustomer.getAccountName(depExpenseAccount);
+        String accountName = GetAccountCustomer.GetAccountName(depExpenseAccount);
         depExpenseAccFound = accountName != null;
         selectedDepExpenseAccount = accountName == null ? "Can't find Account" : accountName;
         System.out.println("Asset Account Name changed to: " + selectedDepExpenseAccount);

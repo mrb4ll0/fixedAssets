@@ -17,26 +17,26 @@ import java.sql.SQLException;
 public class GetAccountCustomer
 {
     
-    public static String getAccountName(String accountNumber) {
+    public static String GetAccountName(String accountNumber) {
     String accountName = null;
     Connection connection = null;
     PreparedStatement ps = null;
     ResultSet rs = null;
-    System.out.println("accountNumber is "+accountNumber);
+    
 
     try {
         DBConnection obj_DB_connection = new DBConnection();
         connection = obj_DB_connection.get_connection();
 
-        String query = "SELECT Names FROM accountlist WHERE Accounts = ?";
+        String query = "SELECT accounttitle FROM account WHERE accountid = ?";
         ps = connection.prepareStatement(query);
         ps.setString(1, accountNumber);
 
         rs = ps.executeQuery();
         if (rs.next()) {
-            accountName = rs.getString("Names");
+            accountName = rs.getString("accounttitle");
         }
-        System.out.println("accountName is "+accountName);
+   
 
     } catch (SQLException e) {
         e.printStackTrace();
@@ -53,7 +53,6 @@ public class GetAccountCustomer
             e.printStackTrace();
         }
     }
-
     return accountName;
 }
     

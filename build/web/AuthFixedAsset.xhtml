@@ -5,7 +5,7 @@
       xmlns:p="http://primefaces.org/ui">
     <h:head>
         <title>New Fixed Asset </title>
-        <h:outputStylesheet library="css" name="ComSetting.css" />
+        <h:outputStylesheet library="css" name="ComSettingNew.css" />
     </h:head>
     <h:body>
         <h:form id="fixedAssetForm">
@@ -50,12 +50,6 @@
             </h:panelGrid>
 
             <br/>
-
-            <p:commandButton value="Export as CSV"
-                             icon="pi pi-download"
-                             styleClass="p-button-secondary"
-                             ajax="false"
-                             onclick="PrimeFaces.exporter.export('#{component.clientId}', {type: 'csv'}); return false;">
                 <p:dataTable id="authorizedFixedAsset"
                              value="#{authNewFixedAsset.authNewFixedAsset}"
                              var="account"
@@ -122,9 +116,15 @@
                                           update="@none"
                                           ajax="false" />
                     </p:column>
+                    
+                    <f:facet name="footer">
+                    <p:commandButton value="Export as csv" icon="pi pi-download" ajax="false" >
+                        <p:dataExporter type="csv" target="authorizedFixedAsset" fileName="Authorized Fixed Asset"/>
+                    </p:commandButton> 
+                </f:facet>
                 </p:dataTable>
 
-            </p:commandButton>
+        
         </h:form>
     </h:body>
 </html>

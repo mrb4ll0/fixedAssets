@@ -114,7 +114,7 @@ public void setAllAuthRecStatus(String allAuthRecStatus) {
     }
 
     private void parseCSVFile(UploadedFile file) {
-        
+        fixedAssets.clear();
 
         try (InputStream input = file.getInputStream();
              BufferedReader reader = new BufferedReader(new InputStreamReader(input))) {

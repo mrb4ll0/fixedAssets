@@ -28,12 +28,18 @@
                               auto="true"
                               dragDropSupport="false"
                               label="Choose"
-                              update=":uploadFixedAssetForm:growl authorizedFixedAsset"
+                              update=":uploadFixedAssetForm:growl dataTable"
                               styleClass="small-file-upload" />
 
-                <p:dataTable id="authorizedFixedAsset"
+                
+                 <h:panelGroup id="dataTable">
+                      <h:outputText value="No assets uploaded yet." 
+              rendered="#{empty uploadFixedAsset.fixedAssets}"
+              style="font-style: italic; color: gray;"/>
+                <p:dataTable 
                              value="#{uploadFixedAsset.fixedAssets}"
                              var="account"
+                             rendered="#{!empty uploadFixedAsset.fixedAssets}"
                              rowIndexVar="r"
                              rowStyleClass="#{r % 2 == 0 ? 'evenClass' : 'oddClass'}"
                              resizableColumns="true"
@@ -81,6 +87,7 @@
                         <h:outputText value="#{account.branch}" />
                     </p:column>
                 </p:dataTable>
+                     </h:panelGroup>
             </p:panel>
         </div>
         </p:tab>

@@ -129,13 +129,13 @@ public class EditFixedAssetParameterSetup implements Serializable {
     private List<Map<String, Object>> fixedAssetsData = new ArrayList<>();
     private List<Integer> depreciationDays = new ArrayList<>();
     private String depDate ="";
-    private FixedAsserParameterSetup.FixedAssetParameter fixedAssetParameter;
+    private FixedAssetParameterSetup.FixedAssetParameter fixedAssetParameter;
 
-    public FixedAsserParameterSetup.FixedAssetParameter getFixedAssetParameter() {
+    public FixedAssetParameterSetup.FixedAssetParameter getFixedAssetParameter() {
         return fixedAssetParameter;
     }
 
-    public void setFixedAssetParameter(FixedAsserParameterSetup.FixedAssetParameter fixedAssetParameter) {
+    public void setFixedAssetParameter(FixedAssetParameterSetup.FixedAssetParameter fixedAssetParameter) {
         this.fixedAssetParameter = fixedAssetParameter;
     }
 
@@ -158,7 +158,7 @@ public class EditFixedAssetParameterSetup implements Serializable {
     @PostConstruct
     public void init() {
 
-        fixedAssetParameter = (FixedAsserParameterSetup.FixedAssetParameter) FacesContext.getCurrentInstance()
+        fixedAssetParameter = (FixedAssetParameterSetup.FixedAssetParameter) FacesContext.getCurrentInstance()
                 .getExternalContext().getFlash().get("selectedFixedAssetParam");
         if (fixedAssetParameter != null) {
             categoryId = fixedAssetParameter.getCategoryId();

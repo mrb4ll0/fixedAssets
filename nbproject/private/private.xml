@@ -3,48 +3,37 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/dell/OneDrive/Documents/NetBeansProjects/Demo/web/ChequeStopReason.xhtml</file>
-            <file>file:/C:/Users/dell/OneDrive/Documents/NetBeansProjects/Demo/src/java/com/general/model/FixedAssetParameter.java</file>
-            <file>file:/C:/Users/dell/OneDrive/Documents/NetBeansProjects/Demo/web/RptClientAccountSearch.xhtml</file>
+            <file>file:/C:/Users/dell/OneDrive/Documents/NetBeansProjects/Demo/web/FixedAssetMigrationUpload.xhtml</file>
             <file>file:/C:/Users/dell/OneDrive/Documents/NetBeansProjects/Demo/src/java/com/general/EditFixedAssets.java</file>
+            <file>file:/C:/Users/dell/OneDrive/Documents/NetBeansProjects/Demo/src/java/com/general/FixedAssetMigration.java</file>
             <file>file:/C:/Users/dell/OneDrive/Documents/NetBeansProjects/Demo/src/java/com/general/NewFixedAsset.java</file>
-            <file>file:/C:/Users/dell/OneDrive/Documents/NetBeansProjects/Demo/src/java/com/newinput/NewCollateral.java</file>
             <file>file:/C:/Users/dell/OneDrive/Documents/NetBeansProjects/Demo/web/NewFixedAssetException.xhtml</file>
             <file>file:/C:/Users/dell/OneDrive/Documents/NetBeansProjects/Demo/src/java/com/general/GetAccountCustomer.java</file>
             <file>file:/C:/Users/dell/OneDrive/Documents/NetBeansProjects/Demo/src/java/com/general/EditFixedAssetParameterSetup.java</file>
             <file>file:/C:/Users/dell/OneDrive/Documents/NetBeansProjects/Demo/src/java/com/general/FADepreciationService.java</file>
+            <file>file:/C:/Users/dell/OneDrive/Documents/NetBeansProjects/Demo/web/FixedAssetMigration.xhtml</file>
             <file>file:/C:/Users/dell/OneDrive/Documents/NetBeansProjects/Demo/web/EditFixedAssets.xhtml</file>
             <file>file:/C:/Users/dell/OneDrive/Documents/NetBeansProjects/Demo/web/index.xhtml</file>
-            <file>file:/C:/Users/dell/OneDrive/Documents/NetBeansProjects/Demo/src/java/com/general/FAPSList.java</file>
-            <file>file:/C:/Users/dell/OneDrive/Documents/NetBeansProjects/Demo/src/java/com/general/FixedAsserParameterSetup.java</file>
+            <file>file:/C:/Users/dell/OneDrive/Documents/NetBeansProjects/Demo/web/UploadFixedAsset.xhtml</file>
             <file>file:/C:/Users/dell/OneDrive/Documents/NetBeansProjects/Demo/web/WEB-INF/web.xml</file>
             <file>file:/C:/Users/dell/OneDrive/Documents/NetBeansProjects/Demo/web/AuthFixedAsset.xhtml</file>
-            <file>file:/C:/Users/dell/OneDrive/Documents/NetBeansProjects/Demo/src/java/com/newinput/NewCollateralAuth.java</file>
+            <file>file:/C:/Users/dell/OneDrive/Documents/NetBeansProjects/Demo/src/java/com/general/FixedAssetParameterSetup.java</file>
             <file>file:/C:/Users/dell/OneDrive/Documents/NetBeansProjects/Demo/src/java/com/general/DBConnection.java</file>
             <file>file:/C:/Users/dell/OneDrive/Documents/NetBeansProjects/Demo/src/java/com/general/AuthNewFixedAsset.java</file>
             <file>file:/C:/Users/dell/OneDrive/Documents/NetBeansProjects/Demo/web/resources/css/CorrespondentBank.css</file>
             <file>file:/C:/Users/dell/OneDrive/Documents/NetBeansProjects/Demo/src/java/com/general/FixedAssetParamSetupException.java</file>
             <file>file:/C:/Users/dell/OneDrive/Documents/NetBeansProjects/Demo/web/FixedAssetParameterSetupException.xhtml</file>
-            <file>file:/C:/Users/dell/OneDrive/Documents/NetBeansProjects/Demo/web/CollateralAuth.xhtml</file>
             <file>file:/C:/Users/dell/OneDrive/Documents/NetBeansProjects/Demo/web/NewFixedAsset.xhtml</file>
+            <file>file:/C:/Users/dell/OneDrive/Documents/NetBeansProjects/Demo/src/java/com/general/UploadFixedAsset.java</file>
             <file>file:/C:/Users/dell/OneDrive/Documents/NetBeansProjects/Demo/src/java/com/general/DepreciationScheduler.java</file>
             <file>file:/C:/Users/dell/OneDrive/Documents/NetBeansProjects/Demo/web/FixedAssetParameterSetup.xhtml</file>
-            <file>file:/C:/Users/dell/OneDrive/Documents/NetBeansProjects/Demo/web/GLMainHeader.xhtml</file>
             <file>file:/C:/Users/dell/OneDrive/Documents/NetBeansProjects/Demo/web/EditFixedAssetParameterSetup.xhtml</file>
-            <file>file:/C:/Users/dell/OneDrive/Documents/NetBeansProjects/Demo/web/FAPSList.xhtml</file>
-            <file>file:/C:/Users/dell/OneDrive/Documents/NetBeansProjects/Demo/src/java/com/newinput/NewCardStopReason.java</file>
+            <file>file:/C:/Users/dell/OneDrive/Documents/NetBeansProjects/Demo/src/java/com/general/FixedAssetMigrationUpload.java</file>
+            <file>file:/C:/Users/dell/OneDrive/Documents/NetBeansProjects/Demo/src/java/com/general/FixedAssetParameter.java</file>
             <file>file:/C:/Users/dell/OneDrive/Documents/NetBeansProjects/Demo/src/java/com/general/GetUserAccessRights.java</file>
             <file>file:/C:/Users/dell/OneDrive/Documents/NetBeansProjects/Demo/src/java/com/general/DepreciationLogService.java</file>
             <file>file:/C:/Users/dell/OneDrive/Documents/NetBeansProjects/Demo/src/java/com/general/NewFixedAssetsException.java</file>
-            <file>file:/C:/Users/dell/OneDrive/Documents/NetBeansProjects/Demo/web/resources/css/ComSetting.css</file>
-            <file>file:/C:/Users/dell/OneDrive/Documents/NetBeansProjects/Demo/src/java/com/reports/RptClientAccountSearch.java</file>
-            <file>file:/C:/Users/dell/OneDrive/Documents/NetBeansProjects/Demo/src/java/com/general/model/FixedAssetReport.java</file>
-            <file>file:/C:/Users/dell/OneDrive/Documents/NetBeansProjects/Demo/src/java/com/general/model/FixedAsset.java</file>
-            <file>file:/C:/Users/dell/OneDrive/Documents/NetBeansProjects/Demo/src/java/com/newinput/NewChqStopReason.java</file>
             <file>file:/C:/Users/dell/OneDrive/Documents/NetBeansProjects/Demo/web/FixedAssetException.xhtml</file>
-            <file>file:/C:/Users/dell/OneDrive/Documents/NetBeansProjects/Demo/web/Collateral.xhtml</file>
-            <file>file:/C:/Users/dell/OneDrive/Documents/NetBeansProjects/Demo/web/CorrespondenceBank.xhtml</file>
-            <file>file:/C:/Users/dell/OneDrive/Documents/NetBeansProjects/Demo/web/CardStopReason.xhtml</file>
             <file>file:/C:/Users/dell/OneDrive/Documents/NetBeansProjects/Demo/src/java/com/general/GetSystemValidity.java</file>
         </group>
     </open-files>

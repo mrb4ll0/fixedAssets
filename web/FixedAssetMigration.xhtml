@@ -41,9 +41,9 @@
                                 <p:outputLabel/>
 
                                 <p:outputLabel for="branch" value="Branch:" />
-                                <p:selectOneMenu style="width:160px;" id="branch" value="#{fixedAssetMigration.category}" required="true">
+                                <p:selectOneMenu style="width:160px;" id="branch" value="#{fixedAssetMigration.branch}" >
                                     <f:selectItem itemLabel="Select Branch" itemValue=""/>
-                                    <f:selectItems value="#{fixedAssetMigration.categories}" />
+                                    <f:selectItems value="#{fixedAssetMigration.branches}" />
                                 </p:selectOneMenu>
                                 <p:outputLabel/>
 
@@ -59,7 +59,12 @@
                                 <p:outputLabel/>
 
                                 <p:outputLabel for="depreciationStartDate" value="Depreciation Start Date:" />
-                                <p:calendar size="15" showOn="button" id="depreciationStartDate" styleClass="GenInputTxtreq" value="#{fixedAssetMigration.depreciationStartDate}" pattern="yyyy-MM-dd"  required="true"/>
+                                <p:calendar id="depreciationStartDate" value="#{fixedAssetMigration.depreciationStartDate}" pattern="yyyy-MM-dd" required="true" showOn="button">
+                                    <p:ajax event="dateSelect" 
+                                            process="@this currentDuration initialPurchaseDate initialPurchaseAmount initialDuration"
+                                            listener="#{fixedAssetMigration.calculateAndComputeDepreciation}" update="currentValue monthlyDepAmount depOverdue" />
+                                </p:calendar>
+
                                 <p:outputLabel/>
 
                                 <p:outputLabel for="currentValue" value="Current Value:" />
@@ -77,28 +82,6 @@
                             </h:panelGrid>
                         </div>
                     </p:tab>
-
-                    <p:tab title="Upload Fixed Asset">
-                        <p:panel style="margin-top:10px; border: none; background: transparent; box-shadow: none;">
-                            <p:fileUpload value="#{fixedAssetMigration.uploadedFile}"
-                                          mode="advanced" auto="true" dragDropSupport="false"
-                                          label="Choose" update=":fixedAssetsForm:growl"
-                                          styleClass="small-file-upload"/>
-
-                            <p:panelGrid columns="2" 
-                                         style="border: none; background: transparent; 
-                                         margin: 0; padding: 0;
-                                         column-gap: 0;">
-                                <p:outputLabel for="fileRef" value="File Reference:" 
-                                               style="display:block; margin: 0; padding: 0;"/>
-                                <p:inputText id="fileRef" size="60" readonly="true" 
-                                             styleClass="GenInputTxtNoInput compact-input"
-                                             value="#{fixedAssetMigration.fileReference}"/>
-                            </p:panelGrid>
-                            <h:outputText value="Initial Audit" style="display:block; margin-top:10px;"/>
-                        </p:panel>
-                    </p:tab>
-
 
                     <p:tab title="Audit Section">
                         <div class="TabDiv">
@@ -127,7 +110,7 @@
                     </p:tab>
                 </p:tabView>
             </div>
-            <p:commandButton value="Commit" action="#{fixedAssetMigration.commitMigration}" class="rounded-button ui-button-success" update="@this"/>
+            <p:commandButton value="Commit" action="#{fixedAssetMigration.commitMigration()}" class="rounded-button ui-button-success" update="@form @(growl)"/>
         </h:form>
     </h:body>
 </html>

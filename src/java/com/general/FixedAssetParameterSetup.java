@@ -40,7 +40,7 @@ import org.primefaces.event.SelectEvent;
  */
 @ManagedBean(name="fixedAssetSetup")
 @ViewScoped
-public class FixedAsserParameterSetup implements Serializable {
+public class FixedAssetParameterSetup implements Serializable {
 private String assetAccount;
 private String selectedAssetAccount;
 private String newCategory;

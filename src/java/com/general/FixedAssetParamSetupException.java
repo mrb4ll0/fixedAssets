@@ -32,13 +32,13 @@ import javax.servlet.http.HttpSession;
 @ViewScoped
 public class FixedAssetParamSetupException implements Serializable
 {
- private List<FixedAsserParameterSetup.FixedAssetParameter> unAuthFixedAssetParams;
+ private List<FixedAssetParameterSetup.FixedAssetParameter> unAuthFixedAssetParams;
 
-    public List<FixedAsserParameterSetup.FixedAssetParameter> getUnAuthFixedAssetParams() {
+    public List<FixedAssetParameterSetup.FixedAssetParameter> getUnAuthFixedAssetParams() {
         return unAuthFixedAssetParams;
     }
 
-    public void setUnAuthFixedAssetParams(List<FixedAsserParameterSetup.FixedAssetParameter> unAuthFixedAssetParams) {
+    public void setUnAuthFixedAssetParams(List<FixedAssetParameterSetup.FixedAssetParameter> unAuthFixedAssetParams) {
         this.unAuthFixedAssetParams = unAuthFixedAssetParams;
     }
 
@@ -54,8 +54,8 @@ public class FixedAssetParamSetupException implements Serializable
       
      
 
-public List<FixedAsserParameterSetup.FixedAssetParameter> fetchFixedAssetParams() {
-    List<FixedAsserParameterSetup.FixedAssetParameter> resultList = new ArrayList<>();
+public List<FixedAssetParameterSetup.FixedAssetParameter> fetchFixedAssetParams() {
+    List<FixedAssetParameterSetup.FixedAssetParameter> resultList = new ArrayList<>();
     Connection connection = null;
     PreparedStatement ps = null;
     ResultSet rs = null;
@@ -71,7 +71,7 @@ public List<FixedAsserParameterSetup.FixedAssetParameter> fetchFixedAssetParams(
         rs = ps.executeQuery();
 
         while (rs.next()) {
-            FixedAsserParameterSetup.FixedAssetParameter param = new FixedAsserParameterSetup.FixedAssetParameter();
+            FixedAssetParameterSetup.FixedAssetParameter param = new FixedAssetParameterSetup.FixedAssetParameter();
 
             param.setCategory(rs.getString("FAPcategory"));
             param.setCategoryId(rs.getString("FAPcatID"));
@@ -100,7 +100,7 @@ public List<FixedAsserParameterSetup.FixedAssetParameter> fetchFixedAssetParams(
     return resultList;
 }
 
- public void authorize(FixedAsserParameterSetup.FixedAssetParameter fap)
+ public void authorize(FixedAssetParameterSetup.FixedAssetParameter fap)
  {    
      
     boolean isSaved= saveFixedAssetParameter(fap);
@@ -108,12 +108,12 @@ public List<FixedAsserParameterSetup.FixedAssetParameter> fetchFixedAssetParams(
      
  }
  
- public void delete(FixedAsserParameterSetup.FixedAssetParameter fap)
+ public void delete(FixedAssetParameterSetup.FixedAssetParameter fap)
  {
      deleteFixedAsset(fap.getCategoryId());
  }
 
-   public boolean saveFixedAssetParameter(FixedAsserParameterSetup.FixedAssetParameter param) {
+   public boolean saveFixedAssetParameter(FixedAssetParameterSetup.FixedAssetParameter param) {
     Connection connection = null;
     PreparedStatement psAuth = null;
     PreparedStatement psUpdate = null;
@@ -275,8 +275,8 @@ public List<FixedAsserParameterSetup.FixedAssetParameter> fetchFixedAssetParams(
         connection = obj_DB_connection.get_connection();
 
         // **Check if Data Exists in List Before Deleting**
-        FixedAsserParameterSetup.FixedAssetParameter existingParam = null;
-        for (FixedAsserParameterSetup.FixedAssetParameter param : unAuthFixedAssetParams) {
+        FixedAssetParameterSetup.FixedAssetParameter existingParam = null;
+        for (FixedAssetParameterSetup.FixedAssetParameter param : unAuthFixedAssetParams) {
             if (param.getCategoryId().equals(categoryId)) {
                 existingParam = param;
                 break;

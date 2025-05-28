@@ -129,7 +129,7 @@ public class NewFixedAssetsException implements Serializable
      }
  }
  
- public void delete(FixedAsserParameterSetup.FixedAssetParameter fap)
+ public void delete(FixedAssetParameterSetup.FixedAssetParameter fap)
  {
      deleteFixedAsset(fap.getCategoryId());
  }

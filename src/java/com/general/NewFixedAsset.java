@@ -619,7 +619,7 @@ public void newFixedAssetCategoryCheck()
         // **Create table if it does not exist**
         String createTableQuery = "CREATE TABLE IF NOT EXISTS fixedAssetTemp ("
                 + "FAPcatID VARCHAR(255) UNIQUE, "
-                + "FAPcategory VARCHAR(255) UNIQUE, "
+                + "FAPcategory VARCHAR(255) , "
                 + "AssetsName VARCHAR(255), "
                 + "AssetsAmount VARCHAR(255), "
                 + "Duration VARCHAR(255), "

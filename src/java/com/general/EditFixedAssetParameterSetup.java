@@ -473,7 +473,7 @@ public class EditFixedAssetParameterSetup implements Serializable {
             try (PreparedStatement stmt = connection.prepareStatement(
                     "CREATE TABLE IF NOT EXISTS fixedAssetParamTemp ("
                             + "FAPcatID VARCHAR(255) UNIQUE, "
-                            + "FAPcategory VARCHAR(255) UNIQUE, "
+                            + "FAPcategory VARCHAR(255) , "
                             + "AssetsName VARCHAR(255), "
                             + "AssetsAmount VARCHAR(255), "
                             + "Duration VARCHAR(255), "

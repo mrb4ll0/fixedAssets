@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
+<h:head>
+    <title>Manual Depreciation</title>
+    <h:outputStylesheet library="css" name="ComSettingNew.css"/>
+</h:head>
+
+<h:body>
+<h:form id="manualDepForm">
+    <p:growl id="growl" showDetail="true" sticky="true" life="3000"/>
+    <h1>Manual Depreciation</h1>
+    <hr style="height:5px;border-width:0;color:white;background-color:gray"/>
+
+    <p:tabView id="manualDepTabs" styleClass="MyTabView">
+
+        <!-- Tab 1: Depreciation Input -->
+        <p:tab title="Manual Depreciation">
+            <div class="TabDiv">
+                <h:panelGrid columns="3" columnClasses="firstColumnPGrid,secondColumnPGrid,thirdColumnPGrid">
+                    
+                    <p:outputLabel for="category" value="Select Category:"/>
+                    <p:selectOneMenu id="category" value="#{manualDepreciationBean.selectedCategory}" styleClass="GenSELTxtreq" required="true">
+                        <f:selectItem itemLabel="Select Category" itemValue=""/>
+                        <f:selectItems value="#{manualDepreciationBean.categoryList}" var="cat" itemLabel="#{cat.name}" itemValue="#{cat}"/>
+                        <p:ajax listener="#{manualDepreciationBean.onCategorySelect}" update="assetTableDep totalAssetValue currentAssetValue monthlyDepAmt totalAmount incomeAccBalance"/>
+                    </p:selectOneMenu>
+                    <p:outputLabel/>
+
+                    <p:outputLabel for="totalAssetValue" value="Total Asset Value:"/>
+                    <p:inputText id="totalAssetValue" value="#{manualDepreciationBean.totalAssetValue}" readonly="true" styleClass="GenInputTxtNoInput"/>
+                    <p:outputLabel/>
+
+                    <p:outputLabel for="numAssets" value="Number of Assets:"/>
+                    <p:inputText id="numAssets" value="#{manualDepreciationBean.assetCount}" readonly="true" styleClass="GenInputTxtNoInput"/>
+                    <p:outputLabel/>
+
+                    <p:outputLabel for="currentAssetValue" value="Current Assets Value:"/>
+                    <p:inputText id="currentAssetValue" value="#{manualDepreciationBean.currentAssetValue}" readonly="true" styleClass="GenInputTxtNoInput"/>
+                    <p:outputLabel/>
+
+                    <p:outputLabel for="monthlyDepAmt" value="Monthly Depreciation Amount:"/>
+                    <p:inputText id="monthlyDepAmt" value="#{manualDepreciationBean.monthlyDepAmount}" readonly="true" styleClass="GenInputTxtNoInput"/>
+                    <p:outputLabel/>
+
+                    <p:outputLabel for="monthsToDepreciate" value="Depreciate (No. of Months):"/>
+                    <p:selectOneMenu id="monthsToDepreciate" value="#{manualDepreciationBean.monthNumber}" styleClass="GenSELTxtreq" required="true">
+                        <f:selectItem itemLabel="Select Month" itemValue=""/>
+                        <f:selectItems value="#{manualDepreciationBean.monthList}" />
+                        <p:ajax listener="#{manualDepreciationBean.onMonthSelected}" update=""/>
+                    </p:selectOneMenu>
+                    <p:outputLabel/>
+
+                    <p:outputLabel for="totalAmount" value="Total Amount:"/>
+                    <p:inputText id="totalAmount" value="#{manualDepreciationBean.totalDepAmount}" readonly="true" styleClass="GenInputTxtNoInput"/>
+                    <p:outputLabel/>
+
+                    <p:outputLabel for="incomeAccBalance" value="Current Income Account Balance:"/>
+                    <p:inputText id="incomeAccBalance" value="#{manualDepreciationBean.incomeAccountBalance}" readonly="true" styleClass="GenInputTxtNoInput"/>
+                    <p:outputLabel/>
+
+                </h:panelGrid>
+
+            </div>
+        </p:tab>
+
+        <!-- Tab 2: Asset Table -->
+        <p:tab title="Category Asset">
+            <h:panelGroup layout="block" style="margin:10px">
+                <p:dataTable id="assetTableDep"
+                             value="#{manualDepreciationBean.assetsByCategory}"
+                             var="asset"
+                             rowIndexVar="r"
+                             paginator="true" rows="10"
+                             styleClass="myLDRepay" stickyHeader="true"
+                             rowStyleClass="#{r % 2 == 0 ? 'evenClass' : 'oddClass'}"
+                             showGridlines="true">
+                    
+                    <p:column headerText="S/N" style="text-align:center;" width="50">
+                        <h:outputText value="#{r + 1}"/>
+                    </p:column>
+
+                    <p:column headerText="Asset Name">
+                        <h:outputText value="#{asset.assetName}"/>
+                    </p:column>
+
+                    <p:column headerText="Amount">
+                        <h:outputText value="#{asset.assetAmount}">
+                            <f:convertNumber type="currency" currencySymbol="₦"/>
+                        </h:outputText>
+                    </p:column>
+
+                    <p:column headerText="Duration (Months)">
+                        <h:outputText value="#{asset.durationMonths}"/>
+                    </p:column>
+
+                    <p:column headerText="Purchased Date">
+                        <h:outputText value="#{asset.purchasedDate}">
+                            <f:convertDateTime pattern="dd-MM-yyyy"/>
+                        </h:outputText>
+                    </p:column>
+
+                    <p:column headerText="Branch">
+                        <h:outputText value="#{asset.branch}"/>
+                    </p:column>
+                </p:dataTable>
+            </h:panelGroup>
+        </p:tab>
+
+        <!-- Tab 3: Audit Section -->
+        <p:tab title="Audit Section">
+            <div class="TabDiv">
+                <h:panelGrid columns="3" columnClasses="firstColumnPGrid,secondColumnPGrid,thirdColumnPGrid">
+                    <p:outputLabel for="recordStatus" value="Record Status:"/>
+                    <p:inputText id="recordStatus" value="#{manualDepreciationBean.auditStatus}" readonly="true" styleClass="GenInputTxtNoInput"/>
+                    <p:outputLabel/>
+
+                    <p:outputLabel for="inputter" value="Inputter:"/>
+                    <p:inputText id="inputter" value="#{manualDepreciationBean.auditInputter}" readonly="true" styleClass="GenInputTxtNoInput"/>
+                    <p:outputLabel/>
+
+                    <p:outputLabel for="inputTime" value="Input Timing:"/>
+                    <p:inputText id="inputTime" value="#{manualDepreciationBean.auditInputTime}" readonly="true" styleClass="GenInputTxtNoInput"/>
+                    <p:outputLabel/>
+
+                    <p:outputLabel for="authoriser" value="Authoriser:"/>
+                    <p:inputText id="authoriser" value="#{manualDepreciationBean.auditAuthoriser}" readonly="true" styleClass="GenInputTxtNoInput"/>
+                    <p:outputLabel/>
+
+                    <p:outputLabel for="authTime" value="Authoriser Timing:"/>
+                    <p:inputText id="authTime" value="#{manualDepreciationBean.auditAuthTime}" readonly="true" styleClass="GenInputTxtNoInput"/>
+                    <p:outputLabel/>
+                </h:panelGrid>
+            </div>
+        </p:tab>
+    </p:tabView>
+    <p:commandButton value="Commit" action="#{manualDepreciationBean.manualDepreciationdCheck()}" class="rounded-button ui-button-success" update="@this"/>
+</h:form>
+</h:body>
+</html>

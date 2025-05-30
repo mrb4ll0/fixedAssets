@@ -177,7 +177,7 @@ public void setAllAuthRecStatus(String allAuthRecStatus) {
                 // Parse each column in the expected order
                 asset.setInitialPurchaseDate(LocalDate.parse(columns[1].replace("\"", "").trim(), dateFormatter));
                 asset.setAssetName(columns[2].replace("\"", "").trim());
-                asset.setInitialPurchaseAmount(new BigDecimal(columns[2].replace("\"", "").trim()));
+                asset.setInitialPurchaseAmount(new BigDecimal(columns[3].replace("\"", "").trim()));
                 asset.setInitialDuration(Integer.parseInt(columns[4].replace("\"", "").trim()));
                 asset.setBranch(columns[5].replace("\"", "").trim());
                 asset.setCategory(columns[6].replace("\"", "").trim());
@@ -264,11 +264,11 @@ public void setAllAuthRecStatus(String allAuthRecStatus) {
                     continue;
                 }
                 insertStmt.setString(1, faMigration.getAssetName());
-            insertStmt.setDate(2, java.sql.Date.valueOf(faMigration.getInitialPurchaseDate()));
+            insertStmt.setDate(2, faMigration.getInitialPurchaseDate());
             insertStmt.setBigDecimal(3, faMigration.getInitialPurchaseAmount());
             insertStmt.setInt(4, faMigration.getInitialDuration());
             insertStmt.setInt(5, faMigration.getCurrentDuration());
-            insertStmt.setDate(6, java.sql.Date.valueOf(faMigration.getDepreciationStartDate()));
+            insertStmt.setDate(6, faMigration.getDepreciationStartDate());
             insertStmt.setBigDecimal(7, faMigration.getCurrentValue());
             insertStmt.setBigDecimal(8, faMigration.getMonthlyDepreciationAmount());
             insertStmt.setBigDecimal(9, faMigration.getDepreciationOverdue());
@@ -402,8 +402,8 @@ public void computeMonthlyDepAmount(FixedAssetMigration.FixedAssetMigrationModel
         return;
     }
 
-    LocalDate initialPurchaseLocal = fapMigration.getInitialPurchaseDate();
-    LocalDate startLocal = fapMigration.getDepreciationStartDate();
+    LocalDate initialPurchaseLocal = fapMigration.getInitialPurchaseDate().toLocalDate();
+    LocalDate startLocal = fapMigration.getDepreciationStartDate().toLocalDate();
 
     YearMonth initialYM = YearMonth.from(initialPurchaseLocal);
     YearMonth startYM = YearMonth.from(startLocal);

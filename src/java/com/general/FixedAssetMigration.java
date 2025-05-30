@@ -22,7 +22,7 @@ import java.time.YearMonth;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
-import java.util.Date;
+import java.sql.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -472,11 +472,11 @@ public class FixedAssetMigration implements Serializable {
 
         try (PreparedStatement insertStmt = connection.prepareStatement(insertSQL)) {
             insertStmt.setString(1, model.getAssetName());
-            insertStmt.setDate(2, java.sql.Date.valueOf(model.getInitialPurchaseDate()));
+            insertStmt.setDate(2, model.getInitialPurchaseDate());
             insertStmt.setBigDecimal(3, model.getInitialPurchaseAmount());
             insertStmt.setInt(4, model.getInitialDuration());
             insertStmt.setInt(5, model.getCurrentDuration());
-            insertStmt.setDate(6, java.sql.Date.valueOf(model.getDepreciationStartDate()));
+            insertStmt.setDate(6, model.getDepreciationStartDate());
             insertStmt.setBigDecimal(7, model.getCurrentValue());
             insertStmt.setBigDecimal(8, model.getMonthlyDepreciationAmount());
             insertStmt.setBigDecimal(9, model.getDepreciationOverdue());
@@ -544,8 +544,8 @@ public static class FixedAssetMigrationModel {
 
     // Getters and Setters
 
-    public LocalDate getInitialPurchaseDate() {
-        return initialPurchaseDate;
+    public Date getInitialPurchaseDate() {
+        return java.sql.Date.valueOf(initialPurchaseDate);
     }
 
     public void setInitialPurchaseDate(LocalDate initialPurchaseDate) {
@@ -600,8 +600,8 @@ public static class FixedAssetMigrationModel {
         this.currentDuration = currentDuration;
     }
 
-    public LocalDate getDepreciationStartDate() {
-        return depreciationStartDate;
+    public Date getDepreciationStartDate() {
+        return java.sql.Date.valueOf(depreciationStartDate);
     }
 
     public void setDepreciationStartDate(LocalDate depreciationStartDate) {

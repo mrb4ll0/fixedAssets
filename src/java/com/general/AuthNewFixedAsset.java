@@ -14,11 +14,16 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
+import org.primefaces.model.FilterMeta;
+import org.primefaces.model.LazyDataModel;
+import org.primefaces.model.SortMeta;
 
 /**
  *
@@ -33,7 +38,7 @@ import javax.faces.context.FacesContext;
 @ViewScoped
 public class AuthNewFixedAsset implements Serializable{
 
-    private List<NewFixedAsset.FixedAsset> authNewFixedAsset  = new ArrayList<>(); // List to store fetched assets
+    private LazyDataModel<NewFixedAsset.FixedAsset> lazyFixedAssetModel; // List to store fetched assets
     private String newAccSearch; 
     private String branches;
     private List<String> categories = new ArrayList<>();
@@ -66,77 +71,74 @@ public class AuthNewFixedAsset implements Serializable{
     }
 
     @PostConstruct
-    public void init() {
-        authNewFixedAsset = fetchAuthFixedAssets();
-    }
+public void init() {
+    lazyFixedAssetModel = new LazyDataModel<NewFixedAsset.FixedAsset>() {
+        @Override
+        public List<NewFixedAsset.FixedAsset> load(int first, int pageSize, Map<String, SortMeta> sortBy, Map<String, FilterMeta> filterBy) {
+            List<NewFixedAsset.FixedAsset> resultList = new ArrayList<>();
+            Connection conn = null;
+            PreparedStatement ps = null;
+            ResultSet rs = null;
+            Statement countStmt = null;
+            ResultSet countRs = null;
 
-    public List<NewFixedAsset.FixedAsset> fetchAuthFixedAssets() {
-        List<NewFixedAsset.FixedAsset> resultList = new ArrayList<>();
-        Connection connection = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
-
-        try {
-            DBConnection obj_DB_connection = new DBConnection();
-            connection = obj_DB_connection.get_connection();
-
-            // Fetch all records from authFixedAsset table
-            String query = "SELECT FAPcatID, FAPcategory, AssetsName, AssetsAmount, Duration, Branch, " +
-                    "FAPdepExpAcct, FAPPrePayAcct, AssetAccount, DepExpenseAccount, " +
-                    "FAPdepDate, RecordStatus, Inputter, InputterRec, Authoriser, AuthoriserRec, " +
-                    "updatetype, FAPtenancy, AuditDateRecord, YUser, ProfileUser, UserTransit, UserTenancy ,PurchasedDate" +
-                    " FROM FixedAsset";
-
-            ps = connection.prepareStatement(query);
-            rs = ps.executeQuery();
-
-            while (rs.next()) {
-                NewFixedAsset.FixedAsset asset = new NewFixedAsset.FixedAsset();
-
-                asset.setFAPcatID(rs.getString("FAPcatID"));
-                asset.setFAPcategory(rs.getString("FAPcategory"));
-                categories.add(rs.getString("FAPcategory"));
-                asset.setAssetName(rs.getString("AssetsName"));
-                asset.setAssetAmount(rs.getString("AssetsAmount"));
-                asset.setDurationsMonth(rs.getString("Duration"));
-                asset.setBranch(rs.getString("Branch"));
-                asset.setFAPdepExpAcct(rs.getString("FAPdepExpAcct"));
-                asset.setFAPPrePayAcct(rs.getString("FAPPrePayAcct"));
-                asset.setAssetAccount(rs.getString("AssetAccount"));
-                asset.setDepExpenseAccount(rs.getString("DepExpenseAccount"));
-                asset.setFAPdepDate(rs.getString("FAPdepDate"));
-                asset.setRecordStatus(rs.getString("RecordStatus"));
-                asset.setInputter(rs.getString("Inputter"));
-                asset.setInputterRec(rs.getString("InputterRec"));
-                asset.setAuthoriser(rs.getString("Authoriser"));
-                asset.setAuthoriserRec(rs.getString("AuthoriserRec"));
-                asset.setUpdatetype(rs.getString("updatetype"));
-                asset.setFAPtenancy(rs.getString("FAPtenancy"));
-                asset.setFAPtenancy(rs.getString("FAPtenancy"));
-                asset.setPurchasedDate(rs.getDate("PurchasedDate"));
-               
-
-                resultList.add(asset);
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
             try {
-                if (rs != null) rs.close();
-                if (ps != null) ps.close();
-                if (connection != null) connection.close();
-            } catch (Exception ex) {
-                ex.printStackTrace();
+                DBConnection obj_DB_connection = new DBConnection();
+                conn = obj_DB_connection.get_connection();
+                String sql = "SELECT * FROM FixedAsset ORDER BY `FAPcategory` LIMIT ? OFFSET ?";
+                ps = conn.prepareStatement(sql);
+                int effectivePageSize = pageSize <= 0 ? 20 : pageSize;
+                    
+                System.out.println("pageSize is "+effectivePageSize+" and first is "+first);
+                ps.setInt(1, effectivePageSize);
+                ps.setInt(2, first);
+
+                rs = ps.executeQuery();
+                while (rs.next()) {
+                    NewFixedAsset.FixedAsset asset = new NewFixedAsset.FixedAsset();
+                    asset.setFAPcatID(rs.getString("FAPcatID"));
+                    asset.setFAPcategory(rs.getString("FAPcategory"));
+                    asset.setAssetName(rs.getString("AssetsName"));  
+                    asset.setAssetAmount(rs.getString("AssetsAmount"));
+                    asset.setDurationsMonth(rs.getString("Duration"));
+                    asset.setBranch(rs.getString("Branch"));
+                    asset.setPurchasedDate(rs.getDate("PurchasedDate"));
+                    resultList.add(asset);
+                }
+                countStmt = conn.createStatement();
+                countRs = countStmt.executeQuery("SELECT COUNT(*) FROM FixedAsset");
+                if (countRs.next()) {
+                    this.setRowCount(countRs.getInt(1));
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                FacesContext.getCurrentInstance().addMessage(null, 
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Database Error", e.getMessage()));
+            } finally {
+                try {
+                    if (rs != null) rs.close();
+                    if (ps != null) ps.close();
+                    if (countRs != null) countRs.close();
+                    if (countStmt != null) countStmt.close();
+                    if (conn != null) conn.close();
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
             }
+               System.out.println("result size is "+resultList.get(10).getAssetName());
+            return resultList;
         }
+    };
+    lazyFixedAssetModel.setPageSize(20);
+}
 
-        return resultList;
-    }
 
+
+    
     // Getter for the list
-    public List<NewFixedAsset.FixedAsset> getAuthNewFixedAsset() {
-        return authNewFixedAsset;
+    public LazyDataModel<NewFixedAsset.FixedAsset> getLazyFixedAssetModel() {
+        return lazyFixedAssetModel;
     }
     
     
@@ -208,11 +210,11 @@ public class AuthNewFixedAsset implements Serializable{
     System.out.println("in searchAccount the length of search Account is " + reportList.size());
      if(!reportList.isEmpty())
      {
-         this.authNewFixedAsset = reportList;
+         //this.lazyFixedAssetModel = reportList;
      }
      else
      {
-         this.authNewFixedAsset = fetchAuthFixedAssets();
+         //this.lazyFixedAssetModel = fetchAuthFixedAssets();
      }
 }
     
@@ -287,7 +289,7 @@ public class AuthNewFixedAsset implements Serializable{
     }
 
     System.out.println("in searchAccount the length of search Account is " + reportList.size());
-    this.authNewFixedAsset = reportList;
+    //this.lazyFixedAssetModel = reportList;
     }
     
     

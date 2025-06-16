@@ -141,7 +141,7 @@ public void setAllAuthRecStatus(String allAuthRecStatus) {
                 asset.setDurationsMonth(columns[5].replace("\"", "").trim());
 
                 try {
-                    java.util.Date utilDate = new SimpleDateFormat("dd-MM-yyyy").parse(columns[6].replace("\"", "").trim());
+                    java.util.Date utilDate = new SimpleDateFormat("dd/MM/yyyy").parse(columns[6].replace("\"", "").trim());
                     asset.setPurchasedDate(new java.sql.Date(utilDate.getTime()));
                 } catch (Exception e) {
                     e.printStackTrace(); // Handle invalid date format
@@ -201,6 +201,7 @@ public void setAllAuthRecStatus(String allAuthRecStatus) {
                 if(asset ==null)
                 {
                     failedCategory+=","+unpopulatedAsset.getFAPcategory();
+                    System.out.println("failed category is "+unpopulatedAsset.getFAPcategory());
                     continue;
                 }
                 insertStmt.setString(1, asset.getFAPcatID());
@@ -280,7 +281,7 @@ public void setAllAuthRecStatus(String allAuthRecStatus) {
     
   public NewFixedAsset.FixedAsset populateFixedAssetAccountsByCategory(NewFixedAsset.FixedAsset asset) {
     String category = asset.getFAPcategory();
-    String sql = "SELECT FAPcatID, FAPdepExpAcctNumber, FAPPrePayAcctNumber, AssetAccountNumber, DepExpenseAccountNumber, FAPdepDate, FAPdepDay FROM fixedAssetParamTemp WHERE FAPcategory = ?";
+    String sql = "SELECT FAPcatID, FAPdepExpAcctNumber, FAPPrePayAcctNumber, AssetAccountNumber, DepExpenseAccountNumber, FAPdepDate, FAPdepDay FROM fixedAssetParamSetup WHERE FAPcategory = ?";
 
     try (Connection conn = new DBConnection().get_connection();
          PreparedStatement stmt = conn.prepareStatement(sql)) {

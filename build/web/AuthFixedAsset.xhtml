@@ -51,17 +51,18 @@
 
             <br/>
                 <p:dataTable id="authorizedFixedAsset"
-                             value="#{authNewFixedAsset.authNewFixedAsset}"
+                             value="#{authNewFixedAsset.lazyFixedAssetModel}"
                              var="account"
+                             scrollable="true" 
+                             scrollHeight="500"
+                             lazy="true"
                              rowIndexVar="r" 
                              rowStyleClass="#{r % 2 == 0 ? 'evenClass' : 'oddClass'}"
                              resizableColumns="true" 
                              widgetVar="unauthorizedAccountsTable"
-                             paginator="true"
-                             paginatorPosition="bottom"
-                             rows="10"
+                             scrollRows="20"
+                             liveScroll="true"
                              showGridlines="true"
-                             stickyHeader="true"
                              styleClass="myLDRepay">
 
 
